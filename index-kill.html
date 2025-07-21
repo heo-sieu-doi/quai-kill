@@ -830,20 +830,18 @@
             });
         }
 
-        // Chức năng xuất ảnh được lấy từ index.html và cải tiến
+        // Chức năng xuất ảnh được lấy từ file index.html theo yêu cầu
         async function exportToPNG() {
             if (!currentData.length) {
                 alert("Vui lòng tải dữ liệu trước!");
                 return;
             }
 
+            // Lấy trực tiếp bảng dữ liệu
             const tableElement = document.getElementById('comparisonTable');
-            // Lấy container để thay đổi kích thước tạm thời
-            const tableContainer = document.getElementById('tableContainer');
 
-
-            if (!tableElement || !tableContainer) {
-                alert(`Không tìm thấy bảng dữ liệu hoặc container để xuất ảnh.`);
+            if (!tableElement) {
+                alert(`Không tìm thấy bảng dữ liệu để xuất ảnh.`);
                 return;
             }
 
@@ -851,13 +849,9 @@
             const thElements = tableElement.querySelectorAll('th');
             const originalThStyles = [];
             thElements.forEach(th => {
-                originalThStyles.push(th.style.position); // Lưu style gốc
-                th.style.position = 'static'; // Tạm thời bỏ sticky để chụp toàn bộ bảng
+                originalThStyles.push(th.style.position);
+                th.style.position = 'static';
             });
-
-            // --- THAY ĐỔI LỚN: Mở rộng container để chứa toàn bộ bảng, tránh lỗi render trên mobile ---
-            const originalContainerWidth = tableContainer.style.width;
-            tableContainer.style.width = tableElement.scrollWidth + 'px';
 
             // --- Phản hồi UI ---
             const exportButton = document.getElementById('exportPngBtn');
@@ -865,66 +859,38 @@
             exportButton.textContent = '📸 Đang xử lý...';
             exportButton.disabled = true;
 
-            // --- Trì hoãn và Chụp ---
             setTimeout(async () => {
                 let stylesRestored = false;
                 const restoreStyles = () => {
                     if (!stylesRestored) {
                         thElements.forEach((th, index) => {
-                            th.style.position = originalThStyles[index] || ''; // Khôi phục style gốc
+                            th.style.position = originalThStyles[index] || '';
                         });
-                        // Khôi phục lại width của container
-                        tableContainer.style.width = originalContainerWidth;
                         stylesRestored = true;
                     }
                 };
 
                 try {
-                    // Chụp bảng sau khi layout đã được mở rộng, bỏ các tùy chọn width/height có thể gây lỗi
+                    // Chụp ảnh với kích thước đầy đủ của bảng (bao gồm cả phần bị cuộn)
                     const canvas = await html2canvas(tableElement, {
-                        scale: 1.5, // Tăng chất lượng ảnh
+                        scale: 1.5,
                         useCORS: true,
                         logging: false,
                         backgroundColor: '#ffffff',
+                        width: tableElement.scrollWidth,
+                        height: tableElement.scrollHeight,
                     });
 
-                    restoreStyles(); // Khôi phục style ngay sau khi chụp xong
+                    restoreStyles();
 
-                    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                    const imageDataUrl = canvas.toDataURL('image/png');
 
-                    if (blob && blob.size > 100) {
-                        // THÀNH CÔNG: Dùng Blob URL (ổn định nhất)
-                        const blobUrl = URL.createObjectURL(blob);
-                        const newWindow = window.open(blobUrl, "_blank");
-
-                        if (!newWindow) {
-                            // Fallback nếu popup bị chặn
-                            alert("Không thể mở tab mới. Vui lòng cho phép pop-up. Đang thử tải ảnh về máy...");
-                            const link = document.createElement('a');
-                            link.download = `so-sanh-thong-ke-${new Date().toISOString().slice(0,10)}.png`;
-                            link.href = blobUrl;
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            URL.revokeObjectURL(blobUrl);
-                        }
-                        // Nếu newWindow mở thành công, không revoke URL để tab mới có thể tải.
+                    const newWindow = window.open();
+                    if (newWindow) {
+                        newWindow.document.write(`<!DOCTYPE html><html><head><title>Báo cáo so sánh</title></head><body style="margin:0;"><img src="${imageDataUrl}" alt="Báo cáo so sánh" style="max-width: 100%; display: block;"></body></html>`);
+                        newWindow.document.close();
                     } else {
-                        // THẤT BẠI: Dùng phương án dự phòng (Data URL)
-                        console.warn("Tạo Blob thất bại hoặc Blob rỗng. Chuyển sang dùng DataURL.");
-                        alert("Phương thức tạo ảnh (Blob) thất bại. Đang thử phương án dự phòng và tải trực tiếp về máy...");
-                        
-                        const dataUrl = canvas.toDataURL('image/png');
-                        if (dataUrl.length < 256) { // Kiểm tra dataUrl có vẻ hợp lệ không
-                            throw new Error("Không thể tạo dữ liệu ảnh. Canvas có thể bị lỗi hoặc trống. Vui lòng thử tải lại trang.");
-                        }
-
-                        const link = document.createElement('a');
-                        link.download = `so-sanh-thong-ke-${new Date().toISOString().slice(0,10)}.png`;
-                        link.href = dataUrl;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        alert("Không thể mở tab mới. Vui lòng kiểm tra cài đặt chặn pop-up của trình duyệt và thử lại.");
                     }
 
                 } catch (error) {
@@ -936,7 +902,7 @@
                     exportButton.textContent = originalButtonText;
                     exportButton.disabled = false;
                 }
-            }, 150); // Độ trễ nhỏ để UI kịp cập nhật
+            }, 150);
         }
 
         function exportToExcel() {
