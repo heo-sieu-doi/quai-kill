@@ -111,6 +111,43 @@
             white-space: nowrap;
         }
 
+        /* Style cho header nhóm */
+        th[colspan] {
+            text-align: center;
+            border-bottom: 2px solid #ccc; /* Đường kẻ dưới đậm hơn để phân tách cấp */
+            border-right: 2px solid #adadad;  /* Đường kẻ phải đậm hơn để phân tách các nhóm */
+            font-weight: bold;
+            color: #333;
+        }
+        th[colspan]:last-child {
+            border-right: 1px solid #ddd; /* Giữ border cho cột cuối cùng của header */
+        }
+
+        /* Thêm đường viền đậm cho cột cuối của nhóm thông tin (Rank) */
+        .info-group-separator {
+            border-right: 2px solid #adadad;
+        }
+
+        /* Màu nền cho từng nhóm để phân biệt rõ ràng */
+        .group-might { background-color: #eaf2f8; }
+        .group-kills { background-color: #e8f8f5; }
+        .group-captured { background-color: #fef5e7; }
+        .group-destroyed { background-color: #feebef; }
+        .group-enemy-wounded { background-color: #f4ecf7; }
+        .group-troops-killed { background-color: #d6eaf8; }
+        .group-troops-lost { background-color: #fdedec; }
+        .group-troops-wounded { background-color: #d7bde2; }
+        .group-losses { background-color: #fef9e7; }
+        .group-attacks { background-color: #e8f6f3; }
+        .group-defenses { background-color: #eaeded; }
+        .group-victories { background-color: #a9cce3; }
+        .group-win-rate { background-color: #a3e4d7; }
+
+        thead tr:last-child th {
+            white-space: nowrap;
+            background-color: #f8f9f9; /* Màu nền riêng cho header phụ */
+        }
+
         .positive {
             color: green;
             font-weight: bold;
@@ -324,24 +361,41 @@
         <div id="tableContainer">
             <table id="comparisonTable">
                 <thead>
+                    <!-- Dòng tiêu đề chính -->
                     <tr>
-                        <th>STT</th>
-                        <th>Tên</th>
-                        <th class="id-col">User ID</th>
-                        <th>Rank</th>
-                        <th class="compact-col">Might (Thay đổi)</th>
-                        <th class="compact-col">Kills (Thay đổi)</th>
-                        <th class="compact-col">Kẻ Thù Bị Bắt</th>
-                        <th class="compact-col">Kẻ Thù Tiêu Diệt</th>
-                        <th class="compact-col">Quân Địch Bị Thương</th>
-                        <th class="compact-col">Quân Đội Đã Giết</th>
-                        <th class="compact-col">Số Quân Tổn Thất</th>
-                        <th class="compact-col">Quân Đội Bị Thương</th>
-                        <th class="compact-col">Thua</th>
-                        <th class="compact-col">Tấn công Thành công</th>
-                        <th class="compact-col">Phòng thủ Thành công</th>
-                        <th class="compact-col">Chiến Thắng</th>
-                        <th class="compact-col">Tỉ Lệ Chiến Thắng</th>
+                        <th rowspan="2">STT</th>
+                        <th rowspan="2">Tên</th>
+                        <th rowspan="2" class="id-col">User ID</th>
+                        <th rowspan="2" class="info-group-separator">Rank</th>
+                        <th colspan="3" class="group-might">Might</th>
+                        <th colspan="3" class="group-kills">Kills</th>
+                        <th colspan="3" class="group-captured">Kẻ Thù Bị Bắt</th>
+                        <th colspan="3" class="group-destroyed">Kẻ Thù Tiêu Diệt</th>
+                        <th colspan="3" class="group-enemy-wounded">Quân Địch Bị Thương</th>
+                        <th colspan="3" class="group-troops-killed">Quân Đội Đã Giết</th>
+                        <th colspan="3" class="group-troops-lost">Số Quân Tổn Thất</th>
+                        <th colspan="3" class="group-troops-wounded">Quân Đội Bị Thương</th>
+                        <th colspan="3" class="group-losses">Thua</th>
+                        <th colspan="3" class="group-attacks">Tấn công Thành công</th>
+                        <th colspan="3" class="group-defenses">Phòng thủ Thành công</th>
+                        <th colspan="3" class="group-victories">Chiến Thắng</th>
+                        <th colspan="3" class="group-win-rate">Tỉ Lệ Chiến Thắng</th>
+                    </tr>
+                    <!-- Dòng tiêu đề phụ -->
+                    <tr>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -690,71 +744,58 @@
                     <td>${name}</td>
                     <td class="id-col">${userId}</td>
                     <td>${rank}</td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.might) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.might) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(mightDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.kills) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.kills) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(killsDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.enemies_captured) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.enemies_captured) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(enemiesCapturedDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.enemies_destroyed) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.enemies_destroyed) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(enemiesDestroyedDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.enemy_wounded) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.enemy_wounded) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(enemyWoundedDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.troops_killed) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.troops_killed) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(troopsKilledDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.troops_lost) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.troops_lost) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(troopsLostDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.troops_wounded) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.troops_wounded) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(troopsWoundedDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.losses) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.losses) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(lossesDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.successful_attacks) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.successful_attacks) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(successfulAttacksDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.successful_defenses) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.successful_defenses) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(successfulDefensesDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? formatNumber(juneStats.victories) + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? formatNumber(julyStats.victories) + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${formatDifference(victoriesDiff)}
-                    </td>
-                    <td>
-                        ${juneStats ? juneStats.win_rate + '<br>' : '<span class="no-data">Không có dữ liệu T6</span><br>'}
-                        ${julyStats ? julyStats.win_rate + '<br>' : '<span class="no-data">Không có dữ liệu T7</span><br>'}
-                        ${winRateDiff}
-                    </td>
+                    <!-- Might -->
+                    <td>${formatNumber(juneStats?.might)}</td>
+                    <td>${formatNumber(julyStats?.might)}</td>
+                    <td>${formatDifference(mightDiff)}</td>
+                    <!-- Kills -->
+                    <td>${formatNumber(juneStats?.kills)}</td>
+                    <td>${formatNumber(julyStats?.kills)}</td>
+                    <td>${formatDifference(killsDiff)}</td>
+                    <!-- Enemies Captured -->
+                    <td>${formatNumber(juneStats?.enemies_captured)}</td>
+                    <td>${formatNumber(julyStats?.enemies_captured)}</td>
+                    <td>${formatDifference(enemiesCapturedDiff)}</td>
+                    <!-- Enemies Destroyed -->
+                    <td>${formatNumber(juneStats?.enemies_destroyed)}</td>
+                    <td>${formatNumber(julyStats?.enemies_destroyed)}</td>
+                    <td>${formatDifference(enemiesDestroyedDiff)}</td>
+                    <!-- Enemy Wounded -->
+                    <td>${formatNumber(juneStats?.enemy_wounded)}</td>
+                    <td>${formatNumber(julyStats?.enemy_wounded)}</td>
+                    <td>${formatDifference(enemyWoundedDiff)}</td>
+                    <!-- Troops Killed -->
+                    <td>${formatNumber(juneStats?.troops_killed)}</td>
+                    <td>${formatNumber(julyStats?.troops_killed)}</td>
+                    <td>${formatDifference(troopsKilledDiff)}</td>
+                    <!-- Troops Lost -->
+                    <td>${formatNumber(juneStats?.troops_lost)}</td>
+                    <td>${formatNumber(julyStats?.troops_lost)}</td>
+                    <td>${formatDifference(troopsLostDiff)}</td>
+                    <!-- Troops Wounded -->
+                    <td>${formatNumber(juneStats?.troops_wounded)}</td>
+                    <td>${formatNumber(julyStats?.troops_wounded)}</td>
+                    <td>${formatDifference(troopsWoundedDiff)}</td>
+                    <!-- Losses -->
+                    <td>${formatNumber(juneStats?.losses)}</td>
+                    <td>${formatNumber(julyStats?.losses)}</td>
+                    <td>${formatDifference(lossesDiff)}</td>
+                    <!-- Successful Attacks -->
+                    <td>${formatNumber(juneStats?.successful_attacks)}</td>
+                    <td>${formatNumber(julyStats?.successful_attacks)}</td>
+                    <td>${formatDifference(successfulAttacksDiff)}</td>
+                    <!-- Successful Defenses -->
+                    <td>${formatNumber(juneStats?.successful_defenses)}</td>
+                    <td>${formatNumber(julyStats?.successful_defenses)}</td>
+                    <td>${formatDifference(successfulDefensesDiff)}</td>
+                    <!-- Victories -->
+                    <td>${formatNumber(juneStats?.victories)}</td>
+                    <td>${formatNumber(julyStats?.victories)}</td>
+                    <td>${formatDifference(victoriesDiff)}</td>
+                    <!-- Win Rate -->
+                    <td>${juneStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td>${julyStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td>${winRateDiff}</td>
                 `;
 
                 tableBody.appendChild(row);
