@@ -863,6 +863,81 @@
         .debt-status-not-found {
             color: var(--warning-color);
         }
+
+        /* === THÊM MỚI: Hell Event Calculator Section === */
+        .hell-event-calculator-section {
+            margin-top: 30px;
+            background: var(--white-color);
+            border-radius: var(--border-radius-md);
+            padding: 30px;
+            box-shadow: var(--box-shadow-medium);
+            border: 1px solid var(--light-gray);
+        }
+
+        .hell-event-calculator-section h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+
+        .hell-event-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .hell-event-controls select,
+        .hell-event-controls input[type="number"] {
+            padding: 10px 12px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .hell-event-controls select:focus,
+        .hell-event-controls input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        #hellResults {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--light-gray);
+        }
+
+        #hellResults h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        #hellResults ul {
+            list-style-type: '✔ ';
+            padding-left: 20px;
+        }
+
+        /* === THÊM MỚI: Tùy chọn Hell Lính === */
+        #troopOptions, #pactOptions, #pactSpeedOptions {
+            display: none; /* Ẩn mặc định */
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+            font-size: 14px;
+            gap: 15px;
+        }
     </style>
 </head>
 
@@ -993,6 +1068,46 @@
             </div>
         </div>
         <!-- === KẾT THÚC THÊM MỚI === -->
+
+        <!-- === THÊM MỚI: Công cụ tính Hell Event === -->
+        <div class="hell-event-calculator-section">
+            <h2>🔥 Công Cụ Tính Điểm Hell Event</h2>
+            <div class="hell-event-controls">
+                <select id="hellEventType" onchange="toggleHellOptions()">
+                    <option value="pact">Hell Khế Ước</option>
+                    <option value="maze">Hell Mê Hồn Trận</option>
+                    <option value="troop">Hell Lính</option>
+                </select>
+                <input type="number" id="hellPointsTarget" placeholder="Nhập tổng điểm hell cần ăn...">
+                <button class="btn btn-primary" onclick="calculateHellEvent()">Tính toán</button>
+                <!-- Thêm tùy chọn cho Hell Khế Ước -->
+                <div id="pactSpeedOptions">
+                     <span>Tốc độ kết hợp (%): </span>
+                     <input type="number" id="pactSpeed" placeholder="Ví dụ: 391.1" value="391.1">
+                </div>
+                <!-- Thêm tùy chọn cho Hell Khế Ước -->
+                <div id="pactOptions">
+                    <span>Dùng khế: </span>
+                    <label><input type="checkbox" class="pact-option" value="pact4" checked> Khế 4</label>
+                    <label><input type="checkbox" class="pact-option" value="pact3" checked> Khế 3</label>
+                    <label><input type="checkbox" class="pact-option" value="pact2" checked> Khế 2</label>
+                    <label><input type="checkbox" class="pact-option" value="pact1" checked> Khế 1</label>
+                </div>
+                <!-- Thêm tùy chọn cho Hell Lính -->
+                <div id="troopOptions">
+                    <span>Dùng lính: </span>
+                    <label><input type="checkbox" class="troop-option" value="t4" checked> T4</label>
+                    <label><input type="checkbox" class="troop-option" value="t3" checked> T3</label>
+                    <label><input type="checkbox" class="troop-option" value="t2" checked> T2</label>
+                    <label><input type="checkbox" class="troop-option" value="t1" checked> T1</label>
+                </div>
+            </div>
+            <div id="hellResults" style="display: none;">
+                <!-- Kết quả tính toán sẽ hiển thị ở đây -->
+            </div>
+        </div>
+        <!-- === KẾT THÚC THÊM MỚI === -->
+
     </div>
 
     <script>
@@ -1711,6 +1826,7 @@
             document.body.classList.add('hide-id-column');
             document.body.classList.add('hide-quaituan');
             showTab('missing'); // Hiển thị tab mặc định
+            toggleHellOptions(); // Gọi để hiển thị đúng options cho hell mặc định
         });
         function exportToExcel() {
     try {
@@ -2365,6 +2481,295 @@ function displayDebtResults(debtData) {
          </div>`;
      resultsContainer.innerHTML = tableHtml;
  }
+
+    // === THÊM MỚI: Chức năng tính Hell Event ===
+     function toggleHellOptions() {
+        const eventType = document.getElementById('hellEventType').value;
+        const troopOptionsDiv = document.getElementById('troopOptions');
+        const pactOptionsDiv = document.getElementById('pactOptions');
+        const pactSpeedOptionsDiv = document.getElementById('pactSpeedOptions');
+
+        pactOptionsDiv.style.display = 'none';
+        troopOptionsDiv.style.display = 'none';
+        pactSpeedOptionsDiv.style.display = 'none';
+
+        if (eventType === 'troop') {
+            troopOptionsDiv.style.display = 'flex'; // Dùng flex để căn chỉnh
+            troopOptionsDiv.style.justifyContent = 'center';
+        } else if (eventType === 'pact') {
+            pactOptionsDiv.style.display = 'flex';
+            pactOptionsDiv.style.justifyContent = 'center';
+            pactSpeedOptionsDiv.style.display = 'flex';
+            pactSpeedOptionsDiv.style.justifyContent = 'center';
+        }
+    }
+
+     function calculateHellEvent() {
+        const eventType = document.getElementById('hellEventType').value;
+        const targetPointsInput = document.getElementById('hellPointsTarget');
+        const resultsDiv = document.getElementById('hellResults');
+
+        const targetPoints = parseInt(targetPointsInput.value);
+
+        if (isNaN(targetPoints) || targetPoints <= 0) {
+            alert("Vui lòng nhập một số điểm hợp lệ.");
+            return;
+        }
+
+        let resultHtml = '';
+        let results;
+
+        switch (eventType) {
+            case 'pact':
+                const selectedPacts = Array.from(document.querySelectorAll('.pact-option:checked')).map(cb => cb.value);
+                if (selectedPacts.length === 0) {
+                    alert("Vui lòng chọn ít nhất một loại khế để tính toán.");
+                    return;
+                }
+                const pactSpeed = parseFloat(document.getElementById('pactSpeed').value);
+                if (isNaN(pactSpeed)) {
+                    alert("Vui lòng nhập tốc độ kết hợp hợp lệ.");
+                    return;
+                }
+                results = calculatePactHell(targetPoints, selectedPacts, pactSpeed);
+                resultHtml = `
+                    <h3>Kết quả tối ưu cho ${targetPoints.toLocaleString('vi-VN')} điểm (Hell Khế Ước):</h3>
+                    <ul>
+                        ${results.pact4 > 0 ? `<li><strong>Khế Ước 4 (9,000 điểm):</strong> ${results.pact4.toLocaleString('vi-VN')} cái</li>` : ''}
+                        ${results.pact3 > 0 ? `<li><strong>Khế Ước 3 (4,800 điểm):</strong> ${results.pact3.toLocaleString('vi-VN')} cái</li>` : ''}
+                        ${results.pact2 > 0 ? `<li><strong>Khế Ước 2 (2,400 điểm):</strong> ${results.pact2.toLocaleString('vi-VN')} cái</li>` : ''}
+                        ${results.pact1 > 0 ? `<li><strong>Khế Ước 1 (1,200 điểm):</strong> ${results.pact1.toLocaleString('vi-VN')} cái</li>` : ''}
+                    </ul>
+                    <p style="font-style: italic; font-size: 13px; color: #666;">
+                        Tổng điểm đạt được: ${results.totalPointsAchieved.toLocaleString('vi-VN')}<br>
+                        <strong>⏳ Thời gian hoàn thành: ${formatDuration(results.totalTime)}</strong><br>
+                        <strong>💎 Chi phí Gem (ước tính): ${results.totalGems.toLocaleString('vi-VN')}</strong>
+                    </p>
+                `;
+                break;
+            case 'maze':
+                results = calculateMazeHell(targetPoints);
+                resultHtml = `
+                    <h3>Kết quả cho ${targetPoints.toLocaleString('vi-VN')} điểm (Hell Mê Hồn Trận):</h3>
+                    <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                        <h4>Chỉ dùng Quái vật ưu việt (6,000 điểm):</h4>
+                        <ul>
+                            <li><strong>Số lần đánh:</strong> ${results.eliteOnly.count.toLocaleString('vi-VN')}</li>
+                            <li><strong>Tổng Sao Thánh cần dùng:</strong> ${results.eliteOnly.stars.toLocaleString('vi-VN')}</li>
+                        </ul>
+                        <p style="font-style: italic; font-size: 13px; color: #666;">
+                            Tổng điểm đạt được: ${results.eliteOnly.points.toLocaleString('vi-VN')}
+                        </p>
+                    </div>
+                    <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                        <h4>Chỉ dùng Quái vật bình thường (200 điểm):</h4>
+                        <ul>
+                            <li><strong>Số lần đánh:</strong> ${results.normalOnly.count.toLocaleString('vi-VN')}</li>
+                            <li><strong>Tổng Sao Thánh cần dùng:</strong> ${results.normalOnly.stars.toLocaleString('vi-VN')}</li>
+                        </ul>
+                        <p style="font-style: italic; font-size: 13px; color: #666;">
+                            Tổng điểm đạt được: ${results.normalOnly.points.toLocaleString('vi-VN')}
+                        </p>
+                    </div>
+                `;
+                break;
+            case 'troop':
+                const selectedTiers = Array.from(document.querySelectorAll('.troop-option:checked')).map(cb => cb.value);
+                if (selectedTiers.length === 0) {
+                    alert("Vui lòng chọn ít nhất một loại lính để tính toán.");
+                    return;
+                }
+                results = calculateTroopHell(targetPoints, selectedTiers);
+                resultHtml = `
+                    <h3>Kết quả tối ưu cho ${targetPoints.toLocaleString('vi-VN')} điểm (Hell Lính):</h3>
+                    <ul>
+                        ${results.t4 > 0 ? `<li><strong>Lính T4 (15 điểm):</strong> ${results.t4.toLocaleString('vi-VN')}</li>` : ''}
+                        ${results.t3 > 0 ? `<li><strong>Lính T3 (5 điểm):</strong> ${results.t3.toLocaleString('vi-VN')}</li>` : ''}
+                        ${results.t2 > 0 ? `<li><strong>Lính T2 (2 điểm):</strong> ${results.t2.toLocaleString('vi-VN')}</li>` : ''}
+                        ${results.t1 > 0 ? `<li><strong>Lính T1 (1 điểm):</strong> ${results.t1.toLocaleString('vi-VN')}</li>` : ''}
+                    </ul>
+                    <p style="font-style: italic; font-size: 13px; color: #666;">
+                        Tổng điểm đạt được: ${results.totalPointsAchieved.toLocaleString('vi-VN')}<br>
+                        <strong>Tổng sức mạnh tăng thêm: ${results.totalMightGained.toLocaleString('vi-VN')}</strong>
+                    </p>
+                `;
+                break;
+        }
+
+        // Hiển thị kết quả
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = resultHtml;
+    }
+
+    function formatDuration(totalSeconds) {
+        if (totalSeconds <= 0) return "0 giây";
+
+        totalSeconds = Math.round(totalSeconds);
+
+        const days = Math.floor(totalSeconds / 86400);
+        totalSeconds %= 86400;
+        const hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        let parts = [];
+        if (days > 0) parts.push(`${days}d`);
+        if (hours > 0) parts.push(`${String(hours).padStart(2, '0')}h`);
+        if (minutes > 0) parts.push(`${String(minutes).padStart(2, '0')}m`);
+        if (seconds > 0 || parts.length === 0) parts.push(`${String(seconds).padStart(2, '0')}s`);
+
+        return parts.join(' ');
+    }
+
+    function calculateGemsForTime(seconds) {
+        if (seconds <= 0) return 0;
+
+        // Data points: [time_in_seconds, gem_cost] sorted by time
+        const dataPoints = [
+            [2200, 198],      // Based on 1xP2 or 2xP1
+            [16494, 822],     // Based on 15xP1
+            [17594, 865],     // Based on 3xP4
+            [32988, 1417],    // Based on 15xP2
+            [54979, 2031],    // Based on 15xP3
+            [87966, 3053]     // Based on 15xP4
+        ];
+
+        // Handle extrapolation for values smaller than the first point
+        if (seconds < dataPoints[0][0]) {
+            const rate = dataPoints[0][1] / dataPoints[0][0]; // gems per second for the first segment
+            return Math.ceil(seconds * rate);
+        }
+
+        // Find the two points to interpolate between
+        for (let i = 0; i < dataPoints.length - 1; i++) {
+            const p1 = dataPoints[i];
+            const p2 = dataPoints[i + 1];
+            if (seconds >= p1[0] && seconds <= p2[0]) {
+                // Linear interpolation: y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)
+                const gems = p1[1] + (seconds - p1[0]) * (p2[1] - p1[1]) / (p2[0] - p1[0]);
+                return Math.ceil(gems);
+            }
+        }
+
+        // Handle extrapolation for values larger than the last point
+        const lastPoint = dataPoints[dataPoints.length - 1];
+        const secondLastPoint = dataPoints[dataPoints.length - 2];
+        const lastRate = (lastPoint[1] - secondLastPoint[1]) / (lastPoint[0] - secondLastPoint[0]);
+        const gems = lastPoint[1] + (seconds - lastPoint[0]) * lastRate;
+        return Math.ceil(gems);
+    }
+
+    function calculatePactHell(targetPoints, selectedPacts, speedPercent) {
+        const pactValues = {
+            // Base times recalculated based on user's data to match 391.1% speed
+            pact4: { points: 9000, baseTime: 28800 }, // ~5864s @ 391.1% -> 28800 base
+            pact3: { points: 4800, baseTime: 18000 }, // ~3665s @ 391.1% -> 18000 base
+            pact2: { points: 2400, baseTime: 10800 }, // ~2200s @ 391.1% -> 10800 base
+            pact1: { points: 1200, baseTime: 5400  }  // ~1100s @ 391.1% -> 5400 base
+        };
+
+        let remainingPoints = targetPoints;
+        const counts = { pact4: 0, pact3: 0, pact2: 0, pact1: 0 };
+
+        const pactsInOrder = ['pact4', 'pact3', 'pact2', 'pact1'];
+
+        pactsInOrder.forEach(pact => {
+            if (selectedPacts.includes(pact)) {
+                const pactPointValue = pactValues[pact].points;
+                const lowestSelectedPact = pactsInOrder.filter(p => selectedPacts.includes(p)).pop();
+
+                if (pact === lowestSelectedPact && remainingPoints > 0) {
+                    counts[pact] = Math.ceil(remainingPoints / pactPointValue);
+                    remainingPoints = 0;
+                } else {
+                    counts[pact] = Math.floor(remainingPoints / pactPointValue);
+                    remainingPoints %= pactPointValue;
+                }
+            }
+        });
+
+        const totalBaseTime = (counts.pact4 * pactValues.pact4.baseTime) + (counts.pact3 * pactValues.pact3.baseTime) + (counts.pact2 * pactValues.pact2.baseTime) + (counts.pact1 * pactValues.pact1.baseTime);
+        const finalTimeInSeconds = totalBaseTime / (1 + (speedPercent / 100));
+        const totalPointsAchieved = (counts.pact4 * pactValues.pact4.points) + (counts.pact3 * pactValues.pact3.points) + (counts.pact2 * pactValues.pact2.points) + (counts.pact1 * pactValues.pact1.points);
+        const totalGems = calculateGemsForTime(finalTimeInSeconds);
+
+        return { ...counts, totalPointsAchieved, totalTime: finalTimeInSeconds, totalGems };
+    }
+
+    function calculateMazeHell(targetPoints) {
+        const mazeValues = {
+            elite: { points: 6000, stars: 1000 },
+            normal: { points: 200, stars: 100 }
+        };
+
+        // Kịch bản 1: Chỉ dùng Quái vật ưu việt
+        const eliteCount = Math.ceil(targetPoints / mazeValues.elite.points);
+        const elitePointsAchieved = eliteCount * mazeValues.elite.points;
+        const eliteStars = eliteCount * mazeValues.elite.stars;
+
+        // Kịch bản 2: Chỉ dùng Quái vật bình thường
+        const normalCount = Math.ceil(targetPoints / mazeValues.normal.points);
+        const normalPointsAchieved = normalCount * mazeValues.normal.points;
+        const normalStars = normalCount * mazeValues.normal.stars;
+
+        return {
+            eliteOnly: {
+                count: eliteCount,
+                points: elitePointsAchieved,
+                stars: eliteStars
+            },
+            normalOnly: {
+                count: normalCount,
+                points: normalPointsAchieved,
+                stars: normalStars
+            }
+        };
+    }
+
+    function calculateTroopHell(targetPoints, selectedTiers) {
+        const troopValues = {
+            t4: { points: 15, might: 36 },
+            t3: { points: 5, might: 24 },
+            t2: { points: 2, might: 8 },
+            t1: { points: 1, might: 2 }
+        };
+
+        let remainingPoints = targetPoints;
+        const counts = { t4: 0, t3: 0, t2: 0, t1: 0 };
+
+        const tiersInOrder = ['t4', 't3', 't2', 't1'];
+
+        tiersInOrder.forEach((tier, index) => {
+            // Chỉ tính toán nếu tier này được chọn
+            if (selectedTiers.includes(tier)) {
+                const tierValue = troopValues[tier].points;
+                
+                // Nếu là tier cuối cùng trong danh sách được chọn, phải làm tròn lên
+                const isLastSelectedTier = selectedTiers.indexOf(tier) === selectedTiers.length - 1;
+
+                if (isLastSelectedTier && remainingPoints > 0) {
+                    counts[tier] = Math.ceil(remainingPoints / tierValue);
+                    remainingPoints = 0; // Đã xử lý xong
+                } else {
+                    counts[tier] = Math.floor(remainingPoints / tierValue);
+                    remainingPoints %= tierValue;
+                }
+            }
+        });
+
+        const totalPointsAchieved = (counts.t4 * troopValues.t4.points) +
+                                  (counts.t3 * troopValues.t3.points) +
+                                  (counts.t2 * troopValues.t2.points) +
+                                  (counts.t1 * troopValues.t1.points);
+
+        const totalMightGained = (counts.t4 * troopValues.t4.might) +
+                                 (counts.t3 * troopValues.t3.might) +
+                                 (counts.t2 * troopValues.t2.might) +
+                                 (counts.t1 * troopValues.t1.might);
+
+        return { ...counts, totalPointsAchieved, totalMightGained };
+    }
     </script>
 </body>
 
