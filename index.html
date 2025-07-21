@@ -439,6 +439,14 @@
             /* Hiệu ứng hover */
         }
 
+        /* === THÊM MỚI: Style cho dòng tổng kết === */
+        .table-summary-row td {
+            font-weight: bold;
+            background-color: #e9edf0; /* Giống màu header */
+            border-top: 2px solid var(--medium-gray);
+            color: var(--text-color);
+        }
+
         /* Input trong bảng */
         .target-input {
             width: 70px;
@@ -1484,31 +1492,6 @@
 
             document.getElementById(`${tabId}Content`).innerHTML = generateTable(dataToRender, tabId);
 
-    if (tabId === 'corrected') {
-        const totalThieu = dataToRender.reduce((sum, item) => {
-            const missing = item.target - item.points;
-            return sum + (missing > 0 ? missing : 0);
-        }, 0);
-
-        const totalBu = dataToRender.reduce((sum, item) => {
-            const missing = item.target - item.points;
-            return sum + (missing > 0 ? (missing + 5) : 0);
-        }, 0);
-
-        const correctedContentDiv = document.getElementById(`${tabId}Content`);
-        const existingTotalElement = correctedContentDiv.querySelector('.total-thieu-corrected');
-        if (existingTotalElement) existingTotalElement.remove();
-
-        const totalDiv = document.createElement('div');
-        totalDiv.className = 'total-thieu-corrected';
-        totalDiv.style = 'margin-top: 10px; font-weight: bold; color: #e74c3c;';
-        totalDiv.innerHTML = `
-            🔧 Tổng Thiếu: <span style="color: black;">${totalThieu.toLocaleString('vi-VN')}</span><br>
-            🛠️ Tổng Bù: <span style="color: black;">${totalBu.toLocaleString('vi-VN')}</span>
-        `;
-        correctedContentDiv.appendChild(totalDiv);
-    }
-
         }
 
         // Sửa lại hàm generateTable chỉ dùng cho các tab thường
@@ -1516,6 +1499,48 @@
             if (!data || data.length === 0) return '<p class="empty">Không có dữ liệu</p>';
         
             const showCheckbox = tabId === 'missing';
+
+            // --- Bắt đầu: Tính toán cho dòng tổng kết ---
+            let footerHtml = '';
+            if (tabId === 'sufficient' || tabId === 'corrected') {
+                const totals = data.reduce((acc, item) => {
+                    acc.l1 += item.levels.l1;
+                    acc.l2 += item.levels.l2;
+                    acc.l3 += item.levels.l3;
+                    acc.l4 += item.levels.l4;
+                    acc.l5 += item.levels.l5;
+                    acc.points += item.points;
+                    if (tabId === 'corrected') {
+                        const missing = item.target - item.points;
+                        if (missing > 0) {
+                            acc.thieu += missing;
+                            acc.bu += missing + 5;
+                        }
+                    }
+                    return acc;
+                }, { l1: 0, l2: 0, l3: 0, l4: 0, l5: 0, points: 0, thieu: 0, bu: 0 });
+
+                const format = (num) => num.toLocaleString('vi-VN');
+
+                footerHtml = `
+                    <tfoot>
+                        <tr class="table-summary-row">
+                            <td class="id-column"></td> <!-- Cột ID để trống -->
+                            <td><strong>Tổng cộng</strong></td> <!-- Chữ 'Tổng cộng' ở cột Tên -->
+                            <td>${format(totals.l1)}</td>
+                            <td>${format(totals.l2)}</td>
+                            <td>${format(totals.l3)}</td>
+                            <td>${format(totals.l4)}</td>
+                            <td>${format(totals.l5)}</td>
+                            <td class="quai-tuan-column"></td>
+                            <td>${format(totals.points)}</td>
+                            <td>${tabId === 'corrected' ? format(totals.thieu) : ''}</td>
+                            ${tabId === 'corrected' ? `<td>${format(totals.bu)}</td>` : ''}
+                        </tr>
+                    </tfoot>
+                `;
+            }
+            // --- Kết thúc: Tính toán cho dòng tổng kết ---
         
             // Bọc bảng trong div.table-responsive
             return `
@@ -1566,6 +1591,7 @@
                             </tr>
                         `).join('')}
                     </tbody>
+                    ${footerHtml}
                 </table>
             </div><br>
             ${showCheckbox ? `
@@ -1640,41 +1666,33 @@
         function processCorrections() {
             const selectedIds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
                 .map(checkbox => parseInt(checkbox.dataset.id));
+            
+            if (selectedIds.length === 0) {
+                alert("Vui lòng chọn ít nhất một thành viên để cập nhật.");
+                return;
+            }
 
+            let changesMade = 0;
             processedData.forEach(item => {
                 if (selectedIds.includes(item.id)) {
-                    const needed = item.target - item.points;
-                    if (needed > 0) {
-                        adjustLevels(item, needed);
-                        item.corrected = true;
+                    // Chỉ cập nhật nếu người chơi đang thiếu điểm
+                    if (item.points < item.target) {
+                        item.target = item.points; // Cập nhật mục tiêu ('Quái Tuần') bằng điểm hiện tại ('Points Hunt')
+                        item.corrected = true;     // Đánh dấu là đã sửa
+                        updateStatus(item);        // Cập nhật lại trạng thái (sẽ thành 'sufficient')
+                        changesMade++;
                     }
                 }
             });
 
+            if (changesMade > 0) {
+                alert(`Đã cập nhật mục tiêu cho ${changesMade} thành viên được chọn.`);
+            } else {
+                alert("Không có thành viên nào được chọn cần cập nhật (tất cả đều đã đủ/dư điểm).");
+            }
             updateUI();
         }
 
-        function adjustLevels(item, needed) {
-            let remaining = needed;
-            const add = {
-                l5: Math.min(Math.floor(remaining / 32)),
-                l4: 0, l3: 0, l2: 0
-            };
-
-            remaining %= 32;
-            add.l4 = Math.min(Math.floor(remaining / 16));
-            remaining %= 16;
-            add.l3 = Math.min(Math.floor(remaining / 4));
-            remaining %= 4;
-            add.l2 = remaining;
-
-            item.levels.l5 += add.l5;
-            item.levels.l4 += add.l4;
-            item.levels.l3 += add.l3;
-            item.levels.l2 += add.l2;
-
-            calculatePoints(item);
-        }
         // Cập nhật hàm createDownloadButton để thêm class
         function createDownloadButton() {
             // Xóa nút cũ trước khi tạo mới (để tránh trùng lặp)
