@@ -83,7 +83,7 @@
         }
 
         button.quaternary {
-            background-color: #deb3e5;
+            background-color: #9c27b0;
         }
 
         button.quaternary:hover {
@@ -404,11 +404,6 @@
             margin-top: 0;
         }
 
-        #comparisonResult {
-            overflow-x: auto; /* Thêm cuộn ngang cho bảng trên mobile */
-            -webkit-overflow-scrolling: touch; /* Cải thiện trải nghiệm cuộn trên iOS */
-        }
-
         #comparisonResult th {
             background-color: #f5eef8;
         }
@@ -458,16 +453,9 @@
             border-collapse: collapse;
         }
 
-        .detailed-view-body {
-            overflow-x: auto; /* Thêm cuộn ngang cho bảng trên mobile */
-            -webkit-overflow-scrolling: touch; /* Cải thiện trải nghiệm cuộn trên iOS */
-        }
-
         .detailed-view-body th, .detailed-view-body td {
-            padding: 5px; /* Giảm padding cho gọn, giống bảng chính */
-            border: 1px solid #ddd; /* Thêm border đầy đủ giống bảng chính */
-            text-align: left; /* Căn lề trái mặc định */
-            white-space: nowrap; /* Ngăn xuống dòng */
+            padding: 8px; /* Giảm padding cho đồng bộ và gọn hơn */
+            border-bottom: 1px solid #eee;
         }
 
         .detailed-view-body .stat-name {
@@ -475,61 +463,30 @@
             font-weight: bold;
             color: #555;
         }
-
-        /* === MODAL STYLES FOR USER SELECTION === */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+                /* === COMPACT VIEW STYLES === */
+        /* Hide entire groups not needed in compact view */
+        body.compact-view .group-captured, body.compact-view .group-captured-cell,
+        body.compact-view .group-losses, body.compact-view .group-losses-cell,
+        body.compact-view .group-attacks, body.compact-view .group-attacks-cell,
+        body.compact-view .group-defenses, body.compact-view .group-defenses-cell,
+        body.compact-view .group-victories, body.compact-view .group-victories-cell,
+        body.compact-view .group-win-rate, body.compact-view .group-win-rate-cell,
+        body.compact-view .id-col, 
+        body.compact-view .rank-col { /* Ẩn cột ID và Rank */
+            display: none;
         }
 
-        .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
+        /* In compact view, hide the month columns for the remaining groups */
+        body.compact-view .month-col {
+            display: none;
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+        /* In compact view, change the main header text alignment to center since it only has one sub-column */
+        body.compact-view th[colspan] {
+            text-align: center;
+            padding-left: 0; /* Reset padding */
         }
 
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.2em;
-        }
-
-        .modal-header .close-button {
-            background: none;
-            border: none;
-            font-size: 1.8em;
-            cursor: pointer;
-            color: #888;
-            padding: 0;
-            margin: 0;
-            line-height: 1;
-        }
-
-        .modal-body {
-            overflow-y: auto;
-        }
     </style>
 </head>
 
@@ -585,6 +542,7 @@
                 <div style="display: flex; gap: 5px; margin-top: 5px;">
                     <button onclick="searchTable()">Tìm kiếm</button>
                     <button onclick="showDetailedView()" class="secondary">Xem chi tiết</button>
+                    <button id="compactViewBtn" onclick="toggleCompactView()" class="tertiary">Tinh gọn</button>
                     <button onclick="showComparisonView()" class="quaternary">So sánh với Ưu tiên</button>
                     <button onclick="sortTable('killsDiff', 'asc')" class="secondary">Sắp xếp Kills (Tăng)</button>
                     <button onclick="sortTable('killsDiff', 'desc')" class="secondary">Sắp xếp Kills (Giảm)</button>
@@ -609,36 +567,36 @@
                         <th rowspan="2">STT</th>
                         <th rowspan="2">Tên</th>
                         <th rowspan="2" class="id-col">User ID</th>
-                        <th rowspan="2" class="info-group-separator">Rank</th>
-                        <th colspan="3" class="group-might">Tổng Might</th>
-                        <th colspan="3" class="group-kills">Tổng Kills</th>
-                        <th colspan="3" class="group-captured">Tổng Kẻ Thù Bị Bắt</th>
-                        <th colspan="3" class="group-destroyed">Tổng Kẻ Thù Tiêu Diệt</th>
-                        <th colspan="3" class="group-enemy-wounded">Tổng Quân Địch Bị Thương</th>
-                        <th colspan="3" class="group-troops-killed">Tổng Quân Đội Đã Giết</th>
-                        <th colspan="3" class="group-troops-lost">Tổng Số Quân Tổn Thất</th>
-                        <th colspan="3" class="group-troops-wounded">Tổng Quân Đội Bị Thương</th>
-                        <th colspan="3" class="group-losses">Tổng Thua</th>
-                        <th colspan="3" class="group-attacks">Tổng Tấn công Thành công</th>
-                        <th colspan="3" class="group-defenses">Tổng Phòng thủ Thành công</th>
-                        <th colspan="3" class="group-victories">Tổng Chiến Thắng</th>
-                        <th colspan="3" class="group-win-rate">Tổng Tỉ Lệ Chiến Thắng</th>
+                        <th rowspan="2" class="info-group-separator rank-col">Rank</th>
+                        <th colspan="3" class="group-might">Might</th>
+                        <th colspan="3" class="group-kills">Kills</th>
+                        <th colspan="3" class="group-captured">Kẻ Thù Bị Bắt</th>
+                        <th colspan="3" class="group-destroyed">Kẻ Thù Tiêu Diệt</th>
+                        <th colspan="3" class="group-enemy-wounded">Quân Địch Bị Thương</th>
+                        <th colspan="3" class="group-troops-killed">Quân Đội Đã Giết</th>
+                        <th colspan="3" class="group-troops-lost">Số Quân Tổn Thất</th>
+                        <th colspan="3" class="group-troops-wounded">Quân Đội Bị Thương</th>
+                        <th colspan="3" class="group-losses">Thua</th>
+                        <th colspan="3" class="group-attacks">Tấn công Thành công</th>
+                        <th colspan="3" class="group-defenses">Phòng thủ Thành công</th>
+                        <th colspan="3" class="group-victories">Chiến Thắng</th>
+                        <th colspan="3" class="group-win-rate">Tỉ Lệ Chiến Thắng</th>
                     </tr>
                     <!-- Dòng tiêu đề phụ -->
-                    <tr>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                    <tr id="sub-header-row">
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
+                        <th class="month-col">Tháng 6</th><th class="month-col">Tháng 7</th><th class="diff-col">Chênh lệch</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -652,19 +610,6 @@
 
         <!-- Container for the new detailed vertical view -->
         <div id="detailedViewContainer" style="display: none;"></div>
-    </div>
-
-    <!-- Modal for user selection -->
-    <div id="userSelectionModal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Vui lòng chọn kết quả</h2>
-                <button class="close-button" onclick="hideUserSelectionModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="userSelectionList">
-                <!-- User list will be injected here -->
-            </div>
-        </div>
     </div>
 
     <script>
@@ -817,7 +762,12 @@
 
             const headers = sheetData[headerRowIndex];
             const getColIndex = (headerName) => {
-                return headers.findIndex(h => h && h.toString().trim().toLowerCase() === headerName.toLowerCase());
+                const possibleNames = Array.isArray(headerName) ? headerName.map(n => n.toLowerCase()) : [headerName.toLowerCase()];
+                for (const name of possibleNames) {
+                    const index = headers.findIndex(h => h && h.toString().trim().toLowerCase() === name);
+                    if (index !== -1) return index;
+                }
+                return -1;
             };
 
             const indices = {
@@ -851,10 +801,8 @@
                     const val = row[index];
                     if (val === undefined || val === null) return defaultValue;
                     if (typeof val === 'number') return val;
-                    if (typeof val === 'string') {
-                        if (indices.winRate === index && val.includes('%')) {
-                            return parseFloat(val.replace(',', '.').replace('%', '')) || 0;
-                        }
+                    // Only parse numbers from strings if it's not the win_rate column
+                    if (typeof val === 'string' && index !== indices.winRate) {
                         const num = parseFloat(val.replace(/[^0-9.-]/g, ''));
                         return isNaN(num) ? defaultValue : num;
                     }
@@ -882,6 +830,7 @@
 
             return result;
         }
+
 
         // Hàm so sánh dữ liệu
         function compareData() {
@@ -923,6 +872,7 @@
                 }
             }, 100);
         }
+
 
         // Hàm cập nhật ID ưu tiên
         function updatePriorityIds() {
@@ -979,7 +929,8 @@
         // Hàm hiển thị dữ liệu đã sắp xếp
         function displaySortedData(sortedData) {
             const tableBody = document.getElementById('tableBody');
-
+            tableBody.innerHTML = ''; // Xóa nội dung cũ
+            
             sortedData.forEach((item, index) => {
                 const { userId, name, rank, juneStats, julyStats, hasBothData, isPriority } = item;
                 const row = document.createElement('tr');
@@ -1005,65 +956,86 @@
                     <td>${index + 1}</td>
                     <td>${name}</td>
                     <td class="id-col">${userId}</td>
-                    <td>${rank}</td>
+                    <td class="rank-col">${rank}</td>
                     <!-- Might -->
-                    <td class="group-might-cell">${formatNumber(juneStats?.might)}</td>
-                    <td class="group-might-cell">${formatNumber(julyStats?.might)}</td>
-                    <td class="group-might-cell">${formatDifference(mightDiff)}</td>
+                    <td class="group-might-cell month-col">${formatNumber(juneStats?.might)}</td>
+                    <td class="group-might-cell month-col">${formatNumber(julyStats?.might)}</td>
+                    <td class="group-might-cell diff-col">${formatDifference(mightDiff)}</td>
                     <!-- Kills -->
-                    <td class="group-kills-cell">${formatNumber(juneStats?.kills)}</td>
-                    <td class="group-kills-cell">${formatNumber(julyStats?.kills)}</td>
-                    <td class="group-kills-cell">${formatDifference(killsDiff)}</td>
+                    <td class="group-kills-cell month-col">${formatNumber(juneStats?.kills)}</td>
+                    <td class="group-kills-cell month-col">${formatNumber(julyStats?.kills)}</td>
+                    <td class="group-kills-cell diff-col">${formatDifference(killsDiff)}</td>
                     <!-- Enemies Captured -->
-                    <td class="group-captured-cell">${formatNumber(juneStats?.enemies_captured)}</td>
-                    <td class="group-captured-cell">${formatNumber(julyStats?.enemies_captured)}</td>
-                    <td class="group-captured-cell">${formatDifference(enemiesCapturedDiff)}</td>
+                    <td class="group-captured-cell month-col">${formatNumber(juneStats?.enemies_captured)}</td>
+                    <td class="group-captured-cell month-col">${formatNumber(julyStats?.enemies_captured)}</td>
+                    <td class="group-captured-cell diff-col">${formatDifference(enemiesCapturedDiff)}</td>
                     <!-- Enemies Destroyed -->
-                    <td class="group-destroyed-cell">${formatNumber(juneStats?.enemies_destroyed)}</td>
-                    <td class="group-destroyed-cell">${formatNumber(julyStats?.enemies_destroyed)}</td>
-                    <td class="group-destroyed-cell">${formatDifference(enemiesDestroyedDiff)}</td>
+                    <td class="group-destroyed-cell month-col">${formatNumber(juneStats?.enemies_destroyed)}</td>
+                    <td class="group-destroyed-cell month-col">${formatNumber(julyStats?.enemies_destroyed)}</td>
+                    <td class="group-destroyed-cell diff-col">${formatDifference(enemiesDestroyedDiff)}</td>
                     <!-- Enemy Wounded -->
-                    <td class="group-enemy-wounded-cell">${formatNumber(juneStats?.enemy_wounded)}</td>
-                    <td class="group-enemy-wounded-cell">${formatNumber(julyStats?.enemy_wounded)}</td>
-                    <td class="group-enemy-wounded-cell">${formatDifference(enemyWoundedDiff)}</td>
+                    <td class="group-enemy-wounded-cell month-col">${formatNumber(juneStats?.enemy_wounded)}</td>
+                    <td class="group-enemy-wounded-cell month-col">${formatNumber(julyStats?.enemy_wounded)}</td>
+                    <td class="group-enemy-wounded-cell diff-col">${formatDifference(enemyWoundedDiff)}</td>
                     <!-- Troops Killed -->
-                    <td class="group-troops-killed-cell">${formatNumber(juneStats?.troops_killed)}</td>
-                    <td class="group-troops-killed-cell">${formatNumber(julyStats?.troops_killed)}</td>
-                    <td class="group-troops-killed-cell">${formatDifference(troopsKilledDiff)}</td>
+                    <td class="group-troops-killed-cell month-col">${formatNumber(juneStats?.troops_killed)}</td>
+                    <td class="group-troops-killed-cell month-col">${formatNumber(julyStats?.troops_killed)}</td>
+                    <td class="group-troops-killed-cell diff-col">${formatDifference(troopsKilledDiff)}</td>
                     <!-- Troops Lost -->
-                    <td class="group-troops-lost-cell">${formatNumber(juneStats?.troops_lost)}</td>
-                    <td class="group-troops-lost-cell">${formatNumber(julyStats?.troops_lost)}</td>
-                    <td class="group-troops-lost-cell">${formatDifference(troopsLostDiff)}</td>
+                    <td class="group-troops-lost-cell month-col">${formatNumber(juneStats?.troops_lost)}</td>
+                    <td class="group-troops-lost-cell month-col">${formatNumber(julyStats?.troops_lost)}</td>
+                    <td class="group-troops-lost-cell diff-col">${formatDifference(troopsLostDiff)}</td>
                     <!-- Troops Wounded -->
-                    <td class="group-troops-wounded-cell">${formatNumber(juneStats?.troops_wounded)}</td>
-                    <td class="group-troops-wounded-cell">${formatNumber(julyStats?.troops_wounded)}</td>
-                    <td class="group-troops-wounded-cell">${formatDifference(troopsWoundedDiff)}</td>
+                    <td class="group-troops-wounded-cell month-col">${formatNumber(juneStats?.troops_wounded)}</td>
+                    <td class="group-troops-wounded-cell month-col">${formatNumber(julyStats?.troops_wounded)}</td>
+                    <td class="group-troops-wounded-cell diff-col">${formatDifference(troopsWoundedDiff)}</td>
                     <!-- Losses -->
-                    <td class="group-losses-cell">${formatNumber(juneStats?.losses)}</td>
-                    <td class="group-losses-cell">${formatNumber(julyStats?.losses)}</td>
-                    <td class="group-losses-cell">${formatDifference(lossesDiff)}</td>
+                    <td class="group-losses-cell month-col">${formatNumber(juneStats?.losses)}</td>
+                    <td class="group-losses-cell month-col">${formatNumber(julyStats?.losses)}</td>
+                    <td class="group-losses-cell diff-col">${formatDifference(lossesDiff)}</td>
                     <!-- Successful Attacks -->
-                    <td class="group-attacks-cell">${formatNumber(juneStats?.successful_attacks)}</td>
-                    <td class="group-attacks-cell">${formatNumber(julyStats?.successful_attacks)}</td>
-                    <td class="group-attacks-cell">${formatDifference(successfulAttacksDiff)}</td>
+                    <td class="group-attacks-cell month-col">${formatNumber(juneStats?.successful_attacks)}</td>
+                    <td class="group-attacks-cell month-col">${formatNumber(julyStats?.successful_attacks)}</td>
+                    <td class="group-attacks-cell diff-col">${formatDifference(successfulAttacksDiff)}</td>
                     <!-- Successful Defenses -->
-                    <td class="group-defenses-cell">${formatNumber(juneStats?.successful_defenses)}</td>
-                    <td class="group-defenses-cell">${formatNumber(julyStats?.successful_defenses)}</td>
-                    <td class="group-defenses-cell">${formatDifference(successfulDefensesDiff)}</td>
+                    <td class="group-defenses-cell month-col">${formatNumber(juneStats?.successful_defenses)}</td>
+                    <td class="group-defenses-cell month-col">${formatNumber(julyStats?.successful_defenses)}</td>
+                    <td class="group-defenses-cell diff-col">${formatDifference(successfulDefensesDiff)}</td>
                     <!-- Victories -->
-                    <td class="group-victories-cell">${formatNumber(juneStats?.victories)}</td>
-                    <td class="group-victories-cell">${formatNumber(julyStats?.victories)}</td>
-                    <td class="group-victories-cell">${formatDifference(victoriesDiff)}</td>
+                    <td class="group-victories-cell month-col">${formatNumber(juneStats?.victories)}</td>
+                    <td class="group-victories-cell month-col">${formatNumber(julyStats?.victories)}</td>
+                    <td class="group-victories-cell diff-col">${formatDifference(victoriesDiff)}</td>
                     <!-- Win Rate -->
-                    <td class="group-win-rate-cell">${juneStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
-                    <td class="group-win-rate-cell">${julyStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
-                    <td class="group-win-rate-cell">${winRateDiff}</td>
+                    <td class="group-win-rate-cell month-col">${juneStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td class="group-win-rate-cell month-col">${julyStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td class="group-win-rate-cell diff-col">${winRateDiff}</td>
                 `;
 
                 tableBody.appendChild(row);
             });
 
             toggleIdColumn(showIdColumn);
+        }
+
+        function toggleCompactView() {
+            const body = document.body;
+            const btn = document.getElementById('compactViewBtn');
+            const isCompact = body.classList.toggle('compact-view'); // toggle() trả về true nếu class được thêm vào
+
+            const mainHeaders = document.querySelectorAll('#comparisonTable th[colspan]');
+            const subHeaderRow = document.getElementById('sub-header-row');
+
+            if (isCompact) {
+                // Khi ở chế độ Tinh gọn
+                btn.textContent = 'Xem đầy đủ';
+                mainHeaders.forEach(th => th.setAttribute('colspan', '1')); // Đặt colspan về 1
+                if (subHeaderRow) subHeaderRow.style.display = 'none'; // Ẩn hàng tiêu đề phụ
+            } else {
+                // Khi ở chế độ Xem đầy đủ
+                btn.textContent = 'Tinh gọn';
+                mainHeaders.forEach(th => th.setAttribute('colspan', '3')); // Trả colspan về 3
+                if (subHeaderRow) subHeaderRow.style.display = ''; // Hiện lại hàng tiêu đề phụ
+            }
         }
 
         // Các hàm tiện ích
@@ -1115,7 +1087,7 @@
                     const nameText = nameCell.textContent || nameCell.innerText;
                     const idText = idCell.textContent || idCell.innerText;
 
-                    if (nameText.toUpperCase().indexOf(filter) > -1 || idText.toUpperCase().indexOf(filter) > -1) {
+                    if (nameText.toUpperCase().indexOf(filter) > -1 || idText.indexOf(filter) > -1) {
                         rows[i].style.display = '';
                     } else {
                         rows[i].style.display = 'none';
@@ -1149,49 +1121,19 @@
 
         function showDetailedView() {
             hideComparisonView();
-            
             const searchTerm = document.getElementById('searchInput').value.trim();
             if (!searchTerm) {
-                // Nếu không có gì trong ô tìm kiếm, có thể người dùng muốn xem toàn bộ danh sách
-                // hoặc ta nên yêu cầu họ tìm kiếm trước. Ở đây, ta yêu cầu tìm kiếm.
-                alert("Vui lòng nhập Tên hoặc ID và nhấn 'Tìm kiếm' trước khi xem chi tiết.");
+                alert("Vui lòng nhập Tên hoặc ID để xem chi tiết.");
                 return;
             }
 
-            const tableBody = document.getElementById('tableBody');
-            const rows = tableBody.getElementsByTagName('tr');
-            const visibleUserIds = [];
+            const foundUser = currentData.find(item => 
+                item.userId.toString() === searchTerm || 
+                item.name.toLowerCase() === searchTerm.toLowerCase()
+            );
 
-            for (let i = 0; i < rows.length; i++) {
-                // Một hàng được coi là hiển thị nếu style.display của nó không phải là 'none'
-                if (rows[i].style.display !== 'none') {
-                    // Tìm ô ID trong hàng. Giả sử ID là cột thứ 3 (index 2).
-                    const idCell = rows[i].getElementsByTagName('td')[2];
-                    if (idCell) {
-                        visibleUserIds.push(idCell.textContent.trim());
-                    }
-                }
-            }
-
-            // Lấy các đối tượng người dùng đầy đủ từ currentData bằng các ID đã thu thập
-            const foundUsers = currentData.filter(item => visibleUserIds.includes(item.userId));
-
-            if (foundUsers.length === 0) {
-                alert(`Không có kết quả nào đang được hiển thị cho "${searchTerm}".`);
-                return;
-            }
-
-            if (foundUsers.length === 1) {
-                renderDetailedView(foundUsers[0]);
-            } else {
-                showUserSelectionModal(foundUsers);
-            }
-        }
-
-
-        function renderDetailedView(foundUser) {
             if (!foundUser) {
-                alert(`Lỗi: Không có thông tin người dùng để hiển thị.`);
+                alert(`Không tìm thấy người chơi với Tên hoặc ID: "${searchTerm}"`);
                 return;
             }
 
@@ -1258,7 +1200,7 @@
                                     <th style="text-align: left;">Chỉ số</th>
                                     <th style="text-align: right;">Tháng 6</th>
                                     <th style="text-align: right;">Tháng 7</th>
-                                    <th style="text-align: right;">Chênh lệch</th>
+                                    <th style="text-align: right;">Tổng</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1272,36 +1214,6 @@
             const container = document.getElementById('detailedViewContainer');
             container.innerHTML = detailedViewHtml;
             container.style.display = 'block';
-        }
-
-        function showUserSelectionModal(users) {
-            const listContainer = document.getElementById('userSelectionList');
-            listContainer.innerHTML = ''; // Clear previous results
-
-            users.forEach(user => {
-                const button = document.createElement('button');
-                button.className = 'quaternary'; // Re-use button style
-                button.style.width = '100%';
-                button.style.marginBottom = '5px';
-                button.style.textAlign = 'left';
-                button.innerHTML = `<strong>${user.name}</strong> <span style="color: #666; font-size: 0.9em;">(ID: ${user.userId})</span>`;
-                button.onclick = () => showSpecificUserDetail(user.userId);
-                listContainer.appendChild(button);
-            });
-
-            document.getElementById('userSelectionModal').style.display = 'flex';
-        }
-
-        function hideUserSelectionModal() {
-            document.getElementById('userSelectionModal').style.display = 'none';
-        }
-
-        function showSpecificUserDetail(userId) {
-            const user = currentData.find(u => u.userId === userId);
-            if (user) {
-                renderDetailedView(user);
-            }
-            hideUserSelectionModal();
         }
 
         function compareThisUser(userId) {
@@ -1444,7 +1356,7 @@
             });
 
             let tableHtml = `
-                <h4>So sánh Chênh lệch (Tháng 7 vs Tháng 6)</h4>
+                <h4>So sánh Tổng (Tháng 7 vs Tháng 6)</h4>
                 <table>
                     <thead>
                         <tr>
@@ -1739,8 +1651,11 @@
             priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
             hideComparisonView();
             hideDetailedView();
+            document.body.classList.remove('compact-view');
+            document.getElementById('compactViewBtn').textContent = 'Tinh gọn';
             sortTable('name', 'asc');
         }
+
 
         // Khởi tạo sự kiện
         window.onload = function () {
