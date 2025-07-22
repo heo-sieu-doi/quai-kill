@@ -404,6 +404,11 @@
             margin-top: 0;
         }
 
+        #comparisonResult {
+            overflow-x: auto; /* Thêm cuộn ngang cho bảng trên mobile */
+            -webkit-overflow-scrolling: touch; /* Cải thiện trải nghiệm cuộn trên iOS */
+        }
+
         #comparisonResult th {
             background-color: #f5eef8;
         }
@@ -459,8 +464,10 @@
         }
 
         .detailed-view-body th, .detailed-view-body td {
-            padding: 8px; /* Giảm padding cho đồng bộ và gọn hơn */
-            border-bottom: 1px solid #eee;
+            padding: 5px; /* Giảm padding cho gọn, giống bảng chính */
+            border: 1px solid #ddd; /* Thêm border đầy đủ giống bảng chính */
+            text-align: left; /* Căn lề trái mặc định */
+            white-space: nowrap; /* Ngăn xuống dòng */
         }
 
         .detailed-view-body .stat-name {
