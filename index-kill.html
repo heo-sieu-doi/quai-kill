@@ -83,7 +83,7 @@
         }
 
         button.quaternary {
-            background-color: #9c27b0;
+            background-color: #deb3e5;
         }
 
         button.quaternary:hover {
@@ -92,7 +92,7 @@
 
         table {
             border-collapse: collapse;
-            width: 100%;
+            /* width: 100%; */ /* Bỏ width để cột tự co giãn theo nội dung */
             margin-top: 10px;
             font-size: 12px;
         }
@@ -100,20 +100,21 @@
         th,
         td {
             border: 1px solid #ddd;
-            padding: 6px;
-            text-align: left;
+            padding: 5px; /* Giảm padding cho giao diện gọn hơn */
+            text-align: left; /* Căn lề trái cho tất cả các cột */
+            white-space: nowrap; /* Ngăn không cho nội dung xuống dòng, giúp cột co giãn */
         }
 
         th {
             background-color: #f2f2f2;
             position: sticky;
             top: 0;
-            white-space: nowrap;
         }
 
         /* Style cho header nhóm */
         th[colspan] {
-            text-align: center;
+            text-align: left; /* Căn lề trái cho header nhóm */
+            padding-left: 10px; /* Thêm khoảng đệm cho dễ nhìn */
             border-bottom: 2px solid #ccc; /* Đường kẻ dưới đậm hơn để phân tách cấp */
             border-right: 2px solid #adadad;  /* Đường kẻ phải đậm hơn để phân tách các nhóm */
             font-weight: bold;
@@ -289,6 +290,234 @@
             flex-grow: 1;
             width: auto; /* Override width: 100% */
         }
+
+        /* === NEW STYLES FOR COMPARISON VIEW === */
+        #comparisonViewContainer {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fcfcfc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .comparison-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #9c27b0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .comparison-header h2 {
+            margin: 0;
+            color: #9c27b0;
+            font-size: 1.5em;
+        }
+
+        .comparison-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .comparison-controls label {
+            font-weight: bold;
+        }
+
+        .comparison-controls select, .comparison-controls button {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        .comparison-controls input[type="text"] {
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+
+        .priority-checkbox-list {
+            max-height: 150px; /* Giới hạn chiều cao */
+            overflow-y: auto;  /* Thêm thanh cuộn khi cần */
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+            flex-basis: 100%; /* Chiếm toàn bộ chiều rộng trong flex container */
+        }
+
+        .priority-checkbox-list label {
+            display: block; /* Mỗi checkbox một dòng */
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-weight: normal; /* Bỏ bold mặc định của label */
+        }
+
+        .priority-checkbox-list input[type="checkbox"] {
+            margin-right: 5px; /* Khoảng cách giữa checkbox và label */
+        }
+        .priority-checkbox-list {
+            max-height: 150px; /* Giới hạn chiều cao */
+            overflow-y: auto;  /* Thêm thanh cuộn khi cần */
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+            flex-basis: 100%; /* Chiếm toàn bộ chiều rộng trong flex container */
+        }
+
+        .priority-checkbox-list label {
+            display: block; /* Mỗi checkbox một dòng */
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-weight: normal; /* Bỏ bold mặc định của label */
+        }
+
+        .priority-checkbox-list input[type="checkbox"] {
+            margin-right: 5px; /* Khoảng cách giữa checkbox và label */
+        }
+        .priority-checkbox-list {
+            max-height: 150px; /* Giới hạn chiều cao */
+            overflow-y: auto;  /* Thêm thanh cuộn khi cần */
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+            flex-basis: 100%; /* Chiếm toàn bộ chiều rộng trong flex container */
+        }
+
+        .priority-checkbox-list label {
+            display: block; /* Mỗi checkbox một dòng */
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-weight: normal; /* Bỏ bold mặc định của label */
+        }
+        #comparisonResult table {
+            margin-top: 0;
+        }
+
+        #comparisonResult th {
+            background-color: #f5eef8;
+        }
+
+        /* === NEW STYLES FOR DETAILED VIEW === */
+        #detailedViewContainer {
+            margin-top: 20px;
+        }
+
+        .detailed-view-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .detailed-view-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .detailed-view-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5em;
+        }
+        
+        .detailed-view-header .user-id {
+            font-size: 0.9em;
+            color: #666;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .detailed-view-body table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .detailed-view-body th, .detailed-view-body td {
+            padding: 8px; /* Giảm padding cho đồng bộ và gọn hơn */
+            border-bottom: 1px solid #eee;
+        }
+
+        .detailed-view-body .stat-name {
+            text-align: left;
+            font-weight: bold;
+            color: #555;
+        }
+
+        /* === MODAL STYLES FOR USER SELECTION === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .modal-header .close-button {
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #888;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+        }
     </style>
 </head>
 
@@ -343,6 +572,8 @@
                 <input type="text" id="searchInput" placeholder="Tìm theo tên hoặc ID..." />
                 <div style="display: flex; gap: 5px; margin-top: 5px;">
                     <button onclick="searchTable()">Tìm kiếm</button>
+                    <button onclick="showDetailedView()" class="secondary">Xem chi tiết</button>
+                    <button onclick="showComparisonView()" class="quaternary">So sánh với Ưu tiên</button>
                     <button onclick="sortTable('killsDiff', 'asc')" class="secondary">Sắp xếp Kills (Tăng)</button>
                     <button onclick="sortTable('killsDiff', 'desc')" class="secondary">Sắp xếp Kills (Giảm)</button>
                     <button onclick="toggleIdColumn()" class="tertiary">Ẩn/Hiện ID</button>
@@ -367,41 +598,60 @@
                         <th rowspan="2">Tên</th>
                         <th rowspan="2" class="id-col">User ID</th>
                         <th rowspan="2" class="info-group-separator">Rank</th>
-                        <th colspan="3" class="group-might">Might</th>
-                        <th colspan="3" class="group-kills">Kills</th>
-                        <th colspan="3" class="group-captured">Kẻ Thù Bị Bắt</th>
-                        <th colspan="3" class="group-destroyed">Kẻ Thù Tiêu Diệt</th>
-                        <th colspan="3" class="group-enemy-wounded">Quân Địch Bị Thương</th>
-                        <th colspan="3" class="group-troops-killed">Quân Đội Đã Giết</th>
-                        <th colspan="3" class="group-troops-lost">Số Quân Tổn Thất</th>
-                        <th colspan="3" class="group-troops-wounded">Quân Đội Bị Thương</th>
-                        <th colspan="3" class="group-losses">Thua</th>
-                        <th colspan="3" class="group-attacks">Tấn công Thành công</th>
-                        <th colspan="3" class="group-defenses">Phòng thủ Thành công</th>
-                        <th colspan="3" class="group-victories">Chiến Thắng</th>
-                        <th colspan="3" class="group-win-rate">Tỉ Lệ Chiến Thắng</th>
+                        <th colspan="3" class="group-might">Tổng Might</th>
+                        <th colspan="3" class="group-kills">Tổng Kills</th>
+                        <th colspan="3" class="group-captured">Tổng Kẻ Thù Bị Bắt</th>
+                        <th colspan="3" class="group-destroyed">Tổng Kẻ Thù Tiêu Diệt</th>
+                        <th colspan="3" class="group-enemy-wounded">Tổng Quân Địch Bị Thương</th>
+                        <th colspan="3" class="group-troops-killed">Tổng Quân Đội Đã Giết</th>
+                        <th colspan="3" class="group-troops-lost">Tổng Số Quân Tổn Thất</th>
+                        <th colspan="3" class="group-troops-wounded">Tổng Quân Đội Bị Thương</th>
+                        <th colspan="3" class="group-losses">Tổng Thua</th>
+                        <th colspan="3" class="group-attacks">Tổng Tấn công Thành công</th>
+                        <th colspan="3" class="group-defenses">Tổng Phòng thủ Thành công</th>
+                        <th colspan="3" class="group-victories">Tổng Chiến Thắng</th>
+                        <th colspan="3" class="group-win-rate">Tổng Tỉ Lệ Chiến Thắng</th>
                     </tr>
                     <!-- Dòng tiêu đề phụ -->
                     <tr>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
-                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Tổng</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
                     <!-- Dữ liệu sẽ được thêm vào đây -->
                 </tbody>
             </table>
+        </div>
+
+        <!-- Container for the new comparison view -->
+        <div id="comparisonViewContainer" style="display: none;"></div>
+
+        <!-- Container for the new detailed vertical view -->
+        <div id="detailedViewContainer" style="display: none;"></div>
+    </div>
+
+    <!-- Modal for user selection -->
+    <div id="userSelectionModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Vui lòng chọn kết quả</h2>
+                <button class="close-button" onclick="hideUserSelectionModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="userSelectionList">
+                <!-- User list will be injected here -->
+            </div>
         </div>
     </div>
 
@@ -745,57 +995,57 @@
                     <td class="id-col">${userId}</td>
                     <td>${rank}</td>
                     <!-- Might -->
-                    <td>${formatNumber(juneStats?.might)}</td>
-                    <td>${formatNumber(julyStats?.might)}</td>
-                    <td>${formatDifference(mightDiff)}</td>
+                    <td class="group-might-cell">${formatNumber(juneStats?.might)}</td>
+                    <td class="group-might-cell">${formatNumber(julyStats?.might)}</td>
+                    <td class="group-might-cell">${formatDifference(mightDiff)}</td>
                     <!-- Kills -->
-                    <td>${formatNumber(juneStats?.kills)}</td>
-                    <td>${formatNumber(julyStats?.kills)}</td>
-                    <td>${formatDifference(killsDiff)}</td>
+                    <td class="group-kills-cell">${formatNumber(juneStats?.kills)}</td>
+                    <td class="group-kills-cell">${formatNumber(julyStats?.kills)}</td>
+                    <td class="group-kills-cell">${formatDifference(killsDiff)}</td>
                     <!-- Enemies Captured -->
-                    <td>${formatNumber(juneStats?.enemies_captured)}</td>
-                    <td>${formatNumber(julyStats?.enemies_captured)}</td>
-                    <td>${formatDifference(enemiesCapturedDiff)}</td>
+                    <td class="group-captured-cell">${formatNumber(juneStats?.enemies_captured)}</td>
+                    <td class="group-captured-cell">${formatNumber(julyStats?.enemies_captured)}</td>
+                    <td class="group-captured-cell">${formatDifference(enemiesCapturedDiff)}</td>
                     <!-- Enemies Destroyed -->
-                    <td>${formatNumber(juneStats?.enemies_destroyed)}</td>
-                    <td>${formatNumber(julyStats?.enemies_destroyed)}</td>
-                    <td>${formatDifference(enemiesDestroyedDiff)}</td>
+                    <td class="group-destroyed-cell">${formatNumber(juneStats?.enemies_destroyed)}</td>
+                    <td class="group-destroyed-cell">${formatNumber(julyStats?.enemies_destroyed)}</td>
+                    <td class="group-destroyed-cell">${formatDifference(enemiesDestroyedDiff)}</td>
                     <!-- Enemy Wounded -->
-                    <td>${formatNumber(juneStats?.enemy_wounded)}</td>
-                    <td>${formatNumber(julyStats?.enemy_wounded)}</td>
-                    <td>${formatDifference(enemyWoundedDiff)}</td>
+                    <td class="group-enemy-wounded-cell">${formatNumber(juneStats?.enemy_wounded)}</td>
+                    <td class="group-enemy-wounded-cell">${formatNumber(julyStats?.enemy_wounded)}</td>
+                    <td class="group-enemy-wounded-cell">${formatDifference(enemyWoundedDiff)}</td>
                     <!-- Troops Killed -->
-                    <td>${formatNumber(juneStats?.troops_killed)}</td>
-                    <td>${formatNumber(julyStats?.troops_killed)}</td>
-                    <td>${formatDifference(troopsKilledDiff)}</td>
+                    <td class="group-troops-killed-cell">${formatNumber(juneStats?.troops_killed)}</td>
+                    <td class="group-troops-killed-cell">${formatNumber(julyStats?.troops_killed)}</td>
+                    <td class="group-troops-killed-cell">${formatDifference(troopsKilledDiff)}</td>
                     <!-- Troops Lost -->
-                    <td>${formatNumber(juneStats?.troops_lost)}</td>
-                    <td>${formatNumber(julyStats?.troops_lost)}</td>
-                    <td>${formatDifference(troopsLostDiff)}</td>
+                    <td class="group-troops-lost-cell">${formatNumber(juneStats?.troops_lost)}</td>
+                    <td class="group-troops-lost-cell">${formatNumber(julyStats?.troops_lost)}</td>
+                    <td class="group-troops-lost-cell">${formatDifference(troopsLostDiff)}</td>
                     <!-- Troops Wounded -->
-                    <td>${formatNumber(juneStats?.troops_wounded)}</td>
-                    <td>${formatNumber(julyStats?.troops_wounded)}</td>
-                    <td>${formatDifference(troopsWoundedDiff)}</td>
+                    <td class="group-troops-wounded-cell">${formatNumber(juneStats?.troops_wounded)}</td>
+                    <td class="group-troops-wounded-cell">${formatNumber(julyStats?.troops_wounded)}</td>
+                    <td class="group-troops-wounded-cell">${formatDifference(troopsWoundedDiff)}</td>
                     <!-- Losses -->
-                    <td>${formatNumber(juneStats?.losses)}</td>
-                    <td>${formatNumber(julyStats?.losses)}</td>
-                    <td>${formatDifference(lossesDiff)}</td>
+                    <td class="group-losses-cell">${formatNumber(juneStats?.losses)}</td>
+                    <td class="group-losses-cell">${formatNumber(julyStats?.losses)}</td>
+                    <td class="group-losses-cell">${formatDifference(lossesDiff)}</td>
                     <!-- Successful Attacks -->
-                    <td>${formatNumber(juneStats?.successful_attacks)}</td>
-                    <td>${formatNumber(julyStats?.successful_attacks)}</td>
-                    <td>${formatDifference(successfulAttacksDiff)}</td>
+                    <td class="group-attacks-cell">${formatNumber(juneStats?.successful_attacks)}</td>
+                    <td class="group-attacks-cell">${formatNumber(julyStats?.successful_attacks)}</td>
+                    <td class="group-attacks-cell">${formatDifference(successfulAttacksDiff)}</td>
                     <!-- Successful Defenses -->
-                    <td>${formatNumber(juneStats?.successful_defenses)}</td>
-                    <td>${formatNumber(julyStats?.successful_defenses)}</td>
-                    <td>${formatDifference(successfulDefensesDiff)}</td>
+                    <td class="group-defenses-cell">${formatNumber(juneStats?.successful_defenses)}</td>
+                    <td class="group-defenses-cell">${formatNumber(julyStats?.successful_defenses)}</td>
+                    <td class="group-defenses-cell">${formatDifference(successfulDefensesDiff)}</td>
                     <!-- Victories -->
-                    <td>${formatNumber(juneStats?.victories)}</td>
-                    <td>${formatNumber(julyStats?.victories)}</td>
-                    <td>${formatDifference(victoriesDiff)}</td>
+                    <td class="group-victories-cell">${formatNumber(juneStats?.victories)}</td>
+                    <td class="group-victories-cell">${formatNumber(julyStats?.victories)}</td>
+                    <td class="group-victories-cell">${formatDifference(victoriesDiff)}</td>
                     <!-- Win Rate -->
-                    <td>${juneStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
-                    <td>${julyStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
-                    <td>${winRateDiff}</td>
+                    <td class="group-win-rate-cell">${juneStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td class="group-win-rate-cell">${julyStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td class="group-win-rate-cell">${winRateDiff}</td>
                 `;
 
                 tableBody.appendChild(row);
@@ -836,6 +1086,10 @@
 
         // Các hàm xử lý giao diện
         function searchTable() {
+            // Hide detailed view when performing a general table search
+            hideComparisonView();
+            hideDetailedView();
+
             const input = document.getElementById('searchInput');
             const filter = input.value.toUpperCase();
             const table = document.getElementById('comparisonTable');
@@ -849,7 +1103,7 @@
                     const nameText = nameCell.textContent || nameCell.innerText;
                     const idText = idCell.textContent || idCell.innerText;
 
-                    if (nameText.toUpperCase().indexOf(filter) > -1 || idText.indexOf(filter) > -1) {
+                    if (nameText.toUpperCase().indexOf(filter) > -1 || idText.toUpperCase().indexOf(filter) > -1) {
                         rows[i].style.display = '';
                     } else {
                         rows[i].style.display = 'none';
@@ -869,6 +1123,350 @@
                     col.classList.add('hidden-col');
                 }
             });
+        }
+
+        function hideDetailedView() {
+            const container = document.getElementById('detailedViewContainer');
+            if (container) container.style.display = 'none';
+            
+            // Only show main content if comparison view is also hidden
+            if (document.getElementById('comparisonViewContainer').style.display === 'none') {
+                showMainContent();
+            }
+        }
+
+        function showDetailedView() {
+            hideComparisonView();
+            
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) {
+                // Nếu không có gì trong ô tìm kiếm, có thể người dùng muốn xem toàn bộ danh sách
+                // hoặc ta nên yêu cầu họ tìm kiếm trước. Ở đây, ta yêu cầu tìm kiếm.
+                alert("Vui lòng nhập Tên hoặc ID và nhấn 'Tìm kiếm' trước khi xem chi tiết.");
+                return;
+            }
+
+            const tableBody = document.getElementById('tableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+            const visibleUserIds = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                // Một hàng được coi là hiển thị nếu style.display của nó không phải là 'none'
+                if (rows[i].style.display !== 'none') {
+                    // Tìm ô ID trong hàng. Giả sử ID là cột thứ 3 (index 2).
+                    const idCell = rows[i].getElementsByTagName('td')[2];
+                    if (idCell) {
+                        visibleUserIds.push(idCell.textContent.trim());
+                    }
+                }
+            }
+
+            // Lấy các đối tượng người dùng đầy đủ từ currentData bằng các ID đã thu thập
+            const foundUsers = currentData.filter(item => visibleUserIds.includes(item.userId));
+
+            if (foundUsers.length === 0) {
+                alert(`Không có kết quả nào đang được hiển thị cho "${searchTerm}".`);
+                return;
+            }
+
+            if (foundUsers.length === 1) {
+                renderDetailedView(foundUsers[0]);
+            } else {
+                showUserSelectionModal(foundUsers);
+            }
+        }
+
+
+        function renderDetailedView(foundUser) {
+            if (!foundUser) {
+                alert(`Lỗi: Không có thông tin người dùng để hiển thị.`);
+                return;
+            }
+
+            // Hide the main table and controls
+            hideMainContent();
+            // Prepare data for rendering
+            const { userId, name, rank, juneStats, julyStats } = foundUser;
+            const statMapping = {
+                might: "Might",
+                kills: "Kills",
+                enemies_captured: "Kẻ Thù Bị Bắt",
+                enemies_destroyed: "Kẻ Thù Tiêu Diệt",
+                enemy_wounded: "Quân Địch Bị Thương",
+                troops_killed: "Quân Đội Đã Giết",
+                troops_lost: "Số Quân Tổn Thất",
+                troops_wounded: "Quân Đội Bị Thương",
+                losses: "Thua",
+                successful_attacks: "Tấn công Thành công",
+                successful_defenses: "Phòng thủ Thành công",
+                victories: "Chiến Thắng",
+                win_rate: "Tỉ Lệ Chiến Thắng"
+            };
+
+            let tableBodyHtml = '';
+            for (const key in statMapping) {
+                const statName = statMapping[key];
+                const juneValue = juneStats ? juneStats[key] : undefined;
+                const julyValue = julyStats ? julyStats[key] : undefined;
+                
+                let diffHtml;
+                if (key === 'win_rate') {
+                    diffHtml = compareWinRates(julyValue, juneValue);
+                } else {
+                    const diff = calculateDifference(julyValue, juneValue);
+                    diffHtml = formatDifference(diff);
+                }
+
+                tableBodyHtml += `
+                    <tr>
+                        <td class="stat-name">${statName}</td>
+                        <td style="text-align: right;">${key === 'win_rate' ? (juneValue || '<span class="no-data">N/A</span>') : formatNumber(juneValue)}</td>
+                        <td style="text-align: right;">${key === 'win_rate' ? (julyValue || '<span class="no-data">N/A</span>') : formatNumber(julyValue)}</td>
+                        <td style="text-align: right;">${diffHtml}</td>
+                    </tr>
+                `;
+            }
+
+            const detailedViewHtml = `
+                <div class="detailed-view-card">
+                    <div class="detailed-view-header">
+                        <div>
+                            <h2>${name}</h2>
+                            <span class="user-id">ID: ${userId} | Rank: ${rank}</span>
+                        </div>
+                        <div>
+                            <button onclick="compareThisUser('${userId}')" class="quaternary">So sánh ID này</button>
+                            <button onclick="hideDetailedView()" class="tertiary">Quay lại bảng</button>
+                        </div>
+                    </div>
+                    <div class="detailed-view-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left;">Chỉ số</th>
+                                    <th style="text-align: right;">Tháng 6</th>
+                                    <th style="text-align: right;">Tháng 7</th>
+                                    <th style="text-align: right;">Chênh lệch</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableBodyHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById('detailedViewContainer');
+            container.innerHTML = detailedViewHtml;
+            container.style.display = 'block';
+        }
+
+        function showUserSelectionModal(users) {
+            const listContainer = document.getElementById('userSelectionList');
+            listContainer.innerHTML = ''; // Clear previous results
+
+            users.forEach(user => {
+                const button = document.createElement('button');
+                button.className = 'quaternary'; // Re-use button style
+                button.style.width = '100%';
+                button.style.marginBottom = '5px';
+                button.style.textAlign = 'left';
+                button.innerHTML = `<strong>${user.name}</strong> <span style="color: #666; font-size: 0.9em;">(ID: ${user.userId})</span>`;
+                button.onclick = () => showSpecificUserDetail(user.userId);
+                listContainer.appendChild(button);
+            });
+
+            document.getElementById('userSelectionModal').style.display = 'flex';
+        }
+
+        function hideUserSelectionModal() {
+            document.getElementById('userSelectionModal').style.display = 'none';
+        }
+
+        function showSpecificUserDetail(userId) {
+            const user = currentData.find(u => u.userId === userId);
+            if (user) {
+                renderDetailedView(user);
+            }
+            hideUserSelectionModal();
+        }
+
+        function compareThisUser(userId) {
+            // Chuyển sang giao diện so sánh
+            showComparisonView();
+
+            // Đợi một chút để DOM cập nhật, sau đó chọn thành viên
+            setTimeout(() => {
+                const memberSelect = document.getElementById('comparisonMemberSelect');
+                if (memberSelect) {
+                    memberSelect.value = userId;
+                }
+            }, 100);
+        }
+
+        function showMainContent() {
+            document.getElementById('tableContainer').style.display = 'block';
+            document.querySelector('.controls').style.display = 'flex';
+            document.querySelector('.filter-controls').style.display = 'flex';
+        }
+
+        function hideMainContent() {
+            document.getElementById('tableContainer').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            document.querySelector('.filter-controls').style.display = 'none';
+        }
+
+        function hideComparisonView() {
+            const container = document.getElementById('comparisonViewContainer');
+            if (container) container.style.display = 'none';
+
+            // Only show main content if detailed view is also hidden
+            if (document.getElementById('detailedViewContainer').style.display === 'none') {
+                showMainContent();
+            }
+        }
+
+        function showComparisonView() {
+            if (currentData.length === 0) {
+                alert("Vui lòng tải dữ liệu trước khi so sánh.");
+                return;
+            }
+            hideDetailedView();
+            hideMainContent();
+
+            const priorityMembers = currentData.filter(item => item.isPriority && item.hasBothData);
+            if (priorityMembers.length === 0) {
+                alert("Không có thành viên ưu tiên nào có đủ dữ liệu 2 tháng để so sánh.");
+                hideComparisonView(); // Quay lại màn hình chính
+                return;
+            }
+
+            // Sắp xếp tất cả thành viên theo tên để dễ chọn
+            const sortedAllMembers = [...currentData].sort((a, b) => a.name.localeCompare(b.name));
+
+            let allMembersOptionsHtml = '<option value="">-- Chọn thành viên --</option>';
+            sortedAllMembers.forEach(member => {
+                allMembersOptionsHtml += `<option value="${member.userId}">${member.name} (${member.userId})</option>`;
+            });
+
+            let priorityCheckboxesHtml = '';
+            priorityMembers.forEach(member => {
+                priorityCheckboxesHtml += `
+                    <label>
+                        <input type="checkbox" class="priority-compare-checkbox" value="${member.userId}">
+                        ${member.name} (${member.userId})
+                    </label>
+                `;
+            });
+
+             const comparisonHtml = `
+                <div class="comparison-card">
+                    <div class="comparison-header">
+                        <h2>So sánh Tăng trưởng</h2>
+                        <button onclick="hideComparisonView()" class="tertiary">Quay lại bảng</button>
+                    </div>
+                    <div class="comparison-controls">
+                        <label for="comparisonMemberSelect">Thành viên:</label>
+                        <select id="comparisonMemberSelect" style="flex-grow: 1;">
+                            ${allMembersOptionsHtml}
+                        </select>
+                    </div>
+                    <div class="comparison-controls" style="background-color: transparent; padding-top: 0;">
+                        <label>So sánh với các thành viên ưu tiên:</label>
+                        <div class="priority-checkbox-list">${priorityCheckboxesHtml}</div>
+                    </div>
+                    <div class="comparison-controls" style="justify-content: center; background-color: transparent; padding-top: 0;">
+                         <button onclick="performMultiComparison()" class="secondary">Thực hiện so sánh</button>
+                    </div>
+                    <div id="comparisonResult">
+                        <p><i>Chọn một thành viên và một hoặc nhiều thành viên ưu tiên, sau đó nhấn "Thực hiện so sánh".</i></p>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById('comparisonViewContainer');
+            container.innerHTML = comparisonHtml;
+            container.style.display = 'block';
+        }
+
+        function performMultiComparison() {
+            const memberId = document.getElementById('comparisonMemberSelect').value;
+            if (!memberId) {
+                alert("Vui lòng chọn thành viên chính để so sánh.");
+                return;
+            }
+
+            const selectedPriorityIds = Array.from(document.querySelectorAll('.priority-compare-checkbox:checked')).map(cb => cb.value);
+
+            if (selectedPriorityIds.length === 0) {
+                alert("Vui lòng chọn ít nhất một thành viên ưu tiên để so sánh.");
+                return;
+            }
+
+            const userToCompare = currentData.find(item => item.userId === memberId);
+            const priorityUsers = selectedPriorityIds.map(id => currentData.find(item => item.userId === id));
+
+            renderComparisonResult(userToCompare, priorityUsers);
+        }
+
+
+        function renderComparisonResult(mainUser, comparisonUsers) {
+            const resultContainer = document.getElementById('comparisonResult');
+            const statMapping = {
+                might: "Might", kills: "Kills", enemies_captured: "Kẻ Thù Bị Bắt", enemies_destroyed: "Kẻ Thù Tiêu Diệt",
+                enemy_wounded: "Quân Địch Bị Thương", troops_killed: "Quân Đội Đã Giết", troops_lost: "Số Quân Tổn Thất",
+                troops_wounded: "Quân Đội Bị Thương", losses: "Thua", successful_attacks: "Tấn công Thành công",
+                successful_defenses: "Phòng thủ Thành công", victories: "Chiến Thắng"
+            };
+
+            const shortenName = (name) => name.length > 15 ? name.substring(0, 12) + '...' : name;
+
+            // Build table headers dynamically
+            let headerHtml = `
+                <th style="text-align: left;">Chỉ số</th>
+                <th class="positive">${shortenName(mainUser.name)}</th>
+            `;
+            comparisonUsers.forEach(user => {
+                headerHtml += `<th>${shortenName(user.name)}</th>`;
+            });
+
+            let tableHtml = `
+                <h4>So sánh Chênh lệch (Tháng 7 vs Tháng 6)</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            ${headerHtml}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const key in statMapping) {
+                let rowHtml = `<tr><td class="stat-name">${statMapping[key]}</td>`;
+
+                // Main user's diff
+                const mainUserDiff = calculateDifference(
+                    mainUser.julyStats ? mainUser.julyStats[key] : undefined,
+                    mainUser.juneStats ? mainUser.juneStats[key] : undefined
+                );
+                rowHtml += `<td style="text-align: right;">${formatDifference(mainUserDiff)}</td>`;
+
+                // Comparison users' diffs
+                comparisonUsers.forEach(user => {
+                    const comparisonUserDiff = calculateDifference(
+                        user.julyStats ? user.julyStats[key] : undefined,
+                        user.juneStats ? user.juneStats[key] : undefined
+                    );
+                    rowHtml += `<td style="text-align: right;">${formatDifference(comparisonUserDiff)}</td>`;
+                });
+
+                rowHtml += '</tr>';
+                tableHtml += rowHtml;
+            }
+
+            tableHtml += `</tbody></table>`;
+            resultContainer.innerHTML = tableHtml;
         }
 
         // Chức năng xuất ảnh được lấy từ file index.html theo yêu cầu
@@ -1127,6 +1725,8 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('priorityIds').value = '416381060,765602761,417896120,537487142,360966484';
             priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
+            hideComparisonView();
+            hideDetailedView();
             sortTable('name', 'asc');
         }
 
