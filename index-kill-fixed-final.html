@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ So sánh Thống kê</title>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .upload-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .upload-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            flex: 1;
+            border-radius: 4px;
+        }
+
+        .upload-box h2 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
+
+        input[type="file"],
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button.secondary {
+            background-color: #2196F3;
+        }
+
+        button.secondary:hover {
+            background-color: #0b7dda;
+        }
+
+        button.tertiary {
+            background-color: #ff9800;
+        }
+
+        button.tertiary:hover {
+            background-color: #e68a00;
+        }
+
+        button.quaternary {
+            background-color: #9c27b0;
+        }
+
+        button.quaternary:hover {
+            background-color: #7b1fa2;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        /* Style cho header nhóm */
+        th[colspan] {
+            text-align: center;
+            border-bottom: 2px solid #ccc; /* Đường kẻ dưới đậm hơn để phân tách cấp */
+            border-right: 2px solid #adadad;  /* Đường kẻ phải đậm hơn để phân tách các nhóm */
+            font-weight: bold;
+            color: #333;
+        }
+        th[colspan]:last-child {
+            border-right: 1px solid #ddd; /* Giữ border cho cột cuối cùng của header */
+        }
+
+        /* Thêm đường viền đậm cho cột cuối của nhóm thông tin (Rank) */
+        .info-group-separator {
+            border-right: 2px solid #adadad;
+        }
+
+        /* Màu nền cho từng nhóm để phân biệt rõ ràng */
+        .group-might { background-color: #eaf2f8; }
+        .group-kills { background-color: #e8f8f5; }
+        .group-captured { background-color: #fef5e7; }
+        .group-destroyed { background-color: #feebef; }
+        .group-enemy-wounded { background-color: #f4ecf7; }
+        .group-troops-killed { background-color: #d6eaf8; }
+        .group-troops-lost { background-color: #fdedec; }
+        .group-troops-wounded { background-color: #d7bde2; }
+        .group-losses { background-color: #fef9e7; }
+        .group-attacks { background-color: #e8f6f3; }
+        .group-defenses { background-color: #eaeded; }
+        .group-victories { background-color: #a9cce3; }
+        .group-win-rate { background-color: #a3e4d7; }
+
+        thead tr:last-child th {
+            white-space: nowrap;
+            background-color: #f8f9f9; /* Màu nền riêng cho header phụ */
+        }
+
+        .positive {
+            color: green;
+            font-weight: bold;
+        }
+
+        .negative {
+            color: red;
+            font-weight: bold;
+        }
+
+        .neutral {
+            color: #666;
+        }
+
+        .no-data {
+            color: #999;
+            font-style: italic;
+        }
+
+        .controls {
+            margin: 10px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .filter-section {
+            flex: 1;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .realtime-filter {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .realtime-filter input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .status {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .success {
+            background-color: #e6ffe6;
+            color: #006600;
+        }
+
+        .error {
+            background-color: #ffebeb;
+            color: #cc0000;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .compact-col {
+            min-width: 70px;
+        }
+
+        .missing-data-row {
+            background-color: #f9f9f9;
+        }
+
+        .priority-row {
+            background-color: #fffacd !important;
+        }
+
+        .hidden-col {
+            display: none;
+        }
+
+        .priority-input {
+            margin-top: 10px;
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .priority-label {
+            display: block;
+            margin: 10px 0 5px 0;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .upload-box input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .url-upload-group {
+            display: flex;
+            gap: 5px;
+        }
+        .url-upload-group input[type="text"] {
+            flex-grow: 1;
+            width: auto; /* Override width: 100% */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Công cụ So sánh Thống kê</h1>
+
+        <div class="upload-section">
+            <div class="upload-box">
+                <h2>Dữ liệu Tháng 6</h2>
+                <label for="juneFile">Tải từ máy:</label>
+                <input type="file" id="juneFile" accept=".xlsx,.xls" />
+                <label for="juneUrl">Hoặc tải từ URL:</label>
+                <div class="url-upload-group">
+                    <input type="text" id="juneUrl" placeholder="Dán link Google Sheets...">
+                    <button onclick="loadFromUrl('june')" class="secondary">Tải</button>
+                </div>
+                <div id="juneStatus" class="status"></div>
+            </div>
+
+            <div class="upload-box">
+                <h2>Dữ liệu Tháng 7</h2>
+                <label for="julyFile">Tải từ máy:</label>
+                <input type="file" id="julyFile" accept=".xlsx,.xls" />
+                <label for="julyUrl">Hoặc tải từ URL:</label>
+                <div class="url-upload-group">
+                    <input type="text" id="julyUrl" placeholder="Dán link Google Sheets...">
+                    <button onclick="loadFromUrl('july')" class="secondary">Tải</button>
+                </div>
+                <div id="julyStatus" class="status"></div>
+            </div>
+        </div>
+
+        <div class="filter-controls">
+            <div class="filter-section">
+                <label class="priority-label">ID ưu tiên (cách nhau bằng dấu phẩy):</label>
+                <input type="text" id="priorityIds" class="priority-input"
+                    placeholder="Nhập các ID ưu tiên, ví dụ: 123,456,789" 
+                    value="416381060,765602761,417896120,537487142,360966484"/>
+                <div class="action-buttons">
+                    <button onclick="applyPriorityFilter()" class="secondary">Áp dụng lọc</button>
+                    <div class="realtime-filter">
+                        <input type="checkbox" id="realtimeFilter" checked>
+                        <label for="realtimeFilter">Lọc realtime</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div style="flex: 1;">
+                <input type="text" id="searchInput" placeholder="Tìm theo tên hoặc ID..." />
+                <div style="display: flex; gap: 5px; margin-top: 5px;">
+                    <button onclick="searchTable()">Tìm kiếm</button>
+                    <button onclick="sortTable('killsDiff', 'asc')" class="secondary">Sắp xếp Kills (Tăng)</button>
+                    <button onclick="sortTable('killsDiff', 'desc')" class="secondary">Sắp xếp Kills (Giảm)</button>
+                    <button onclick="toggleIdColumn()" class="tertiary">Ẩn/Hiện ID</button>
+                    <button id="exportPngBtn" onclick="exportToPNG()" class="tertiary">Xuất ảnh PNG</button>
+                    <button onclick="exportToExcel()" class="quaternary">Xuất file Excel</button>
+                    <button onclick="resetTable()">Đặt lại</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Đang xử lý...</p>
+        </div>
+
+        
+        <div class="controls">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                <label for="compareInput">Nhập ID để so sánh (so với ID ưu tiên đầu tiên):</label>
+                <input type="text" id="compareInput" placeholder="Nhập ID cần so sánh..." />
+                <button onclick="compareTwoIds()" class="secondary">🔍 So sánh</button>
+            </div>
+        </div>
+        <div id="verticalComparison" style="margin: 20px 0;"></div>
+<div id="tableContainer">
+            <table id="comparisonTable">
+                <thead>
+                    <!-- Dòng tiêu đề chính -->
+                    <tr>
+                        <th rowspan="2">STT</th>
+                        <th rowspan="2">Tên</th>
+                        <th rowspan="2" class="id-col">User ID</th>
+                        <th rowspan="2" class="info-group-separator">Rank</th>
+                        <th colspan="3" class="group-might">Might</th>
+                        <th colspan="3" class="group-kills">Kills</th>
+                        <th colspan="3" class="group-captured">Kẻ Thù Bị Bắt</th>
+                        <th colspan="3" class="group-destroyed">Kẻ Thù Tiêu Diệt</th>
+                        <th colspan="3" class="group-enemy-wounded">Quân Địch Bị Thương</th>
+                        <th colspan="3" class="group-troops-killed">Quân Đội Đã Giết</th>
+                        <th colspan="3" class="group-troops-lost">Số Quân Tổn Thất</th>
+                        <th colspan="3" class="group-troops-wounded">Quân Đội Bị Thương</th>
+                        <th colspan="3" class="group-losses">Thua</th>
+                        <th colspan="3" class="group-attacks">Tấn công Thành công</th>
+                        <th colspan="3" class="group-defenses">Phòng thủ Thành công</th>
+                        <th colspan="3" class="group-victories">Chiến Thắng</th>
+                        <th colspan="3" class="group-win-rate">Tỉ Lệ Chiến Thắng</th>
+                    </tr>
+                    <!-- Dòng tiêu đề phụ -->
+                    <tr>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                        <th>Tháng 6</th><th>Tháng 7</th><th>Chênh lệch</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Dữ liệu sẽ được thêm vào đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<script>
+        // Biến toàn cục
+        let juneData = {};
+        let julyData = {};
+        let currentData = [];
+        let showIdColumn = true;
+        let priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
+        let realtimeFilterEnabled = true;
+        let currentSort = { column: 'name', direction: 'asc' };
+
+        // Hàm xử lý upload file
+        function handleFileUpload(file, type) {
+            const reader = new FileReader();
+            const statusElement = document.getElementById(`${type}Status`);
+
+            reader.onload = function (e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    if (type === 'june') {
+                        juneData = processData(jsonData);
+                        statusElement.textContent = `Đã tải tháng 6: ${Object.keys(juneData).length} người chơi`;
+                        statusElement.className = 'status success';
+                    } else {
+                        julyData = processData(jsonData);
+                        statusElement.textContent = `Đã tải tháng 7: ${Object.keys(julyData).length} người chơi`;
+                        statusElement.className = 'status success';
+                    }
+
+                    if (Object.keys(juneData).length > 0 && Object.keys(julyData).length > 0) {
+                        compareData();
+                    }
+                } catch (error) {
+                    statusElement.textContent = `Lỗi: ${error.message}`;
+                    statusElement.className = 'status error';
+                }
+            };
+
+            reader.onerror = function () {
+                statusElement.textContent = `Lỗi đọc file`;
+                statusElement.className = 'status error';
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Hàm tải từ URL, được lấy và chỉnh sửa từ file index.html
+        async function loadFromUrl(type) {
+            const urlInputId = `${type}Url`;
+            const statusElementId = `${type}Status`;
+            const urlInput = document.getElementById(urlInputId);
+            const statusElement = document.getElementById(statusElementId);
+
+            const rawUrl = urlInput.value.trim();
+            if (!rawUrl) {
+                alert(`Vui lòng nhập URL cho tháng ${type === 'june' ? '6' : '7'}!`);
+                return;
+            }
+
+            let exportUrl = '';
+            const googleSheetRegex = /(?:spreadsheets|file)\/d\/([a-zA-Z0-9-_]+)/;
+            const match = rawUrl.match(googleSheetRegex);
+
+            if (match && match[1]) {
+                const sheetId = match[1];
+                exportUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`;
+            } else if (rawUrl.toLowerCase().endsWith('.xlsx') || rawUrl.toLowerCase().endsWith('.xls')) {
+                exportUrl = rawUrl;
+            } else {
+                alert("URL không hợp lệ. Vui lòng cung cấp link Google Sheets/File hợp lệ (đã chia sẻ công khai) hoặc link trực tiếp đến file .xlsx.");
+                return;
+            }
+
+            statusElement.textContent = 'Đang tải từ URL...';
+            statusElement.className = 'status';
+            const loading = showLoading(`Đang tải dữ liệu tháng ${type === 'june' ? '6' : '7'}...`);
+
+            try {
+                const proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=';
+                const fetchUrl = proxyUrl + encodeURIComponent(exportUrl);
+
+                const response = await fetch(fetchUrl, { signal: AbortSignal.timeout(30000) });
+
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP: ${response.status} ${response.statusText}`);
+                }
+
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !(contentType.includes('spreadsheetml.sheet') || contentType.includes('application/vnd.ms-excel') || contentType.includes('octet-stream'))) {
+                    const clonedResponse = response.clone();
+                    const responseText = await clonedResponse.text();
+                    if (responseText.trim().toLowerCase().startsWith('<html') || responseText.trim().toLowerCase().startsWith('<!doctype html')) {
+                        throw new Error("Lỗi định dạng: Nhận được HTML thay vì file Excel. Đảm bảo link được chia sẻ công khai.");
+                    }
+                }
+
+                const arrayBuffer = await response.arrayBuffer();
+                if (arrayBuffer.byteLength < 100) {
+                    throw new Error("Tải file thất bại: File nhận được quá nhỏ.");
+                }
+
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                const processed = processData(jsonData);
+                if (type === 'june') {
+                    juneData = processed;
+                    statusElement.textContent = `Đã tải tháng 6 từ URL: ${Object.keys(juneData).length} người chơi`;
+                    statusElement.className = 'status success';
+                } else {
+                    julyData = processed;
+                    statusElement.textContent = `Đã tải tháng 7 từ URL: ${Object.keys(julyData).length} người chơi`;
+                    statusElement.className = 'status success';
+                }
+
+                if (Object.keys(juneData).length > 0 && Object.keys(julyData).length > 0) {
+                    compareData();
+                }
+            } catch (error) {
+                console.error(`Lỗi khi tải URL cho ${type}:`, error);
+                statusElement.textContent = `Lỗi tải URL: ${error.message}`;
+                statusElement.className = 'status error';
+            } finally {
+                loading.remove();
+            }
+        }
+
+        // Hàm xử lý dữ liệu
+        function processData(sheetData) {
+            const result = {};
+            let headerRowIndex = -1;
+
+            for (let i = 0; i < sheetData.length; i++) {
+                const row = sheetData[i];
+                if (row && row.includes("User ID")) {
+                    headerRowIndex = i;
+                    break;
+                }
+            }
+
+            if (headerRowIndex === -1) throw new Error("Không tìm thấy hàng tiêu đề");
+
+            const headers = sheetData[headerRowIndex];
+            const getColIndex = (headerName) => {
+                return headers.findIndex(h => h && h.toString().trim().toLowerCase() === headerName.toLowerCase());
+            };
+
+            const indices = {
+                name: getColIndex("Name"),
+                userId: getColIndex("User ID"),
+                rank: getColIndex("Rank"),
+                might: getColIndex("Might"),
+                kills: getColIndex("Kills"),
+                enemiesCaptured: getColIndex("Enemies captured"),
+                enemiesDestroyed: getColIndex("Enemies Destroyed Might"),
+                enemyWounded: getColIndex("Enemy Troops Wounded"),
+                troopsKilled: getColIndex("Troops Killed"),
+                troopsLost: getColIndex("Troops Lost"),
+                troopsWounded: getColIndex("Troops Wounded"),
+                losses: getColIndex("Losses"),
+                successfulAttacks: getColIndex("Successful Attacks"),
+                successfulDefenses: getColIndex("Phòng thủ thành công"),
+                victories: getColIndex("Victories"),
+                winRate: getColIndex("Win Rate")
+            };
+
+            for (let i = headerRowIndex + 1; i < sheetData.length; i++) {
+                const row = sheetData[i];
+                if (!row || row.length === 0) continue;
+
+                const userId = row[indices.userId];
+                if (!userId) continue;
+
+                const getValue = (index, defaultValue = 0) => {
+                    if (index === -1) return defaultValue;
+                    const val = row[index];
+                    if (val === undefined || val === null) return defaultValue;
+                    if (typeof val === 'number') return val;
+                    if (typeof val === 'string') {
+                        if (indices.winRate === index && val.includes('%')) {
+                            return parseFloat(val.replace(',', '.').replace('%', '')) || 0;
+                        }
+                        const num = parseFloat(val.replace(/[^0-9.-]/g, ''));
+                        return isNaN(num) ? defaultValue : num;
+                    }
+                    return defaultValue;
+                };
+
+                result[userId] = {
+                    name: row[indices.name] || 'Không xác định',
+                    rank: row[indices.rank] || 'Không xác định',
+                    might: getValue(indices.might),
+                    kills: getValue(indices.kills),
+                    enemies_captured: getValue(indices.enemiesCaptured),
+                    enemies_destroyed: getValue(indices.enemiesDestroyed),
+                    enemy_wounded: getValue(indices.enemyWounded),
+                    troops_killed: getValue(indices.troopsKilled),
+                    troops_lost: getValue(indices.troopsLost),
+                    troops_wounded: getValue(indices.troopsWounded),
+                    losses: getValue(indices.losses),
+                    successful_attacks: getValue(indices.successfulAttacks),
+                    successful_defenses: getValue(indices.successfulDefenses),
+                    victories: getValue(indices.victories),
+                    win_rate: row[indices.winRate] ? row[indices.winRate].toString() : '0%'
+                };
+            }
+
+            return result;
+        }
+
+        // Hàm so sánh dữ liệu
+        function compareData() {
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'block';
+
+            setTimeout(() => {
+                try {
+                    const allUserIds = new Set([...Object.keys(juneData), ...Object.keys(julyData)]);
+                    currentData = [];
+
+                    Array.from(allUserIds).forEach(userId => {
+                        const juneStats = juneData[userId];
+                        const julyStats = julyData[userId];
+
+                        if (!juneStats && !julyStats) return;
+
+                        const killsDiff = calculateDifference(julyStats?.kills, juneStats?.kills);
+                        const isPriority = priorityIds.includes(userId);
+
+                        currentData.push({
+                            userId,
+                            name: julyStats?.name || juneStats?.name || 'Không xác định',
+                            rank: julyStats?.rank || juneStats?.rank || 'Không xác định',
+                            juneStats,
+                            julyStats,
+                            killsDiff,
+                            hasBothData: juneStats && julyStats,
+                            isPriority
+                        });
+                    });
+
+                    applyPriorityFilter();
+
+                } catch (error) {
+                    console.error('Lỗi khi so sánh:', error);
+                } finally {
+                    loadingElement.style.display = 'none';
+                }
+            }, 100);
+        }
+
+        // Hàm cập nhật ID ưu tiên
+        function updatePriorityIds() {
+            const input = document.getElementById('priorityIds').value;
+            priorityIds = input.split(',')
+                .map(id => id.trim())
+                .filter(id => id !== '');
+
+            currentData.forEach(item => {
+                item.isPriority = priorityIds.includes(item.userId);
+            });
+        }
+
+        // Hàm áp dụng bộ lọc ưu tiên
+        function applyPriorityFilter() {
+            updatePriorityIds();
+            sortTable(currentSort.column, currentSort.direction);
+        }
+
+        // Hàm sắp xếp bảng
+        function sortTable(column, direction) {
+            if (!currentData.length) return;
+
+            currentSort = { column, direction };
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            const sortedData = [...currentData].sort((a, b) => {
+                // Ưu tiên các ID trong danh sách priorityIds lên đầu
+                if (a.isPriority && !b.isPriority) return -1;
+                if (!a.isPriority && b.isPriority) return 1;
+                if (a.isPriority && b.isPriority) {
+                    return a.name.localeCompare(b.name);
+                }
+
+                if (column === 'killsDiff') {
+                    if (a.hasBothData && b.hasBothData) {
+                        return direction === 'asc' ? a.killsDiff - b.killsDiff : b.killsDiff - a.killsDiff;
+                    }
+                    if (!a.hasBothData && !b.hasBothData) return 0;
+                    if (!a.hasBothData) return 1;
+                    if (!b.hasBothData) return -1;
+                } else {
+                    return direction === 'asc'
+                        ? a.name.localeCompare(b.name)
+                        : b.name.localeCompare(a.name);
+                }
+                return 0;
+            });
+
+            displaySortedData(sortedData);
+        }
+
+        // Hàm hiển thị dữ liệu đã sắp xếp
+        function displaySortedData(sortedData) {
+            const tableBody = document.getElementById('tableBody');
+
+            sortedData.forEach((item, index) => {
+                const { userId, name, rank, juneStats, julyStats, hasBothData, isPriority } = item;
+                const row = document.createElement('tr');
+
+                if (!hasBothData) row.classList.add('missing-data-row');
+                if (isPriority) row.classList.add('priority-row');
+
+                const mightDiff = calculateDifference(julyStats?.might, juneStats?.might);
+                const killsDiff = calculateDifference(julyStats?.kills, juneStats?.kills);
+                const enemiesCapturedDiff = calculateDifference(julyStats?.enemies_captured, juneStats?.enemies_captured);
+                const enemiesDestroyedDiff = calculateDifference(julyStats?.enemies_destroyed, juneStats?.enemies_destroyed);
+                const enemyWoundedDiff = calculateDifference(julyStats?.enemy_wounded, juneStats?.enemy_wounded);
+                const troopsKilledDiff = calculateDifference(julyStats?.troops_killed, juneStats?.troops_killed);
+                const troopsLostDiff = calculateDifference(julyStats?.troops_lost, juneStats?.troops_lost);
+                const troopsWoundedDiff = calculateDifference(julyStats?.troops_wounded, juneStats?.troops_wounded);
+                const lossesDiff = calculateDifference(julyStats?.losses, juneStats?.losses);
+                const successfulAttacksDiff = calculateDifference(julyStats?.successful_attacks, juneStats?.successful_attacks);
+                const successfulDefensesDiff = calculateDifference(julyStats?.successful_defenses, juneStats?.successful_defenses);
+                const victoriesDiff = calculateDifference(julyStats?.victories, juneStats?.victories);
+                const winRateDiff = compareWinRates(julyStats?.win_rate, juneStats?.win_rate);
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${name}</td>
+                    <td class="id-col">${userId}</td>
+                    <td>${rank}</td>
+                    <!-- Might -->
+                    <td>${formatNumber(juneStats?.might)}</td>
+                    <td>${formatNumber(julyStats?.might)}</td>
+                    <td>${formatDifference(mightDiff)}</td>
+                    <!-- Kills -->
+                    <td>${formatNumber(juneStats?.kills)}</td>
+                    <td>${formatNumber(julyStats?.kills)}</td>
+                    <td>${formatDifference(killsDiff)}</td>
+                    <!-- Enemies Captured -->
+                    <td>${formatNumber(juneStats?.enemies_captured)}</td>
+                    <td>${formatNumber(julyStats?.enemies_captured)}</td>
+                    <td>${formatDifference(enemiesCapturedDiff)}</td>
+                    <!-- Enemies Destroyed -->
+                    <td>${formatNumber(juneStats?.enemies_destroyed)}</td>
+                    <td>${formatNumber(julyStats?.enemies_destroyed)}</td>
+                    <td>${formatDifference(enemiesDestroyedDiff)}</td>
+                    <!-- Enemy Wounded -->
+                    <td>${formatNumber(juneStats?.enemy_wounded)}</td>
+                    <td>${formatNumber(julyStats?.enemy_wounded)}</td>
+                    <td>${formatDifference(enemyWoundedDiff)}</td>
+                    <!-- Troops Killed -->
+                    <td>${formatNumber(juneStats?.troops_killed)}</td>
+                    <td>${formatNumber(julyStats?.troops_killed)}</td>
+                    <td>${formatDifference(troopsKilledDiff)}</td>
+                    <!-- Troops Lost -->
+                    <td>${formatNumber(juneStats?.troops_lost)}</td>
+                    <td>${formatNumber(julyStats?.troops_lost)}</td>
+                    <td>${formatDifference(troopsLostDiff)}</td>
+                    <!-- Troops Wounded -->
+                    <td>${formatNumber(juneStats?.troops_wounded)}</td>
+                    <td>${formatNumber(julyStats?.troops_wounded)}</td>
+                    <td>${formatDifference(troopsWoundedDiff)}</td>
+                    <!-- Losses -->
+                    <td>${formatNumber(juneStats?.losses)}</td>
+                    <td>${formatNumber(julyStats?.losses)}</td>
+                    <td>${formatDifference(lossesDiff)}</td>
+                    <!-- Successful Attacks -->
+                    <td>${formatNumber(juneStats?.successful_attacks)}</td>
+                    <td>${formatNumber(julyStats?.successful_attacks)}</td>
+                    <td>${formatDifference(successfulAttacksDiff)}</td>
+                    <!-- Successful Defenses -->
+                    <td>${formatNumber(juneStats?.successful_defenses)}</td>
+                    <td>${formatNumber(julyStats?.successful_defenses)}</td>
+                    <td>${formatDifference(successfulDefensesDiff)}</td>
+                    <!-- Victories -->
+                    <td>${formatNumber(juneStats?.victories)}</td>
+                    <td>${formatNumber(julyStats?.victories)}</td>
+                    <td>${formatDifference(victoriesDiff)}</td>
+                    <!-- Win Rate -->
+                    <td>${juneStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td>${julyStats?.win_rate || '<span class="no-data">N/A</span>'}</td>
+                    <td>${winRateDiff}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+
+            toggleIdColumn(showIdColumn);
+        }
+
+        // Các hàm tiện ích
+        function formatNumber(num) {
+            if (num === undefined || num === null) return '<span class="no-data">N/A</span>';
+            return num.toLocaleString();
+        }
+
+        function calculateDifference(newVal, oldVal) {
+            if (newVal === undefined || oldVal === undefined) return null;
+            return newVal - oldVal;
+        }
+
+        function formatDifference(diff) {
+            if (diff === null) return '<span class="no-data">N/A</span>';
+            if (diff > 0) return `<span class="positive">+${formatNumber(diff)}</span>`;
+            if (diff < 0) return `<span class="negative">${formatNumber(diff)}</span>`;
+            return `<span class="neutral">0</span>`;
+        }
+
+        function compareWinRates(newRate, oldRate) {
+            if (!newRate || !oldRate) return '<span class="no-data">N/A</span>';
+
+            const newNum = parseFloat(newRate.replace(',', '.').replace('%', ''));
+            const oldNum = parseFloat(oldRate.replace(',', '.').replace('%', ''));
+            const diff = newNum - oldNum;
+
+            if (diff > 0) return `<span class="positive">+${diff.toFixed(2)}%</span>`;
+            if (diff < 0) return `<span class="negative">${diff.toFixed(2)}%</span>`;
+            return `<span class="neutral">0%</span>`;
+        }
+
+        // Các hàm xử lý giao diện
+        function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById('comparisonTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const nameCell = rows[i].getElementsByTagName('td')[1];
+                const idCell = rows[i].getElementsByTagName('td')[2];
+
+                if (nameCell && idCell) {
+                    const nameText = nameCell.textContent || nameCell.innerText;
+                    const idText = idCell.textContent || idCell.innerText;
+
+                    if (nameText.toUpperCase().indexOf(filter) > -1 || idText.indexOf(filter) > -1) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        function toggleIdColumn() {
+            const idCols = document.querySelectorAll('.id-col');
+            showIdColumn = !showIdColumn;
+
+            idCols.forEach(col => {
+                if (showIdColumn) {
+                    col.classList.remove('hidden-col');
+                } else {
+                    col.classList.add('hidden-col');
+                }
+            });
+        }
+
+        // Chức năng xuất ảnh được lấy từ file index.html theo yêu cầu
+        async function exportToPNG() {
+            if (!currentData.length) {
+                alert("Vui lòng tải dữ liệu trước!");
+                return;
+            }
+
+            // Lấy trực tiếp bảng dữ liệu
+            const tableElement = document.getElementById('comparisonTable');
+
+            if (!tableElement) {
+                alert(`Không tìm thấy bảng dữ liệu để xuất ảnh.`);
+                return;
+            }
+
+            // --- Chuẩn bị chụp: Tạm thời bỏ style sticky của header ---
+            const thElements = tableElement.querySelectorAll('th');
+            const originalThStyles = [];
+            thElements.forEach(th => {
+                originalThStyles.push(th.style.position);
+                th.style.position = 'static';
+            });
+
+            // --- Phản hồi UI ---
+            const exportButton = document.getElementById('exportPngBtn');
+            const originalButtonText = exportButton.textContent;
+            exportButton.textContent = '📸 Đang xử lý...';
+            exportButton.disabled = true;
+
+            setTimeout(async () => {
+                let stylesRestored = false;
+                const restoreStyles = () => {
+                    if (!stylesRestored) {
+                        thElements.forEach((th, index) => {
+                            th.style.position = originalThStyles[index] || '';
+                        });
+                        stylesRestored = true;
+                    }
+                };
+
+                try {
+                    // Chụp ảnh với kích thước đầy đủ của bảng (bao gồm cả phần bị cuộn)
+                    const canvas = await html2canvas(tableElement, {
+                        scale: 1.5,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff',
+                        width: tableElement.scrollWidth,
+                        height: tableElement.scrollHeight,
+                    });
+
+                    restoreStyles();
+
+                    const imageDataUrl = canvas.toDataURL('image/png');
+
+                    const newWindow = window.open();
+                    if (newWindow) {
+                        newWindow.document.write(`<!DOCTYPE html><html><head><title>Báo cáo so sánh</title></head><body style="margin:0;"><img src="${imageDataUrl}" alt="Báo cáo so sánh" style="max-width: 100%; display: block;"></body></html>`);
+                        newWindow.document.close();
+                    } else {
+                        alert("Không thể mở tab mới. Vui lòng kiểm tra cài đặt chặn pop-up của trình duyệt và thử lại.");
+                    }
+
+                } catch (error) {
+                    console.error('Lỗi xuất ảnh:', error);
+                    alert(`Xuất ảnh thất bại! Lỗi: ${error.message}. Vui lòng thử lại hoặc kiểm tra console (F12).`);
+                    restoreStyles(); // Đảm bảo khôi phục nếu có lỗi
+                } finally {
+                    // --- Khôi phục nút ---
+                    exportButton.textContent = originalButtonText;
+                    exportButton.disabled = false;
+                }
+            }, 150);
+        }
+
+        function exportToExcel() {
+            if (currentData.length === 0) {
+                alert("Không có dữ liệu để xuất file Excel.");
+                return;
+            }
+
+            const loading = showLoading("Đang tạo file Excel...");
+
+            setTimeout(() => {
+                try {
+                    // Lấy dữ liệu đang hiển thị
+                    const visibleData = [];
+                    const tableRows = document.getElementById('tableBody').getElementsByTagName('tr');
+                    for (const row of tableRows) {
+                        if (row.style.display !== 'none') {
+                            const userId = row.cells[2].innerText;
+                            const dataItem = currentData.find(item => item.userId === userId);
+                            if (dataItem) visibleData.push(dataItem);
+                        }
+                    }
+
+                    if (visibleData.length === 0) {
+                        alert("Không có dữ liệu nào đang được hiển thị để xuất.");
+                        throw new Error("No visible data");
+                    }
+
+                    const dataToExport = [];
+                    const headers = [
+                        "Loại Dữ Liệu", "Tên", "User ID", "Rank", "Might", "Kills",
+                        "Kẻ Thù Bị Bắt", "Kẻ Thù Tiêu Diệt", "Quân Địch Bị Thương",
+                        "Quân Đội Đã Giết", "Số Quân Tổn Thất", "Quân Đội Bị Thương",
+                        "Thua", "Tấn công Thành công", "Phòng thủ Thành công",
+                        "Chiến Thắng", "Tỉ Lệ Chiến Thắng"
+                    ];
+
+                    // Tiêu đề chính
+                    dataToExport.push([`Báo cáo so sánh thống kê - Ngày xuất: ${new Date().toLocaleString('vi-VN')}`]);
+                    dataToExport.push([]);
+                    dataToExport.push(headers.map(h => ({ v: h, t: 's', s: { font: { bold: true }, alignment: { horizontal: 'center' } } })));
+
+                    // --- Các hàm tiện ích để tạo ô trong Excel ---
+                    const createCell = (value, type = 's', format = null, style = {}) => {
+                        const cell = { v: value, t: type, s: style };
+                        if (format) cell.z = format;
+                        return cell;
+                    };
+
+                    const createNumericCell = (value) => {
+                        if (value === undefined || value === null || value === "Không có dữ liệu") {
+                            return createCell("Không có dữ liệu");
+                        }
+                        return createCell(value, 'n', '#,##0');
+                    };
+
+                    const createDiffCell = (diff) => {
+                        if (diff === null || diff === undefined) return createCell("N/A");
+                        const style = { font: {} };
+                        if (diff > 0) style.font.color = { rgb: "FF008000" }; // Green
+                        if (diff < 0) style.font.color = { rgb: "FFFF0000" }; // Red
+                        return createCell(diff, 'n', '+#,##0;-#,##0;0', style);
+                    };
+
+                    const createWinRateDiffCell = (newRate, oldRate) => {
+                        if (!newRate || !oldRate) return createCell("N/A");
+                        const newNum = parseFloat(newRate.replace(',', '.').replace('%', ''));
+                        const oldNum = parseFloat(oldRate.replace(',', '.').replace('%', ''));
+                        if (isNaN(newNum) || isNaN(oldNum)) return createCell("N/A");
+
+                        const diff = newNum - oldNum;
+                        const style = { font: {} };
+                        let text = `${diff.toFixed(2)}%`;
+                        if (diff > 0) {
+                            style.font.color = { rgb: "FF008000" }; // Green
+                            text = `+${text}`;
+                        } else if (diff < 0) {
+                            style.font.color = { rgb: "FFFF0000" }; // Red
+                        }
+                        return createCell(text, 's', null, style);
+                    };
+
+                    visibleData.forEach(item => {
+                        const { userId, name, rank, juneStats, julyStats } = item;
+                        const getStat = (stats, key) => (stats ? stats[key] : undefined);
+
+                        const juneRow = [
+                            createCell(""), createCell(name), createCell(userId), createCell(rank),
+                            createNumericCell(getStat(juneStats, 'might')), createNumericCell(getStat(juneStats, 'kills')),
+                            createNumericCell(getStat(juneStats, 'enemies_captured')), createNumericCell(getStat(juneStats, 'enemies_destroyed')),
+                            createNumericCell(getStat(juneStats, 'enemy_wounded')), createNumericCell(getStat(juneStats, 'troops_killed')),
+                            createNumericCell(getStat(juneStats, 'troops_lost')), createNumericCell(getStat(juneStats, 'troops_wounded')),
+                            createNumericCell(getStat(juneStats, 'losses')), createNumericCell(getStat(juneStats, 'successful_attacks')),
+                            createNumericCell(getStat(juneStats, 'successful_defenses')), createNumericCell(getStat(juneStats, 'victories')),
+                            createCell(getStat(juneStats, 'win_rate') || '0%')
+                        ];
+                        dataToExport.push(juneRow);
+
+                        const julyRow = [
+                            createCell(""), createCell(name), createCell(userId), createCell(rank),
+                            createNumericCell(getStat(julyStats, 'might')), createNumericCell(getStat(julyStats, 'kills')),
+                            createNumericCell(getStat(julyStats, 'enemies_captured')), createNumericCell(getStat(julyStats, 'enemies_destroyed')),
+                            createNumericCell(getStat(julyStats, 'enemy_wounded')), createNumericCell(getStat(julyStats, 'troops_killed')),
+                            createNumericCell(getStat(julyStats, 'troops_lost')), createNumericCell(getStat(julyStats, 'troops_wounded')),
+                            createNumericCell(getStat(julyStats, 'losses')), createNumericCell(getStat(julyStats, 'successful_attacks')),
+                            createNumericCell(getStat(julyStats, 'successful_defenses')), createNumericCell(getStat(julyStats, 'victories')),
+                            createCell(getStat(julyStats, 'win_rate') || '0%')
+                        ];
+                        dataToExport.push(julyRow);
+
+                        const diffRow = [
+                            createCell("Tổng", 's', null, { font: { bold: true } }), createCell(""), createCell(""), createCell(""),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'might'), getStat(juneStats, 'might'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'kills'), getStat(juneStats, 'kills'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'enemies_captured'), getStat(juneStats, 'enemies_captured'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'enemies_destroyed'), getStat(juneStats, 'enemies_destroyed'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'enemy_wounded'), getStat(juneStats, 'enemy_wounded'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'troops_killed'), getStat(juneStats, 'troops_killed'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'troops_lost'), getStat(juneStats, 'troops_lost'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'troops_wounded'), getStat(juneStats, 'troops_wounded'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'losses'), getStat(juneStats, 'losses'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'successful_attacks'), getStat(juneStats, 'successful_attacks'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'successful_defenses'), getStat(juneStats, 'successful_defenses'))),
+                            createDiffCell(calculateDifference(getStat(julyStats, 'victories'), getStat(juneStats, 'victories'))),
+                            createWinRateDiffCell(getStat(julyStats, 'win_rate'), getStat(juneStats, 'win_rate'))
+                        ];
+                        dataToExport.push(diffRow);
+
+                        dataToExport.push([]); // Dòng trống phân cách
+                    });
+
+                    const ws = XLSX.utils.aoa_to_sheet(dataToExport);
+
+                    // Tự động điều chỉnh độ rộng cột
+                    const objectMaxLength = dataToExport.reduce((acc, row) => {
+                        row.forEach((cell, i) => {
+                            const cellValue = cell && cell.v ? cell.v : '';
+                            const cellLength = String(cellValue).length;
+                            acc[i] = Math.max(acc[i] || 0, cellLength);
+                        });
+                        return acc;
+                    }, []);
+                    ws["!cols"] = objectMaxLength.map(width => ({ wch: Math.min(width + 2, 40) })); // Giới hạn độ rộng tối đa
+                    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }];
+
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "So Sánh Thống Kê");
+                    XLSX.writeFile(wb, `SoSanhThongKe_${new Date().toISOString().slice(0, 10)}.xlsx`);
+                } catch (error) {
+                    if (error.message === "No visible data") return; // Đã có alert, không cần báo lỗi thêm
+                    console.error("Lỗi khi xuất Excel:", error);
+                    alert("Đã xảy ra lỗi khi tạo file Excel. Vui lòng kiểm tra console (F12) để biết chi tiết.");
+                } finally {
+                    loading.remove();
+                }
+            }, 50);
+        }
+
+        function showLoading(message) {
+            const loading = document.createElement('div');
+            loading.style.position = 'fixed';
+            loading.style.top = '0';
+            loading.style.left = '0';
+            loading.style.width = '100%';
+            loading.style.height = '100%';
+            loading.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            loading.style.display = 'flex';
+            loading.style.flexDirection = 'column';
+            loading.style.justifyContent = 'center';
+            loading.style.alignItems = 'center';
+            loading.style.zIndex = '9999';
+            loading.innerHTML = `
+                <div style="color:white;font-size:20px;margin-bottom:10px;">${message}</div>
+                <div class="spinner"></div>
+            `;
+            document.body.appendChild(loading);
+            return loading;
+        }
+
+        function resetTable() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('priorityIds').value = '416381060,765602761,417896120,537487142,360966484';
+            priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
+            sortTable('name', 'asc');
+        }
+
+        // Khởi tạo sự kiện
+        window.onload = function () {
+            document.getElementById('juneFile').addEventListener('change', function (e) {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0], 'june');
+                }
+            });
+
+            document.getElementById('julyFile').addEventListener('change', function (e) {
+                if (e.target.files.length > 0) {
+                    handleFileUpload(e.target.files[0], 'july');
+                }
+            });
+
+            document.getElementById('searchInput').addEventListener('keyup', function (event) {
+                if (event.key === 'Enter') {
+                    searchTable();
+                }
+            });
+
+            document.getElementById('priorityIds').addEventListener('input', function () {
+                if (realtimeFilterEnabled) {
+                    applyPriorityFilter();
+                }
+            });
+
+            document.getElementById('realtimeFilter').addEventListener('change', function (e) {
+                realtimeFilterEnabled = e.target.checked;
+            });
+
+            // Khởi tạo giá trị mặc định cho priorityIds
+            document.getElementById('priorityIds').value = priorityIds.join(',');
+        
+    // === TỰ ĐỘNG TẢI DỮ LIỆU MẶC ĐỊNH ===
+    document.getElementById('juneUrl').value = 'https://docs.google.com/spreadsheets/d/1pF9hCZz0kzafaZQxGJDVZVwd275kgGc4rbWr9LnoBoQ/edit?usp=drivesdk';
+    document.getElementById('julyUrl').value = 'https://docs.google.com/spreadsheets/d/1vxjNifx_pgJjDlZ-FK6_Y2NpzKU1ArcV/edit?usp=drivesdk&ouid=102277306545046971176&rtpof=true&sd=true';
+    loadFromUrl('june');
+    loadFromUrl('july');
+};
+    </script>
+</body>
+</html>
