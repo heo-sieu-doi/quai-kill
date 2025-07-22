@@ -1162,7 +1162,13 @@
 
             // Khởi tạo giá trị mặc định cho priorityIds
             document.getElementById('priorityIds').value = priorityIds.join(',');
-        };
+        
+    // === TỰ ĐỘNG TẢI DỮ LIỆU MẶC ĐỊNH ===
+    document.getElementById('juneUrl').value = 'https://docs.google.com/spreadsheets/d/1pF9hCZz0kzafaZQxGJDVZVwd275kgGc4rbWr9LnoBoQ/edit?usp=drivesdk';
+    document.getElementById('julyUrl').value = 'https://docs.google.com/spreadsheets/d/1vxjNifx_pgJjDlZ-FK6_Y2NpzKU1ArcV/edit?usp=drivesdk&ouid=102277306545046971176&rtpof=true&sd=true';
+    loadFromUrl('june');
+    loadFromUrl('july');
+};
     </script>
 </body>
 </html>
