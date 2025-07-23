@@ -928,15 +928,98 @@
         }
 
         /* === THÊM MỚI: Tùy chọn Hell Lính === */
-        #troopOptions, #pactOptions, #pactSpeedOptions {
+        #troopOptions, #pactOptions, #pactSpeedOptions, #troopExtraOptions {
             display: none; /* Ẩn mặc định */
             width: 100%;
-            text-align: center;
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid var(--light-gray);
             font-size: 14px;
             gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #troopExtraOptions select, #troopExtraOptions input {
+            min-width: 120px;
+            flex-grow: 0 !important; /* Ngăn không cho co giãn quá lớn */
+        }
+
+        /* === THÊM MỚI: Energy Calculator Section === */
+        .energy-calculator-section {
+            margin-top: 30px;
+            background: var(--white-color);
+            border-radius: var(--border-radius-md);
+            padding: 30px;
+            box-shadow: var(--box-shadow-medium);
+            border: 1px solid var(--light-gray);
+        }
+
+        .energy-calculator-section h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+
+        .energy-grid {
+            display: flex; /* Chuyển sang flexbox */
+            flex-wrap: wrap; /* Cho phép các item xuống dòng */
+            justify-content: center; /* Căn giữa các item */
+            gap: 10px; /* Khoảng cách giữa các "viên thuốc" */
+            margin-bottom: 25px;
+        }
+
+        .energy-input-group {
+            display: inline-flex; /* Hiển thị như một khối inline */
+            align-items: center;
+            border: 1px solid var(--medium-gray);
+            border-radius: 20px; /* Bo tròn để tạo hình viên thuốc */
+            padding: 5px 10px;
+            background-color: var(--white-color);
+            transition: border-color var(--transition-speed);
+        }
+
+        .energy-input-group:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .energy-input-group label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 14px;
+            margin-right: 5px;
+            white-space: nowrap;
+        }
+
+        .energy-input-group input[type="number"] {
+            width: 40px; /* Độ rộng rất nhỏ */
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            padding: 2px;
+            -moz-animation: textfield; /* Ẩn mũi tên tăng/giảm trên Firefox */
+        }
+
+        .energy-input-group input[type="number"]:focus {
+            outline: none;
+        }
+
+        #energyResults {
+            margin-top: 20px;
+            background-color: #f9fafb;
+            padding: 20px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--light-gray);
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -1101,10 +1184,58 @@
                     <label><input type="checkbox" class="troop-option" value="t2" checked> T2</label>
                     <label><input type="checkbox" class="troop-option" value="t1" checked> T1</label>
                 </div>
+                <!-- === THÊM MỚI: Tùy chọn chi tiết cho Hell Lính === -->
+                <div id="troopExtraOptions">
+                    <span>Loại T4: </span>
+                    <select id="t4TroopType" class="url-input">
+                        <option value="archer">Cung</option>
+                        <option value="cavalry">Kỵ</option>
+                        <option value="infantry">Bộ</option>
+                    </select>
+                    <span>Tốc độ huấn luyện (%): </span>
+                    <input type="number" id="trainingSpeed" placeholder="Ví dụ: 522.38" value="522.38" class="url-input">
+                </div>
+                <!-- === KẾT THÚC THÊM MỚI === -->
             </div>
             <div id="hellResults" style="display: none;">
                 <!-- Kết quả tính toán sẽ hiển thị ở đây -->
             </div>
+        </div>
+        <!-- === KẾT THÚC THÊM MỚI === -->
+
+        <!-- === THÊM MỚI: Công cụ tính Năng Lượng Săn Quái === -->
+        <div class="energy-calculator-section">
+            <h2>⚡ Công Cụ Tính Năng Lượng Săn Quái</h2>
+            <div class="energy-grid">
+                <div class="energy-input-group">
+                    <label for="energy1k">1k NL x</label>
+                    <input type="number" id="energy1k" placeholder="0" min="0">
+                </div>
+                <div class="energy-input-group">
+                    <label for="energy2k">2k NL x</label>
+                    <input type="number" id="energy2k" placeholder="0" min="0">
+                </div>
+                <div class="energy-input-group">
+                    <label for="energy5k">5k NL x</label>
+                    <input type="number" id="energy5k" placeholder="0" min="0">
+                </div>
+                <div class="energy-input-group">
+                    <label for="energy10k">10k NL x</label>
+                    <input type="number" id="energy10k" placeholder="0" min="0">
+                </div>
+                <div class="energy-input-group">
+                    <label for="energy20k">20k NL x</label>
+                    <input type="number" id="energy20k" placeholder="0" min="0">
+                </div>
+                <div class="energy-input-group">
+                    <label for="energy50k">50k NL x</label>
+                    <input type="number" id="energy50k" placeholder="0" min="0">
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <button class="btn btn-primary" onclick="calculateEnergy()">Tính Tổng</button>
+            </div>
+            <div id="energyResults" style="display: none;"></div>
         </div>
         <!-- === KẾT THÚC THÊM MỚI === -->
 
@@ -2412,12 +2543,16 @@ function displayDebtResults(debtData) {
         const troopOptionsDiv = document.getElementById('troopOptions');
         const pactOptionsDiv = document.getElementById('pactOptions');
         const pactSpeedOptionsDiv = document.getElementById('pactSpeedOptions');
+        const troopExtraOptionsDiv = document.getElementById('troopExtraOptions');
 
         pactOptionsDiv.style.display = 'none';
         troopOptionsDiv.style.display = 'none';
         pactSpeedOptionsDiv.style.display = 'none';
+        troopExtraOptionsDiv.style.display = 'none';
 
         if (eventType === 'troop') {
+            troopOptionsDiv.style.display = 'flex';
+            troopExtraOptionsDiv.style.display = 'flex';
             troopOptionsDiv.style.display = 'flex'; // Dùng flex để căn chỉnh
             troopOptionsDiv.style.justifyContent = 'center';
         } else if (eventType === 'pact') {
@@ -2503,7 +2638,60 @@ function displayDebtResults(debtData) {
                     alert("Vui lòng chọn ít nhất một loại lính để tính toán.");
                     return;
                 }
+                // Đọc các tùy chọn mới
+                const t4Type = document.getElementById('t4TroopType').value;
+                const trainingSpeed = parseFloat(document.getElementById('trainingSpeed').value);
+                if (isNaN(trainingSpeed)) {
+                    alert("Vui lòng nhập Tốc độ huấn luyện hợp lệ.");
+                    return;
+                }
+
                 results = calculateTroopHell(targetPoints, selectedTiers);
+
+                // Tính toán chi phí tài nguyên và thời gian cho tất cả các loại lính
+                let totalBaseTimeSeconds = 0;
+                const resources = { food: 0, wood: 0, stone: 0, ore: 0, gold: 0 };
+
+                const baseTimes = { t4: 120, t3: 48, t2: 30, t1: 6 };
+                const resourceCosts = {
+                    t4: { rss: 700, gold: 350 },
+                    t3: { rss: 350, gold: 175 },
+                    t2: { rss: 60,  gold: 3 },
+                    t1: { rss: 50,  gold: 25 }
+                };
+
+                for (const tier of ['t4', 't3', 't2', 't1']) {
+                    const count = results[tier];
+                    if (count > 0) {
+                        // Tính tổng thời gian cơ bản
+                        totalBaseTimeSeconds += count * baseTimes[tier];
+
+                        // Tính tổng tài nguyên
+                        const cost = resourceCosts[tier];
+                        resources.gold += count * cost.gold;
+                        
+                        switch (t4Type) { // Dùng chung loại lính cho tất cả các tier
+                            case 'archer': // Cung: Lúa, Đá, Gỗ
+                                resources.food += count * cost.rss;
+                                resources.stone += count * cost.rss;
+                                resources.wood += count * cost.rss;
+                                break;
+                            case 'cavalry': // Kỵ: Lúa, Đá, Quặng
+                                resources.food += count * cost.rss;
+                                resources.stone += count * cost.rss;
+                                resources.ore += count * cost.rss;
+                                break;
+                            case 'infantry': // Bộ: Lúa, Gỗ, Quặng
+                                resources.food += count * cost.rss;
+                                resources.wood += count * cost.rss;
+                                resources.ore += count * cost.rss;
+                                break;
+                        }
+                    }
+                }
+
+                const finalTimeSeconds = totalBaseTimeSeconds / (1 + trainingSpeed / 100);
+
                 resultHtml = `
                     <h3>Kết quả tối ưu cho ${targetPoints.toLocaleString('vi-VN')} điểm (Hell Lính):</h3>
                     <ul>
@@ -2516,6 +2704,17 @@ function displayDebtResults(debtData) {
                         Tổng điểm đạt được: ${results.totalPointsAchieved.toLocaleString('vi-VN')}<br>
                         <strong>Tổng sức mạnh tăng thêm: ${results.totalMightGained.toLocaleString('vi-VN')}</strong>
                     </p>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                        <h4>Tổng chi phí ước tính:</h4>
+                        <p><strong>⏱️ Tăng tốc cần dùng:</strong> ${formatDuration(finalTimeSeconds)}</p>
+                        <ul>
+                            ${resources.food > 0 ? `<li><strong>Lúa:</strong> ${resources.food.toLocaleString('vi-VN')}</li>` : ''}
+                            ${resources.wood > 0 ? `<li><strong>Gỗ:</strong> ${resources.wood.toLocaleString('vi-VN')}</li>` : ''}
+                            ${resources.stone > 0 ? `<li><strong>Đá:</strong> ${resources.stone.toLocaleString('vi-VN')}</li>` : ''}
+                            ${resources.ore > 0 ? `<li><strong>Quặng:</strong> ${resources.ore.toLocaleString('vi-VN')}</li>` : ''}
+                            ${resources.gold > 0 ? `<li><strong>Vàng:</strong> ${resources.gold.toLocaleString('vi-VN')}</li>` : ''}
+                        </ul>
+                    </div>
                 `;
                 break;
         }
@@ -2693,6 +2892,35 @@ function displayDebtResults(debtData) {
                                  (counts.t1 * troopValues.t1.might);
 
         return { ...counts, totalPointsAchieved, totalMightGained };
+    }
+
+    function calculateEnergy() {
+        const getVal = (id) => parseInt(document.getElementById(id).value) || 0;
+
+        const energyItems = {
+            '1k': { count: getVal('energy1k'), energy: 1000, gems: 250 },
+            '2k': { count: getVal('energy2k'), energy: 2000, gems: 475 },
+            '5k': { count: getVal('energy5k'), energy: 5000, gems: 1125 },
+            '10k': { count: getVal('energy10k'), energy: 10000, gems: 2000 },
+            '20k': { count: getVal('energy20k'), energy: 20000, gems: 3500 }, // Đã điều chỉnh từ 35000
+            '50k': { count: getVal('energy50k'), energy: 50000, gems: 7500 }
+        };
+
+        let totalEnergy = 0;
+        let totalGems = 0;
+
+        for (const key in energyItems) {
+            const item = energyItems[key];
+            totalEnergy += item.count * item.energy;
+            totalGems += item.count * item.gems;
+        }
+
+        const resultsDiv = document.getElementById('energyResults');
+        resultsDiv.style.display = 'block';
+        resultsDiv.innerHTML = `
+            <div style="color: var(--primary-color);">Tổng năng lượng: ${totalEnergy.toLocaleString('vi-VN')}</div>
+            <div style="color: var(--success-color); margin-top: 10px;">Quy đổi thành: ${totalGems.toLocaleString('vi-VN')} 💎</div>
+        `;
     }
     </script>
 </body>
