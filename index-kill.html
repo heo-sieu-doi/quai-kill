@@ -360,46 +360,20 @@
             cursor: pointer;
             font-weight: normal; /* Bỏ bold mặc định của label */
         }
-
-        .priority-checkbox-list input[type="checkbox"] {
-            margin-right: 5px; /* Khoảng cách giữa checkbox và label */
-        }
-        .priority-checkbox-list {
-            max-height: 150px; /* Giới hạn chiều cao */
-            overflow-y: auto;  /* Thêm thanh cuộn khi cần */
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #fff;
-            flex-basis: 100%; /* Chiếm toàn bộ chiều rộng trong flex container */
+        .file-name-display {
+            display: block;
+            margin-top: 5px;
+            font-style: italic;
+            color: #555;
+            font-size: 12px;
+            min-height: 1em; /* Giữ khoảng trống */
         }
 
-        .priority-checkbox-list label {
-            display: block; /* Mỗi checkbox một dòng */
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-weight: normal; /* Bỏ bold mặc định của label */
+        #comparisonResult {
+            width: 100%;
+            overflow-x: auto; /* Thêm thanh cuộn ngang khi cần */
         }
 
-        .priority-checkbox-list input[type="checkbox"] {
-            margin-right: 5px; /* Khoảng cách giữa checkbox và label */
-        }
-        .priority-checkbox-list {
-            max-height: 150px; /* Giới hạn chiều cao */
-            overflow-y: auto;  /* Thêm thanh cuộn khi cần */
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #fff;
-            flex-basis: 100%; /* Chiếm toàn bộ chiều rộng trong flex container */
-        }
-
-        .priority-checkbox-list label {
-            display: block; /* Mỗi checkbox một dòng */
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-weight: normal; /* Bỏ bold mặc định của label */
-        }
         #comparisonResult table {
             margin-top: 0;
         }
@@ -421,6 +395,11 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             max-width: 800px;
             margin: 0 auto;
+        }
+
+        .detailed-view-body {
+            width: 100%;
+            overflow-x: auto; /* Thêm thanh cuộn ngang khi cần */
         }
 
         .detailed-view-header {
@@ -497,25 +476,23 @@
         <div class="upload-section">
             <div class="upload-box">
                 <h2>Dữ liệu Tháng 6</h2>
-                <label for="juneFile">Tải từ máy:</label>
+                <label for="juneFile">1. Tải từ máy (ưu tiên):</label>
                 <input type="file" id="juneFile" accept=".xlsx,.xls" />
-                <label for="juneUrl">Hoặc tải từ URL:</label>
-                <div class="url-upload-group">
-                    <input type="text" id="juneUrl" placeholder="Dán link Google Sheets...">
-                    <button onclick="loadFromUrl('june')" class="secondary">Tải</button>
-                </div>
+                <span class="file-name-display" id="juneFileName"></span>
+                <label for="juneUrl" style="margin-top:10px; display:block;">2. Hoặc dán URL vào đây:</label>
+                <input type="text" id="juneUrl" placeholder="Dán link Google Sheets/GitHub Raw...">
+                <button onclick="loadData('june')" class="secondary" style="width: 100%; margin-top: 10px;">Tải Dữ Liệu Tháng 6</button>
                 <div id="juneStatus" class="status"></div>
             </div>
 
             <div class="upload-box">
                 <h2>Dữ liệu Tháng 7</h2>
-                <label for="julyFile">Tải từ máy:</label>
+                <label for="julyFile">1. Tải từ máy (ưu tiên):</label>
                 <input type="file" id="julyFile" accept=".xlsx,.xls" />
-                <label for="julyUrl">Hoặc tải từ URL:</label>
-                <div class="url-upload-group">
-                    <input type="text" id="julyUrl" placeholder="Dán link Google Sheets...">
-                    <button onclick="loadFromUrl('july')" class="secondary">Tải</button>
-                </div>
+                <span class="file-name-display" id="julyFileName"></span>
+                <label for="julyUrl" style="margin-top:10px; display:block;">2. Hoặc dán URL vào đây:</label>
+                <input type="text" id="julyUrl" placeholder="Dán link Google Sheets/GitHub Raw...">
+                <button onclick="loadData('july')" class="secondary" style="width: 100%; margin-top: 10px;">Tải Dữ Liệu Tháng 7</button>
                 <div id="julyStatus" class="status"></div>
             </div>
         </div>
@@ -528,10 +505,6 @@
                     value="416381060,765602761,417896120,537487142,360966484"/>
                 <div class="action-buttons">
                     <button onclick="applyPriorityFilter()" class="secondary">Áp dụng lọc</button>
-                    <div class="realtime-filter">
-                        <input type="checkbox" id="realtimeFilter" checked>
-                        <label for="realtimeFilter">Lọc realtime</label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -619,9 +592,26 @@
         let currentData = [];
         let showIdColumn = true;
         let priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
-        let realtimeFilterEnabled = true;
         let currentSort = { column: 'name', direction: 'asc' };
 
+        // Hàm tải dữ liệu với logic ưu tiên
+        function loadData(type) {
+            const fileInput = document.getElementById(`${type}File`);
+            const urlInput = document.getElementById(`${type}Url`);
+
+            // Ưu tiên 1: Kiểm tra file đã chọn
+            if (fileInput.files.length > 0) {
+                handleFileUpload(fileInput.files[0], type);
+            } 
+            // Ưu tiên 2: Kiểm tra URL
+            else if (urlInput.value.trim() !== '') {
+                loadFromUrl(type);
+            } 
+            // Không có nguồn dữ liệu
+            else {
+                alert(`Vui lòng chọn một file hoặc dán URL cho tháng ${type === 'june' ? '6' : '7'}.`);
+            }
+        }
         // Hàm xử lý upload file
         function handleFileUpload(file, type) {
             const reader = new FileReader();
@@ -863,7 +853,8 @@
                         });
                     });
 
-                    applyPriorityFilter();
+                    // Sắp xếp theo tên mặc định thay vì áp dụng bộ lọc ưu tiên ngay
+                    sortTable('name', 'asc');
 
                 } catch (error) {
                     console.error('Lỗi khi so sánh:', error);
@@ -889,7 +880,32 @@
         // Hàm áp dụng bộ lọc ưu tiên
         function applyPriorityFilter() {
             updatePriorityIds();
-            sortTable(currentSort.column, currentSort.direction);
+
+            const sortedData = [...currentData].sort((a, b) => {
+                // Logic ưu tiên
+                const aIsPriority = a.isPriority;
+                const bIsPriority = b.isPriority;
+
+                if (aIsPriority && !bIsPriority) return -1;
+                if (!aIsPriority && bIsPriority) return 1;
+
+                // Nếu cả hai cùng trạng thái ưu tiên (hoặc cùng không), sắp xếp theo tiêu chí hiện tại
+                if (currentSort.column === 'killsDiff') {
+                    if (a.hasBothData && b.hasBothData) {
+                        return currentSort.direction === 'asc' ? a.killsDiff - b.killsDiff : b.killsDiff - a.killsDiff;
+                    }
+                    if (!a.hasBothData && !b.hasBothData) return 0;
+                    if (!a.hasBothData) return 1;
+                    if (!b.hasBothData) return -1;
+                } else { // Sắp xếp theo tên
+                    return currentSort.direction === 'asc'
+                        ? a.name.localeCompare(b.name)
+                        : b.name.localeCompare(a.name);
+                }
+                return 0;
+            });
+
+            displaySortedData(sortedData);
         }
 
         // Hàm sắp xếp bảng
@@ -897,17 +913,9 @@
             if (!currentData.length) return;
 
             currentSort = { column, direction };
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = '';
 
             const sortedData = [...currentData].sort((a, b) => {
-                // Ưu tiên các ID trong danh sách priorityIds lên đầu
-                if (a.isPriority && !b.isPriority) return -1;
-                if (!a.isPriority && b.isPriority) return 1;
-                if (a.isPriority && b.isPriority) {
-                    return a.name.localeCompare(b.name);
-                }
-
+                // Bỏ hoàn toàn logic ưu tiên ở đây
                 if (column === 'killsDiff') {
                     if (a.hasBothData && b.hasBothData) {
                         return direction === 'asc' ? a.killsDiff - b.killsDiff : b.killsDiff - a.killsDiff;
@@ -1119,28 +1127,18 @@
             }
         }
 
-        function showDetailedView() {
-            hideComparisonView();
-            const searchTerm = document.getElementById('searchInput').value.trim();
-            if (!searchTerm) {
-                alert("Vui lòng nhập Tên hoặc ID để xem chi tiết.");
-                return;
-            }
-
-            const foundUser = currentData.find(item => 
-                item.userId.toString() === searchTerm || 
-                item.name.toLowerCase() === searchTerm.toLowerCase()
-            );
-
-            if (!foundUser) {
-                alert(`Không tìm thấy người chơi với Tên hoặc ID: "${searchTerm}"`);
+        function displayDetailedView(user) {
+            if (!user) {
+                alert("Không tìm thấy thông tin chi tiết của người dùng.");
+                // Make sure main content is visible if something goes wrong
+                showMainContent();
                 return;
             }
 
             // Hide the main table and controls
             hideMainContent();
             // Prepare data for rendering
-            const { userId, name, rank, juneStats, julyStats } = foundUser;
+            const { userId, name, rank, juneStats, julyStats } = user;
             const statMapping = {
                 might: "Might",
                 kills: "Kills",
@@ -1213,6 +1211,68 @@
 
             const container = document.getElementById('detailedViewContainer');
             container.innerHTML = detailedViewHtml;
+            container.style.display = 'block';
+        }
+
+        function showDetailedView() {
+            hideComparisonView();
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!searchTerm) {
+                alert("Vui lòng nhập Tên hoặc ID để xem chi tiết.");
+                return;
+            }
+
+            // Tìm tất cả người dùng phù hợp (không phân biệt hoa thường, tìm kiếm một phần)
+            const foundUsers = currentData.filter(item =>
+                item.name.toLowerCase().includes(searchTerm) ||
+                item.userId.toString().includes(searchTerm)
+            );
+
+            if (foundUsers.length === 0) {
+                alert(`Không tìm thấy người chơi với Tên hoặc ID chứa: "${searchTerm}"`);
+                return;
+            }
+
+            // Nếu chỉ tìm thấy một người dùng, hiển thị chi tiết
+            if (foundUsers.length === 1) {
+                displayDetailedView(foundUsers[0]);
+            } else {
+                // Nếu tìm thấy nhiều người dùng, hiển thị danh sách lựa chọn
+                displayUserSelection(foundUsers);
+            }
+        }
+
+        function displayUserSelection(users) {
+            hideMainContent(); // Ẩn bảng chính
+
+            let selectionHtml = `
+                <div class="detailed-view-card">
+                    <div class="detailed-view-header">
+                        <h2>Chọn người chơi để xem chi tiết:</h2>
+                        <button onclick="hideDetailedView()" class="tertiary">Quay lại bảng</button>
+                    </div>
+                    <div class="detailed-view-body">
+                        <ul style="list-style-type: none; padding: 0; margin: 0;">
+            `;
+
+            users.forEach(user => {
+                selectionHtml += `
+                    <li style="padding: 10px; border-bottom: 1px solid #eee;">
+                        <a href="#" onclick="displayDetailedView(currentData.find(item => item.userId === '${user.userId}')); return false;" style="text-decoration: none; color: #2196F3; font-weight: bold;">
+                            ${user.name} (ID: ${user.userId})
+                        </a>
+                    </li>
+                `;
+            });
+
+            selectionHtml += `
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            const container = document.getElementById('detailedViewContainer');
+            container.innerHTML = selectionHtml;
             container.style.display = 'block';
         }
 
@@ -1656,49 +1716,58 @@
             sortTable('name', 'asc');
         }
 
-
         // Khởi tạo sự kiện
         window.onload = function () {
-            document.getElementById('juneFile').addEventListener('change', function (e) {
-                if (e.target.files.length > 0) {
-                    handleFileUpload(e.target.files[0], 'june');
-                }
-            });
-
-            document.getElementById('julyFile').addEventListener('change', function (e) {
-                if (e.target.files.length > 0) {
-                    handleFileUpload(e.target.files[0], 'july');
-                }
-            });
-
             document.getElementById('searchInput').addEventListener('keyup', function (event) {
                 if (event.key === 'Enter') {
                     searchTable();
                 }
             });
 
-            document.getElementById('priorityIds').addEventListener('input', function () {
-                if (realtimeFilterEnabled) {
-                    applyPriorityFilter();
+            // Thêm sự kiện để xử lý việc chọn file
+            document.getElementById('juneFile').addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : '';
+                document.getElementById('juneFileName').textContent = fileName;
+                if (fileName) {
+                    document.getElementById('juneUrl').value = ''; // Xóa URL nếu đã chọn file
                 }
             });
 
-            document.getElementById('realtimeFilter').addEventListener('change', function (e) {
-                realtimeFilterEnabled = e.target.checked;
+            document.getElementById('julyFile').addEventListener('change', function(e) {
+                const fileName = e.target.files[0] ? e.target.files[0].name : '';
+                document.getElementById('julyFileName').textContent = fileName;
+                if (fileName) {
+                    document.getElementById('julyUrl').value = ''; // Xóa URL nếu đã chọn file
+                }
+            });
+
+            // Thêm sự kiện để xử lý việc nhập URL
+            document.getElementById('juneUrl').addEventListener('input', function(e) {
+                // Nếu người dùng bắt đầu nhập URL, xóa lựa chọn file
+                if (e.target.value.trim() !== '') {
+                    document.getElementById('juneFile').value = ''; 
+                    document.getElementById('juneFileName').textContent = '';
+                }
+            });
+
+            document.getElementById('julyUrl').addEventListener('input', function(e) {
+                // Nếu người dùng bắt đầu nhập URL, xóa lựa chọn file
+                if (e.target.value.trim() !== '') {
+                    document.getElementById('julyFile').value = '';
+                    document.getElementById('julyFileName').textContent = '';
+                }
             });
 
             // Khởi tạo giá trị mặc định cho priorityIds
             document.getElementById('priorityIds').value = priorityIds.join(',');
         
-        // === TỰ ĐỘNG TẢI DỮ LIỆU MẶC ĐỊNH TỪ GITHUB ===
-        // Thay thế các URL placeholder bên dưới bằng link "Raw" thực tế của bạn
+        // === TỰ ĐỘNG ĐIỀN URL MẶC ĐỊNH TỪ GITHUB ===
+        // Người dùng sẽ cần nhấn nút "Tải Dữ Liệu" để bắt đầu
         const juneFileUrl = 'https://raw.githubusercontent.com/heo-sieu-doi/quai-kill/main/kill%209-6.xlsx';
         const julyFileUrl = 'https://raw.githubusercontent.com/heo-sieu-doi/quai-kill/main/kill%209-7.xlsx';
 
         document.getElementById('juneUrl').value = juneFileUrl;
         document.getElementById('julyUrl').value = julyFileUrl;
-        loadFromUrl('june');
-        loadFromUrl('july');
     };
     </script>
 </body>
