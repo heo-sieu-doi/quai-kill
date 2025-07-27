@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nhập liệu Google Sheet</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      font-size: 12pt;
+      max-width: 800px;
+      margin: 20px auto;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 5px;
+      font-family: "Times New Roman", serif;
+      font-size: 12pt;
+    }
+    button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      font-size: 12pt;
+    }
+  </style>
+</head>
+<body>
+  <h2>Form nhập liệu vào Google Sheet</h2>
+  <form id="dataForm">
+    <label>Name: <input name="Name" /></label>
+    <label>User ID: <input name="User ID" /></label>
+    <label>Rank: <input name="Rank" /></label>
+    <label>Might: <input name="Might" /></label>
+    <label>Kills: <input name="Kills" /></label>
+    <label>Enemies captured: <input name="Enemies captured" /></label>
+    <label>Enemies Destroyed Might: <input name="Enemies Destroyed Might" /></label>
+    <label>Enemy Troops Wounded: <input name="Enemy Troops Wounded" /></label>
+    <label>Troops Killed: <input name="Troops Killed" /></label>
+    <label>Troops Lost: <input name="Troops Lost" /></label>
+    <label>Troops Wounded: <input name="Troops Wounded" /></label>
+    <label>Losses: <input name="Losses" /></label>
+    <label>Successful Attacks: <input name="Successful Attacks" /></label>
+    <label>Phòng thủ thành công: <input name="Phòng thủ thành công" /></label>
+    <label>Victories: <input name="Victories" /></label>
+    <label>Win Rate: <input name="Win Rate" /></label>
+    <button type="submit">Gửi dữ liệu</button>
+  </form>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxB4WrcJsq2XJdf0IZ3ZfgmSD-Qahdxxsk11DWDlWZgE3G4aRRlGFIPibdUlElvc/exec"; // Cập nhật đúng URL
+
+    document.getElementById("dataForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const obj = {};
+      formData.forEach((value, key) => {
+        // Định dạng số lại
+        if (!isNaN(value.replaceAll('.', '').replaceAll(',', '.'))) {
+          obj[key] = parseFloat(value.replaceAll('.', '').replaceAll(',', '.'));
+        } else {
+          obj[key] = value;
+        }
+      });
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(obj),
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => alert("Đã gửi thành công!"))
+        .catch((err) => alert("Lỗi gửi: " + err));
+    });
+  </script>
+</body>
+</html>
