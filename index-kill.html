@@ -647,7 +647,8 @@
                     <button onclick="sortTable('killsDiff', 'asc')" class="secondary">Sắp xếp Kills (Tăng)</button>
                     <button onclick="sortTable('killsDiff', 'desc')" class="secondary">Sắp xếp Kills (Giảm)</button>
                     <button onclick="toggleIdColumn()" class="tertiary">Ẩn/Hiện ID</button>
-                    <button id="exportPngBtn" onclick="exportToPNG()" class="tertiary">Xuất ảnh PNG</button>
+                    <button id="exportPngBtn" onclick="exportToPNGByRange()" class="tertiary">Xuất ảnh theo phạm
+                        vi</button>
                     <button onclick="exportToExcel()" class="quaternary">Xuất file Excel</button>
                     <button onclick="resetTable()">Đặt lại</button>
                 </div>
@@ -1973,6 +1974,103 @@
                     Object.keys(julyStats).forEach(key => checkValue(julyStats[key], key, 'July'));
                 }
             });
+        }
+        function getRowsByRange(rangeString) {
+            const ranges = rangeString.split(',').map(range => {
+                const [start, end] = range.split('-').map(num => parseInt(num.trim(), 10));
+                return { start, end };
+            });
+
+            const tableRows = Array.from(document.querySelectorAll('#tableBody tr'));
+            const filteredRows = [];
+
+            ranges.forEach(({ start, end }) => {
+                if (isNaN(start) || isNaN(end) || start > end) {
+                    alert(`Phạm vi không hợp lệ: ${start}-${end}`);
+                    return;
+                }
+
+                tableRows.forEach(row => {
+                    const sttCell = row.querySelector('td:first-child');
+                    if (sttCell) {
+                        const stt = parseInt(sttCell.textContent.trim(), 10);
+                        if (stt >= start && stt <= end) {
+                            filteredRows.push(row.cloneNode(true)); // Sao chép hàng
+                        }
+                    }
+                });
+            });
+
+            return filteredRows;
+        }
+        async function exportToPNGByRange() {
+            const rangeInput = prompt("Nhập phạm vi STT (ví dụ: 1-50, 51-95):").trim();
+            if (!rangeInput) {
+                alert('Vui lòng nhập phạm vi STT để xuất ảnh.');
+                return;
+            }
+
+            const filteredRows = getRowsByRange(rangeInput);
+            if (filteredRows.length === 0) {
+                alert('Không tìm thấy hàng nào trong phạm vi STT đã nhập.');
+                return;
+            }
+
+            const tableElement = document.getElementById('comparisonTable');
+            const originalTableBody = document.getElementById('tableBody');
+            const originalRows = Array.from(originalTableBody.children);
+
+            const exportButton = document.getElementById('exportPngBtn');
+            const originalButtonText = exportButton.textContent;
+            exportButton.textContent = '📸 Đang xử lý...';
+            exportButton.disabled = true;
+
+            try {
+                // Chia các hàng thành từng nhóm theo phạm vi
+                const rowsPerImage = [];
+                let currentGroup = [];
+                filteredRows.forEach((row, index) => {
+                    currentGroup.push(row);
+                    if ((index + 1) % 50 === 0 || index === filteredRows.length - 1) {
+                        rowsPerImage.push(currentGroup);
+                        currentGroup = [];
+                    }
+                });
+
+                // Xuất từng nhóm hàng thành ảnh
+                for (let i = 0; i < rowsPerImage.length; i++) {
+                    // Tạm thời thay thế nội dung bảng bằng nhóm hàng hiện tại
+                    originalTableBody.innerHTML = '';
+                    rowsPerImage[i].forEach(row => originalTableBody.appendChild(row));
+
+                    // Chụp ảnh bảng
+                    const canvas = await html2canvas(tableElement, {
+                        scale: 1.5,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff',
+                        width: tableElement.scrollWidth,
+                        height: tableElement.scrollHeight,
+                    });
+
+                    // Tải ảnh xuống
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/png');
+                    link.download = `Exported_Image_${i + 1}.png`;
+                    link.click();
+                }
+            } catch (error) {
+                console.error('Lỗi xuất ảnh:', error);
+                alert(`Xuất ảnh thất bại! Lỗi: ${error.message}`);
+            } finally {
+                // Khôi phục bảng gốc
+                originalTableBody.innerHTML = '';
+                originalRows.forEach(row => originalTableBody.appendChild(row));
+
+                // Khôi phục nút
+                exportButton.textContent = originalButtonText;
+                exportButton.disabled = false;
+            }
         }
     </script>
 </body>
