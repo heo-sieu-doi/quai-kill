@@ -550,6 +550,78 @@
         body.compact-view .group-troops-killed-cell {
             display: none;
         }
+
+        #updateDataModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        #updateDataModal>div {
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #updateDataModal h2 {
+            margin-top: 0;
+        }
+
+        #updateDataModal table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        #updateDataModal th,
+        #updateDataModal td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        #updateDataModal th {
+            background-color: #f2f2f2;
+        }
+
+        #updateDataModal>div {
+            max-height: 90vh;
+            /* Giới hạn chiều cao modal tối đa là 90% chiều cao màn hình */
+            overflow-y: auto;
+            /* Thêm thanh cuộn dọc nếu nội dung vượt quá chiều cao */
+        }
+
+        #updateDataTableContainer {
+            max-height: 60vh;
+            /* Giới hạn chiều cao bảng */
+            overflow-y: auto;
+            /* Thêm thanh cuộn dọc */
+            border: 1px solid #ddd;
+            /* Thêm viền */
+            padding: 10px;
+            /* Thêm khoảng cách bên trong */
+            background-color: #f9f9f9;
+            /* Màu nền nhẹ */
+        }
+
+        #updateDataModal table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #ce8686;
+            /* Màu nền cho tiêu đề */
+            z-index: 1;
+        }
     </style>
 </head>
 
@@ -656,6 +728,8 @@
                         vi</button>
                     <button onclick="exportToExcel()" class="quaternary">Xuất file Excel</button>
                     <button onclick="resetTable()">Đặt lại</button>
+                    <button id="updateDataBtn" onclick="showUpdateDataModal()" class="secondary">Cập nhật dữ
+                        liệu</button>
                 </div>
             </div>
         </div>
@@ -739,6 +813,9 @@
                         <th class="month-col month-col-june">Tháng 6</th>
                         <th class="month-col month-col-july">Tháng 7</th>
                         <th class="diff-col">Tổng</th>
+                        <th class="month-col month-col-june">Tháng 6</th>
+                        <th class="month-col month-col-july">Tháng 7</th>
+                        <th class="diff-col">Tổng</th>
                         <!-- Tiếp tục cho các cột khác -->
                     </tr>
                 </thead>
@@ -753,7 +830,51 @@
 
         <!-- Container for the new detailed vertical view -->
         <div id="detailedViewContainer" style="display: none;"></div>
-
+        <div id="updateDataModal"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999;">
+            <div
+                style="background: white; margin: 50px auto; padding: 20px; width: 80%; max-width: 800px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                <h2 style="margin-top: 0;">Cập nhật dữ liệu</h2>
+                <button onclick="showGitHubFilesForUpdate()" class="secondary">Chọn tệp từ GitHub</button>
+                <div id="githubFilesUpdate" style="display: none; margin-top: 10px;">
+                    <label for="githubFileSelectUpdate">Chọn file:</label>
+                    <select id="githubFileSelectUpdate" onchange="loadGitHubFileForUpdate()">
+                        <option value="">-- Chọn file --</option>
+                    </select>
+                </div>
+                <div id="updateDataTableContainer"
+                    style="margin-top: 20px; overflow-x: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên</th>
+                                <th>User ID</th>
+                                <th>Rank</th>
+                                <th>Might</th>
+                                <th>Kills</th>
+                                <th>Kẻ Thù Bị Bắt</th>
+                                <th>Kẻ Thù Tiêu Diệt</th>
+                                <th>Quân Địch Bị Thương</th>
+                                <th>Quân Đội Đã Giết</th>
+                                <th>Số Quân Tổn Thất</th>
+                                <th>Quân Đội Bị Thương</th>
+                                <th>Thua</th>
+                                <th>Tấn công Thành công</th>
+                                <th>Phòng thủ Thành công</th>
+                                <th>Chiến Thắng</th>
+                                <th>Tỉ Lệ Chiến Thắng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dữ liệu sẽ được thêm vào đây -->
+                        </tbody>
+                    </table>
+                </div>
+                <button onclick="addNewRow()" class="secondary" style="margin-top: 10px;">Thêm Dữ Liệu Mới</button>
+                <button onclick="saveUpdatedData()" class="secondary" style="margin-top: 10px;">Lưu thay đổi</button>
+                <button onclick="closeUpdateDataModal()" class="tertiary" style="float: right;">Đóng</button>
+            </div>
+        </div>
 
     </div>
 
@@ -2076,6 +2197,294 @@
                 exportButton.textContent = originalButtonText;
                 exportButton.disabled = false;
             }
+        }
+        function showUpdateDataModal() {
+            document.getElementById('updateDataModal').style.display = 'block';
+        }
+
+        function closeUpdateDataModal() {
+            document.getElementById('updateDataModal').style.display = 'none';
+            document.getElementById('updateDataTableContainer').innerHTML = ''; // Xóa dữ liệu cũ
+        }
+        function showGitHubFilesForUpdate() {
+            const githubFilesContainer = document.getElementById('githubFilesUpdate');
+            const githubFileSelect = document.getElementById('githubFileSelectUpdate');
+
+            // Hiển thị container
+            githubFilesContainer.style.display = 'block';
+
+            // Gọi GitHub API để lấy danh sách file
+            fetch('https://api.github.com/repos/heo-sieu-doi/quai-kill/contents/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Lỗi khi gọi GitHub API: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(files => {
+                    githubFileSelect.innerHTML = '<option value="">-- Chọn file --</option>'; // Reset danh sách
+
+                    // Lọc các file Excel và thêm vào dropdown
+                    files
+                        .filter(file => file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))
+                        .forEach(file => {
+                            const option = document.createElement('option');
+                            option.value = file.download_url; // URL tải file
+                            option.textContent = file.name; // Tên file
+                            githubFileSelect.appendChild(option);
+                        });
+                })
+                .catch(error => {
+                    console.error('Lỗi khi lấy danh sách file từ GitHub:', error);
+                    alert('Không thể lấy danh sách file từ GitHub. Vui lòng thử lại sau.');
+                });
+        }
+
+        function loadGitHubFileForUpdate() {
+            const githubFileSelect = document.getElementById('githubFileSelectUpdate');
+            const selectedFileUrl = githubFileSelect.value;
+
+            if (selectedFileUrl) {
+                // Gán URL file vào ô nhập URL
+                document.getElementById('juneUrl').value = selectedFileUrl;
+
+                // Tự động tải file
+                loadUpdateData(selectedFileUrl);
+            }
+        }
+
+        function loadUpdateData(url) {
+            const statusElement = document.getElementById('juneStatus');
+
+            // Tách biệt phần xử lý URL cho cập nhật dữ liệu
+            const rawUrl = url.trim();
+            let exportUrl = '';
+            const googleSheetRegex = /(?:spreadsheets|file)\/d\/([a-zA-Z0-9-_]+)/;
+            const match = rawUrl.match(googleSheetRegex);
+
+            if (match && match[1]) {
+                const sheetId = match[1];
+                exportUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`;
+            } else if (rawUrl.toLowerCase().endsWith('.xlsx') || rawUrl.toLowerCase().endsWith('.xls')) {
+                exportUrl = rawUrl;
+            } else {
+                alert("URL không hợp lệ. Vui lòng cung cấp link Google Sheets/File hợp lệ (đã chia sẻ công khai) hoặc link trực tiếp đến file .xlsx.");
+                return;
+            }
+
+            statusElement.textContent = 'Đang tải từ URL...';
+            statusElement.className = 'status';
+            const loading = showLoading(`Đang tải dữ liệu cập nhật...`);
+
+            fetch(exportUrl, { signal: AbortSignal.timeout(30000) })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Lỗi HTTP: ${response.status} ${response.statusText}`);
+                    }
+                    return response.arrayBuffer();
+                })
+                .then(arrayBuffer => {
+                    const data = new Uint8Array(arrayBuffer);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                    // Hiển thị dữ liệu trong modal
+                    displayUpdateData(jsonData);
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tải dữ liệu cập nhật:', error);
+                    statusElement.textContent = `Lỗi tải dữ liệu: ${error.message}`;
+                    statusElement.className = 'status error';
+                })
+                .finally(() => {
+                    loading.remove();
+                });
+        }
+
+        function saveUpdatedData() {
+            const container = document.getElementById('updateDataTableContainer');
+            const table = container.querySelector('table');
+
+            if (!table) {
+                alert('Không có dữ liệu để lưu.');
+                return;
+            }
+
+            const rows = Array.from(table.querySelectorAll('tr'));
+            const updatedData = rows.map(row => {
+                return Array.from(row.querySelectorAll('td, th')).map(cell => cell.textContent.trim());
+            });
+
+            // Chuyển dữ liệu thành file Excel
+            const worksheet = XLSX.utils.aoa_to_sheet(updatedData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Updated Data');
+
+            // Tải file Excel
+            XLSX.writeFile(workbook, 'Updated_Data.xlsx');
+            alert('Dữ liệu đã được lưu thành công!');
+        }
+        async function showGitHubFilesForUpdate() {
+            const githubFilesContainer = document.getElementById('githubFilesUpdate');
+            const githubFileSelect = document.getElementById('githubFileSelectUpdate');
+
+            // Hiển thị container
+            githubFilesContainer.style.display = 'block';
+
+            // Gọi GitHub API để lấy danh sách file
+            try {
+                const response = await fetch('https://api.github.com/repos/heo-sieu-doi/quai-kill/contents/');
+                if (!response.ok) {
+                    throw new Error(`Lỗi khi gọi GitHub API: ${response.status}`);
+                }
+
+                const files = await response.json();
+                githubFileSelect.innerHTML = '<option value="">-- Chọn file --</option>'; // Reset danh sách
+
+                // Lọc các file Excel và thêm vào dropdown
+                files
+                    .filter(file => file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))
+                    .forEach(file => {
+                        const option = document.createElement('option');
+                        option.value = file.download_url; // URL tải file
+                        option.textContent = file.name; // Tên file
+                        githubFileSelect.appendChild(option);
+                    });
+            } catch (error) {
+                console.error('Lỗi khi lấy danh sách file từ GitHub:', error);
+                alert('Không thể lấy danh sách file từ GitHub. Vui lòng thử lại sau.');
+            }
+        }
+        async function loadGitHubFileForUpdate() {
+            const githubFileSelect = document.getElementById('githubFileSelectUpdate');
+            const selectedFileUrl = githubFileSelect.value;
+
+            if (!selectedFileUrl) {
+                alert('Vui lòng chọn một file từ GitHub.');
+                return;
+            }
+
+            try {
+                const response = await fetch(selectedFileUrl);
+                if (!response.ok) {
+                    throw new Error(`Lỗi khi tải file từ GitHub: ${response.status}`);
+                }
+
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                // Hiển thị dữ liệu trong bảng
+                displayEditableData(jsonData);
+            } catch (error) {
+                console.error('Lỗi khi tải file từ GitHub:', error);
+                alert('Không thể tải file từ GitHub. Vui lòng thử lại sau.');
+            }
+        }
+        function displayEditableData(data) {
+            const container = document.getElementById('updateDataTableContainer');
+            container.innerHTML = ''; // Xóa dữ liệu cũ
+
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p>Không có dữ liệu để hiển thị.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // Ánh xạ tiêu đề tiếng Anh sang tiếng Việt
+            const statMapping = {
+                "Enemies captured": "Kẻ Thù Bị Bắt",
+                "Enemies Destroyed Might": "Kẻ Thù Tiêu Diệt",
+                "Enemy Troops Wounded": "Quân Địch Bị Thương",
+                "Troops Killed": "Quân Đội Đã Giết",
+                "Troops Lost": "Số Quân Tổn Thất",
+                "Troops Wounded": "Quân Đội Bị Thương",
+                "Losses": "Thua",
+                "Successful Attacks": "Tấn công Thành công",
+                "Phòng thủ thành công": "Phòng thủ Thành công",
+                "Victories": "Chiến Thắng",
+                "Win Rate": "Tỉ Lệ Chiến Thắng"
+            };
+
+            // Tạo tiêu đề bảng
+            const headerRow = document.createElement('tr');
+            data[0].forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = statMapping[header] || header; // Hiển thị tiếng Việt nếu có, nếu không giữ nguyên
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+
+            // Tạo các hàng dữ liệu
+            data.slice(1).forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+                row.forEach((cell, colIndex) => {
+                    const td = document.createElement('td');
+                    td.contentEditable = true; // Cho phép chỉnh sửa
+                    td.textContent = cell || '';
+                    td.dataset.row = rowIndex + 1; // Lưu chỉ số hàng
+                    td.dataset.col = colIndex; // Lưu chỉ số cột
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            container.appendChild(table);
+        }
+        function addNewRow() {
+            const container = document.getElementById('updateDataTableContainer');
+            const table = container.querySelector('table');
+
+            if (!table) {
+                alert('Không có bảng dữ liệu để thêm hàng mới.');
+                return;
+            }
+
+            const tbody = table.querySelector('tbody');
+            const newRow = document.createElement('tr');
+
+            // Thêm các ô trống vào hàng mới
+            const columnCount = table.querySelector('thead tr').children.length;
+            for (let i = 0; i < columnCount; i++) {
+                const td = document.createElement('td');
+                td.contentEditable = true; // Cho phép chỉnh sửa
+                td.textContent = ''; // Nội dung trống
+                newRow.appendChild(td);
+            }
+
+            tbody.appendChild(newRow);
+        }
+        function saveUpdatedData() {
+            const container = document.getElementById('updateDataTableContainer');
+            const table = container.querySelector('table');
+
+            if (!table) {
+                alert('Không có dữ liệu để lưu.');
+                return;
+            }
+
+            const rows = Array.from(table.querySelectorAll('tr'));
+            const updatedData = rows.map(row => {
+                return Array.from(row.querySelectorAll('td, th')).map(cell => cell.textContent.trim());
+            });
+
+            // Chuyển dữ liệu thành file Excel
+            const worksheet = XLSX.utils.aoa_to_sheet(updatedData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Updated Data');
+
+            // Tải file Excel
+            XLSX.writeFile(workbook, 'Updated_Data.xlsx');
+            alert('Dữ liệu đã được lưu thành công!');
         }
     </script>
 </body>
