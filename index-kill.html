@@ -613,7 +613,12 @@
             /* Thêm khoảng cách bên trong */
             background-color: #f9f9f9;
             /* Màu nền nhẹ */
+            position: relative; /* Đảm bảo sticky hoạt động trên Safari */
         }
+        th, td {
+    white-space: nowrap;
+    overflow-wrap: break-word; /* Đảm bảo nội dung không bị tràn */
+}
 
         #updateDataModal table thead th {
             position: sticky;
@@ -622,6 +627,14 @@
             /* Màu nền cho tiêu đề */
             z-index: 1;
         }
+        .upload-section {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.upload-box {
+    margin-right: 10px; /* Thay thế gap */
+}
     </style>
 </head>
 
