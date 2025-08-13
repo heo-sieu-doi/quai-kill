@@ -613,12 +613,16 @@
             /* Thêm khoảng cách bên trong */
             background-color: #f9f9f9;
             /* Màu nền nhẹ */
-            position: relative; /* Đảm bảo sticky hoạt động trên Safari */
+            position: relative;
+            /* Đảm bảo sticky hoạt động trên Safari */
         }
-        th, td {
-    white-space: nowrap;
-    overflow-wrap: break-word; /* Đảm bảo nội dung không bị tràn */
-}
+
+        th,
+        td {
+            white-space: nowrap;
+            overflow-wrap: break-word;
+            /* Đảm bảo nội dung không bị tràn */
+        }
 
         #updateDataModal table thead th {
             position: sticky;
@@ -627,14 +631,16 @@
             /* Màu nền cho tiêu đề */
             z-index: 1;
         }
-        .upload-section {
-    display: flex;
-    margin-bottom: 10px;
-}
 
-.upload-box {
-    margin-right: 10px; /* Thay thế gap */
-}
+        .upload-section {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .upload-box {
+            margin-right: 10px;
+            /* Thay thế gap */
+        }
     </style>
 </head>
 
@@ -753,8 +759,9 @@
                 <div><strong>Tổng Kills:</strong> <span id="totalKills">0</span></div>
                 <div><strong>Tổng Số Quân Tổn Thất:</strong> <span id="totalTroopsLost">0</span></div>
                 <div><strong>Tổng Quân Địch Bị Thương:</strong> <span id="totalEnemyWounded">0</span></div>
-                <div><strong>Tổng Quân Đội Đã Giết:</strong> <span id="totalTroopsKilled">0</span></div>
                 <div><strong>Tổng Quân Đội Bị Thương:</strong> <span id="totalTroopsWounded">0</span></div>
+                <div><strong>Tổng Kẻ Thù Tiêu Diệt:</strong> <span id="totalEnemiesDestroyed">0</span></div>
+                <!-- Thêm dòng này -->
             </div>
         </div>
         <div id="loading" class="loading">
@@ -1982,7 +1989,8 @@
                 troopsLostDiff: 0,
                 enemyWoundedDiff: 0,
                 troopsKilledDiff: 0,
-                troopsWoundedDiff: 0
+                troopsWoundedDiff: 0,
+                enemiesDestroyedDiff: 0 // Thêm tổng cho "Kẻ Thù Tiêu Diệt"
             };
 
             currentData.forEach(item => {
@@ -2021,21 +2029,21 @@
                     const enemyWoundedDiff = enemyWoundedJuly - enemyWoundedJune;
                     totals.enemyWoundedDiff += enemyWoundedDiff;
                 }
-
-                // Tính tổng Quân Đội Đã Giết
-                const troopsKilledJune = parseValue(juneStats?.troops_killed);
-                const troopsKilledJuly = parseValue(julyStats?.troops_killed);
-                if (juneStats && julyStats) {
-                    const troopsKilledDiff = troopsKilledJuly - troopsKilledJune;
-                    totals.troopsKilledDiff += troopsKilledDiff;
-                }
-
+                
                 // Tính tổng Quân Đội Bị Thương
                 const troopsWoundedJune = parseValue(juneStats?.troops_wounded);
                 const troopsWoundedJuly = parseValue(julyStats?.troops_wounded);
                 if (juneStats && julyStats) {
                     const troopsWoundedDiff = troopsWoundedJuly - troopsWoundedJune;
                     totals.troopsWoundedDiff += troopsWoundedDiff;
+                }
+
+                // Tính tổng "Kẻ Thù Tiêu Diệt"
+                const enemiesDestroyedJune = parseValue(juneStats?.enemies_destroyed);
+                const enemiesDestroyedJuly = parseValue(julyStats?.enemies_destroyed);
+                if (juneStats && julyStats) {
+                    const enemiesDestroyedDiff = enemiesDestroyedJuly - enemiesDestroyedJune;
+                    totals.enemiesDestroyedDiff += enemiesDestroyedDiff;
                 }
             });
 
@@ -2047,8 +2055,8 @@
             document.getElementById('totalKills').textContent = formatNumber(totals.killsDiff);
             document.getElementById('totalTroopsLost').textContent = formatNumber(totals.troopsLostDiff);
             document.getElementById('totalEnemyWounded').textContent = formatNumber(totals.enemyWoundedDiff);
-            document.getElementById('totalTroopsKilled').textContent = formatNumber(totals.troopsKilledDiff);
             document.getElementById('totalTroopsWounded').textContent = formatNumber(totals.troopsWoundedDiff);
+            document.getElementById('totalEnemiesDestroyed').textContent = formatNumber(totals.enemiesDestroyedDiff); // Hiển thị tổng "Kẻ Thù Tiêu Diệt"
 
             document.getElementById('totalsContainer').style.display = 'block';
         }
