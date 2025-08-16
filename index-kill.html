@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Công cụ So sánh Thống kê</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         body {
@@ -641,6 +646,37 @@
             margin-right: 10px;
             /* Thay thế gap */
         }
+
+        /* Styles for Chart Modal */
+        #chartModal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #chartModal>div {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+            border-radius: 8px;
+        }
+
+        #chartModal .chart-controls {
+            margin-bottom: 15px;
+        }
+
+        #chartModal .chart-controls select {
+            padding: 5px;
+        }
     </style>
 </head>
 
@@ -745,10 +781,13 @@
                     <button onclick="toggleIdColumn()" class="tertiary">Ẩn/Hiện ID</button>
                     <button id="exportPngBtn" onclick="exportToPNGByRange()" class="tertiary">Xuất ảnh theo phạm
                         vi</button>
-                    <button onclick="exportToExcel()" class="quaternary">Xuất file Excel</button>
+                    <button onclick="exportToExcel()" class="quaternary">Xuất Excel (Đầy đủ)</button>
+                    <button onclick="exportToCompactExcel()" class="quaternary">Xuất Excel (Tinh gọn)</button>
                     <button onclick="resetTable()">Đặt lại</button>
                     <button id="updateDataBtn" onclick="showUpdateDataModal()" class="secondary">Cập nhật dữ
                         liệu</button>
+                    <button onclick="showChartModal()" class="secondary">Hiển thị Biểu đồ</button>
+                    <button onclick="showOverallComparisonChart()" class="secondary">Biểu đồ so sánh</button>
                 </div>
             </div>
         </div>
@@ -833,11 +872,6 @@
                         <th class="month-col month-col-june">Tháng 6</th>
                         <th class="month-col month-col-july">Tháng 7</th>
                         <th class="diff-col">Tổng</th>
-                        <th class="month-col month-col-june">Tháng 6</th>
-                        <th class="month-col month-col-july">Tháng 7</th>
-                        <th class="diff-col">Tổng</th>
-                        <!-- Tiếp tục cho các cột khác -->
-                    </tr>
                 </thead>
                 <tbody id="tableBody">
                     <!-- Dữ liệu sẽ được thêm vào đây -->
@@ -895,21 +929,56 @@
                 <button onclick="closeUpdateDataModal()" class="tertiary" style="float: right;">Đóng</button>
             </div>
         </div>
-
+        <!-- Chart Modal -->
+        <div id="chartModal">
+            <div>
+                <h2 style="margin-top: 0;">Biểu đồ Biến động Chỉ số</h2>
+                <div class="chart-controls">
+                    <label for="playerSelectChart">Chọn người chơi:</label>
+                    <select id="playerSelectChart" onchange="updateChart()"></select>
+                </div>
+                <div style="position: relative; height:60vh; width:100%">
+                    <canvas id="statsChart"></canvas>
+                </div>
+                <button onclick="hideChartModal()" class="tertiary"
+                    style="float: right; margin-top: 15px;">Đóng</button>
+            </div>
+        </div>
+        <!-- Overall Comparison Chart Modal -->
+        <div id="overallComparisonChartModal"
+            style="display: none; position: fixed; z-index: 10001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);">
+            <div
+                style="background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 1200px; border-radius: 8px;">
+                <h2 style="margin-top: 0;">Biểu đồ So sánh Tổng quan Người chơi</h2>
+                <button id="toggleOverallChartBtn" class="secondary">Chuyển đổi dữ liệu</button>
+                <div id="overallChartContainer" style="position: relative; height: 80vh; overflow-y: auto;">
+                    <!-- Biểu đồ sẽ được render ở đây -->
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                    <button onclick="exportComparisonChartPDF()">📄 Xuất PDF</button>
+                    <button onclick="hideOverallComparisonChart()" class="tertiary">Đóng</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // Biến toàn cục
         let juneData = {};
         let julyData = {};
+        let chartInstance;
         let currentData = [];
         let showIdColumn = true;
+        window.showMonthlyDataOverall = false; // Track whether to show monthly data or total diff
         let priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
         let currentSort = { column: 'name', direction: 'asc' };
         let selectedMonths = {
             june: 6, // Mặc định là tháng 6
             july: 7  // Mặc định là tháng 7
         };
+
+        // Đăng ký plugin datalabels cho tất cả các biểu đồ
+        Chart.register(ChartDataLabels);
 
         // Mảng cấu hình cho các chỉ số để tránh lặp code
         const STATS_CONFIG = [
@@ -1271,6 +1340,14 @@
         function displaySortedData(sortedData) {
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = ''; // Xóa nội dung cũ
+
+            // Kiểm tra xem có dữ liệu tháng 6 hay không
+            juneDataExists = Object.keys(juneData).length > 0;
+
+            // Ẩn hoặc hiện các cột tháng 6 dựa trên biến juneDataExists
+            const juneColumns = document.querySelectorAll('.month-col-june');
+            juneColumns.forEach(column => column.style.display = juneDataExists ? '' : 'none');
+
 
             sortedData.forEach((item, index) => {
                 const { userId, name, rank, juneStats, julyStats, hasBothData, isPriority } = item;
@@ -1870,6 +1947,77 @@
             }, 50);
         }
 
+        function exportToCompactExcel() {
+            if (currentData.length === 0) {
+                alert("Không có dữ liệu để xuất file Excel.");
+                return;
+            }
+
+            const loading = showLoading("Đang tạo file Excel tinh gọn...");
+
+            setTimeout(() => {
+                try {
+                    // Lấy dữ liệu đang hiển thị, tôn trọng các bộ lọc hiện tại
+                    const visibleData = [];
+                    const tableRows = document.getElementById('tableBody').getElementsByTagName('tr');
+                    for (const row of tableRows) {
+                        if (row.style.display !== 'none') {
+                            const stt = row.cells[0].innerText;
+                            const userId = row.cells[2].innerText; // User ID vẫn ở cột 3 dù có thể bị ẩn
+                            const dataItem = currentData.find(item => item.userId === userId);
+                            if (dataItem) {
+                                visibleData.push({
+                                    ...dataItem,
+                                    stt
+                                }); // Thêm STT vào đối tượng
+                            }
+                        }
+                    }
+
+                    if (visibleData.length === 0) {
+                        alert("Không có dữ liệu nào đang được hiển thị để xuất.");
+                        throw new Error("No visible data");
+                    }
+
+                    const dataToExport = [];
+                    const headers = [
+                        "STT", "Tên", "Might", "Kills", "Kẻ Thù Tiêu Diệt",
+                        "Quân Địch Bị Thương", "Số Quân Tổn Thất", "Quân Đội Bị Thương"
+                    ];
+
+                    dataToExport.push(headers.map(h => ({ v: h, t: 's', s: { font: { bold: true } } })));
+
+                    const getDiff = (item, key) => {
+                        const diff = calculateDifference(item.julyStats?.[key], item.juneStats?.[key]);
+                        return diff === null ? "N/A" : diff;
+                    };
+
+                    visibleData.forEach(item => {
+                        const row = [
+                            parseInt(item.stt, 10), item.name,
+                            getDiff(item, 'might'), getDiff(item, 'kills'),
+                            getDiff(item, 'enemies_destroyed'), getDiff(item, 'enemy_wounded'),
+                            getDiff(item, 'troops_lost'), getDiff(item, 'troops_wounded')
+                        ];
+                        dataToExport.push(row);
+                    });
+
+                    const ws = XLSX.utils.aoa_to_sheet(dataToExport);
+                    const objectMaxLength = dataToExport.reduce((acc, row) => { row.forEach((cell, i) => { const cellValue = cell && cell.v ? cell.v : cell; const cellLength = String(cellValue).length; acc[i] = Math.max(acc[i] || 0, cellLength); }); return acc; }, []);
+                    ws["!cols"] = objectMaxLength.map(width => ({ wch: Math.min(width + 2, 40) }));
+
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "BaoCaoTinhGon");
+                    XLSX.writeFile(wb, `BaoCaoTinhGon_${new Date().toISOString().slice(0, 10)}.xlsx`);
+
+                } catch (error) {
+                    if (error.message !== "No visible data") { console.error("Lỗi khi xuất Excel tinh gọn:", error); alert("Đã xảy ra lỗi khi tạo file Excel tinh gọn. Vui lòng kiểm tra console (F12)."); }
+                } finally {
+                    loading.remove();
+                }
+            }, 50);
+        }
+
         function showLoading(message) {
             const loading = document.createElement('div');
             loading.style.position = 'fixed';
@@ -1910,21 +2058,27 @@
                 }
             });
 
-            // Thêm sự kiện để xử lý việc chọn file
+            // Thêm sự kiện để xử lý việc chọn file và tự động tải
             document.getElementById('juneFile').addEventListener('change', function (e) {
-                const fileName = e.target.files[0] ? e.target.files[0].name : '';
-                document.getElementById('juneFileName').textContent = fileName;
-                if (fileName) {
-                    document.getElementById('juneUrl').value = ''; // Xóa URL nếu đã chọn file
+                const file = e.target.files[0];
+                if (!file) {
+                    document.getElementById('juneFileName').textContent = '';
+                    return;
                 }
+                document.getElementById('juneFileName').textContent = file.name;
+                document.getElementById('juneUrl').value = ''; // Xóa URL nếu đã chọn file
+                handleFileUpload(file, 'june'); // Tự động xử lý file
             });
 
             document.getElementById('julyFile').addEventListener('change', function (e) {
-                const fileName = e.target.files[0] ? e.target.files[0].name : '';
-                document.getElementById('julyFileName').textContent = fileName;
-                if (fileName) {
-                    document.getElementById('julyUrl').value = ''; // Xóa URL nếu đã chọn file
+                const file = e.target.files[0];
+                if (!file) {
+                    document.getElementById('julyFileName').textContent = '';
+                    return;
                 }
+                document.getElementById('julyFileName').textContent = file.name;
+                document.getElementById('julyUrl').value = ''; // Xóa URL nếu đã chọn file
+                handleFileUpload(file, 'july'); // Tự động xử lý file
             });
 
             // Thêm sự kiện để xử lý việc nhập URL
@@ -1954,6 +2108,17 @@
 
             document.getElementById('juneUrl').value = juneFileUrl;
             document.getElementById('julyUrl').value = julyFileUrl;
+
+            // Gán sự kiện cho nút chuyển đổi dữ liệu của Biểu đồ So sánh
+            // Phương pháp này đảm bảo nút đã tồn tại trên trang trước khi gán sự kiện, giải quyết lỗi ReferenceError
+            const toggleBtn = document.getElementById('toggleOverallChartBtn');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    // Khi nút được nhấn, đảo ngược trạng thái và vẽ lại biểu đồ
+                    window.showMonthlyDataOverall = !window.showMonthlyDataOverall;
+                    showOverallComparisonChart();
+                });
+            }
         };
 
         function updateMonth(type) {
@@ -2029,7 +2194,7 @@
                     const enemyWoundedDiff = enemyWoundedJuly - enemyWoundedJune;
                     totals.enemyWoundedDiff += enemyWoundedDiff;
                 }
-                
+
                 // Tính tổng Quân Đội Bị Thương
                 const troopsWoundedJune = parseValue(juneStats?.troops_wounded);
                 const troopsWoundedJuly = parseValue(julyStats?.troops_wounded);
@@ -2507,7 +2672,344 @@
             XLSX.writeFile(workbook, 'Updated_Data.xlsx');
             alert('Dữ liệu đã được lưu thành công!');
         }
+
+        function showChartModal() {
+            const playerSelect = document.getElementById('playerSelectChart');
+            playerSelect.innerHTML = ''; // Xóa các lựa chọn cũ
+
+            const eligiblePlayers = currentData.filter(p => p.hasBothData);
+
+            if (eligiblePlayers.length === 0) {
+                alert("Không có người chơi nào có đủ dữ liệu ở cả 2 tháng để vẽ biểu đồ.");
+                return;
+            }
+
+            eligiblePlayers.sort((a, b) => a.name.localeCompare(b.name)); // Sắp xếp theo tên
+
+            eligiblePlayers.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.userId;
+                option.textContent = player.name;
+                playerSelect.appendChild(option);
+            });
+
+            document.getElementById('chartModal').style.display = 'block';
+            updateChart(); // Vẽ biểu đồ cho người chơi đầu tiên
+        }
+
+        function hideChartModal() {
+            document.getElementById('chartModal').style.display = 'none';
+            if (chartInstance) {
+                chartInstance.destroy();
+                chartInstance = null;
+            }
+        }
+
+        function updateChart() {
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const playerId = document.getElementById('playerSelectChart').value;
+            const player = currentData.find(p => p.userId === playerId);
+
+            if (!player) return;
+
+            const statsToChart = [
+                { key: 'kills', label: 'Kills', yAxisID: 'y' },
+                { key: 'enemies_destroyed', label: 'Kẻ Thù Tiêu Diệt', yAxisID: 'y1' },
+                { key: 'enemy_wounded', label: 'Quân Địch Bị Thương', yAxisID: 'y' },
+                { key: 'troops_lost', label: 'Số Quân Tổn Thất', yAxisID: 'y' }
+            ];
+
+            const labels = statsToChart.map(s => s.label);
+
+            const datasets = statsToChart.map((stat, index) => {
+                const value = calculateDifference(player.julyStats?.[stat.key], player.juneStats?.[stat.key]) || 0;
+
+                let backgroundColor;
+                if (stat.key === 'troops_lost') {
+                    backgroundColor = value <= 0 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(255, 99, 132, 0.7)';
+                } else {
+                    backgroundColor = value >= 0 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(255, 99, 132, 0.7)';
+                }
+
+                // Create a dataset for each stat
+                return {
+                    label: stat.label,
+                    data: labels.map((_, i) => i === index ? value : null), // Only one value per dataset
+                    backgroundColor: backgroundColor,
+                    borderWidth: 1,
+                    yAxisID: stat.yAxisID
+                };
+            });
+
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { // To make tooltips work better with this setup
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        title: { display: true, text: `Biến động chỉ số của: ${player.name}`, font: { size: 16 } },
+                        legend: { display: false }, // Legend is redundant with x-axis labels
+                        tooltip: {
+                            callbacks: {
+                                // Show only the tooltip for the non-null value
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toLocaleString();
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Kills / Bị thương / Tổn thất' },
+                            ticks: { callback: (value) => value.toLocaleString() }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: 'Kẻ Thù Tiêu Diệt' },
+                            ticks: { callback: (value) => value.toLocaleString() },
+                            // This is crucial to prevent the grid lines from overlapping
+                            grid: { drawOnChartArea: false, },
+                        }
+                    }
+                }
+            });
+        }
+
+        function hideOverallComparisonChart() {
+            document.getElementById('overallComparisonChartModal').style.display = 'none';
+            // Xóa nội dung container để hủy các biểu đồ và giải phóng bộ nhớ
+            document.getElementById('overallChartContainer').innerHTML = '';
+        }
+
+        function showOverallComparisonChart() {
+            const container = document.getElementById('overallChartContainer');
+            container.innerHTML = ''; // Xóa các biểu đồ cũ
+
+            const eligiblePlayers = currentData.filter(p => p.hasBothData);
+            if (eligiblePlayers.length === 0) {
+                alert("Không có người chơi nào có đủ dữ liệu ở cả 2 tháng để vẽ biểu đồ.");
+                return;
+            }
+
+            // Sắp xếp theo chênh lệch Kills giảm dần hoặc theo tên
+            if (!window.showMonthlyDataOverall) {
+                eligiblePlayers.sort((a, b) => {
+                    const diffA = calculateDifference(a.julyStats?.kills, a.juneStats?.kills) || 0;
+                    const diffB = calculateDifference(b.julyStats?.kills, b.juneStats?.kills) || 0;
+                    return diffB - diffA;
+                });
+            } else {
+                eligiblePlayers.sort((a, b) => a.name.localeCompare(b.name));
+
+            }
+
+            // Định dạng số
+            const formatVietnameseTick = (value) => {
+                if (value === 0) return '0';
+                const absVal = Math.abs(value);
+                const sign = value < 0 ? '-' : '';
+                if (absVal >= 1e12) return sign + (absVal / 1e12).toFixed(2).replace(/\.00$|\.0$/, '') + ' nghìn tỷ';
+                if (absVal >= 1e9) return sign + (absVal / 1e9).toFixed(2).replace(/\.00$|\.0$/, '') + ' tỷ';
+                if (absVal >= 1e6) return sign + (absVal / 1e6).toFixed(2).replace(/\.00$|\.0$/, '') + ' triệu';
+                if (absVal >= 1e3) return sign + (absVal / 1e3).toFixed(0) + 'k';
+                return value.toLocaleString('vi-VN');
+            };
+
+            const statsConfig = [
+                { key: 'enemies_destroyed', label: 'Kẻ Thù Tiêu Diệt', colorJune: 'rgba(54, 162, 235, 0.7)', colorJuly: 'rgba(54, 162, 235, 0.35)', xAxisID: 'x1' },
+                { key: 'kills', label: 'Kills', colorJune: 'rgba(75, 192, 192, 0.7)', colorJuly: 'rgba(75, 192, 192, 0.35)', xAxisID: 'x' },
+                { key: 'enemy_wounded', label: 'Quân Địch Bị Thương', colorJune: 'rgba(255, 206, 86, 0.7)', colorJuly: 'rgba(255, 206, 86, 0.35)', xAxisID: 'x' },
+                { key: 'troops_lost', label: 'Số Quân Tổn Thất', colorJune: 'rgba(255, 99, 132, 0.7)', colorJuly: 'rgba(255, 99, 132, 0.35)', xAxisID: 'x' }
+            ];
+            const chartLabels = statsConfig.map(s => s.label);
+
+            eligiblePlayers.forEach((player, index) => {
+                const playerChartContainer = document.createElement('div');
+                playerChartContainer.style.height = '350px';
+                playerChartContainer.style.position = 'relative';
+                playerChartContainer.style.marginBottom = '40px';
+
+                const canvas = document.createElement('canvas');
+                playerChartContainer.appendChild(canvas);
+                container.appendChild(playerChartContainer);
+
+                let chartConfig;
+
+                if (window.showMonthlyDataOverall) {          
+                
+                    // CHẾ ĐỘ 1: Mỗi tháng 1 dòng riêng biệt, có 2 trục giá trị
+                    const labels = [];
+                    const datasets = [];
+                    statsConfig.forEach(stat => {
+                        // Label riêng cho từng tháng
+                        labels.push(`${stat.label} - Tháng ${selectedMonths.june}`);
+                        labels.push(`${stat.label} - Tháng ${selectedMonths.july}`);
+
+                        // Dataset tháng 6 (chỉ có giá trị ở dòng tháng 6, dòng tháng 7 null)
+                        datasets.push({
+                            label: `${stat.label} - Tháng ${selectedMonths.june}`,
+                            data: labels.map(l => l === `${stat.label} - Tháng ${selectedMonths.june}` ? (player.juneStats?.[stat.key] || 0) : null),
+                            backgroundColor: 'rgba(59, 130, 246, 0.75)', // xanh
+                            barPercentage: 3,
+                            categoryPercentage: 0.9,
+                            maxBarThickness: 42,
+                            xAxisID: stat.xAxisID
+                        });
+
+                        // Dataset tháng 7 (chỉ có giá trị ở dòng tháng 7, dòng tháng 6 null)
+                        datasets.push({
+                            label: `${stat.label} - Tháng ${selectedMonths.july}`,
+                            data: labels.map(l => l === `${stat.label} - Tháng ${selectedMonths.july}` ? (player.julyStats?.[stat.key] || 0) : null),
+                            backgroundColor: 'rgba(234, 88, 12, 0.75)', // cam
+                            barPercentage: 5,
+                            categoryPercentage: 0.9,
+                            maxBarThickness: 42,
+                            xAxisID: stat.xAxisID
+                        });
+                    });
+
+                    chartConfig = {
+                        type: 'bar',
+                        data: { labels, datasets },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: `${index + 1}. ${player.name}`,
+                                    align: 'start',
+                                    font: { size: 16, weight: 'bold' },
+                                    padding: { bottom: 10 }
+                                },
+                                legend: { display: false }, // legend không cần vì label đã có tháng
+                                tooltip: {
+                                    callbacks: {
+                                        label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.x?.toLocaleString('vi-VN')}`
+                                    }
+                                },
+                                datalabels: {
+                                    formatter: (value) => value?.toLocaleString('vi-VN'),
+                                    color: '#fff',
+                                    font: { weight: 'bold' },
+                                    textStrokeColor: 'rgba(0,0,0,0.6)',
+                                    textStrokeWidth: 2
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    type: 'linear',
+                                    position: 'bottom',
+                                    title: { display: true, text: 'Kills / Bị thương / Tổn thất' },
+                                    ticks: { callback: formatVietnameseTick }
+                                },
+                                x1: {
+                                    type: 'linear',
+                                    position: 'top',
+                                    title: { display: true, text: 'Kẻ Thù Tiêu Diệt' },
+                                    grid: { drawOnChartArea: false },
+                                    ticks: { callback: formatVietnameseTick }
+                                }
+                            }
+                        }
+                    };
+                }
+
+
+                else {
+                    // CHẾ ĐỘ 2: Tổng chênh lệch (giữ nguyên)
+                    chartConfig = {
+                        type: 'bar',
+                        data: {
+                            labels: chartLabels,
+                            datasets: statsConfig.map((stat, i) => ({
+                                label: stat.label,
+                                data: chartLabels.map((_, j) => i === j ? (calculateDifference(player.julyStats?.[stat.key], player.juneStats?.[stat.key]) || 0) : null),
+                                backgroundColor: stat.colorJune,
+                                barPercentage: 3,        // tăng độ rộng thanh
+                                categoryPercentage: 0.9,
+                                maxBarThickness: 42,
+                                xAxisID: stat.xAxisID
+                            }))
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: { display: true, text: `${index + 1}. ${player.name}`, align: 'start', font: { size: 15, weight: 'bold' }, padding: { bottom: 5 } },
+                                legend: { display: false },
+                                tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.x.toLocaleString('vi-VN')}` } },
+                                datalabels: {
+                                    formatter: (value) => value?.toLocaleString('vi-VN'),
+                                    color: '#fff', font: { size: 10, weight: 'bold' },
+                                    textStrokeColor: 'rgba(0,0,0,0.6)', textStrokeWidth: 2
+                                }
+                            },
+                            scales: {
+                                x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Kills / Bị thương / Tổn thất' }, ticks: { callback: formatVietnameseTick } },
+                                x1: { type: 'linear', position: 'top', title: { display: true, text: 'Kẻ Thù Tiêu Diệt' }, grid: { drawOnChartArea: false }, ticks: { callback: formatVietnameseTick } }
+                            }
+                        }
+                    };
+                }
+
+                new Chart(canvas.getContext('2d'), chartConfig);
+            });
+
+            document.getElementById('overallComparisonChartModal').style.display = 'block';
+        }
+
+        function exportComparisonChartPDF() {
+    const charts = document.getElementById('overallChartContainer');
+
+    if (!charts) {
+        alert("Không tìm thấy biểu đồ để xuất PDF!");
+        return;
+    }
+
+    const opt = {
+        margin:       0.2,
+        filename:     'bieu-do-so-sanh.pdf',
+        image:        { type: 'jpeg', quality: 1 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(charts).save();
+}
+
+
     </script>
+
+
 </body>
 
 </html>
