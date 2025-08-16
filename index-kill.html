@@ -2916,11 +2916,15 @@
                                     }
                                 },
                                 datalabels: {
+                                    anchor: 'end', // Di chuyển nhãn ra cuối thanh
+                                    align: 'end',  // Căn lề nhãn ở cuối thanh
+                                    offset: 4,     // Thêm một chút khoảng cách từ cuối thanh
                                     formatter: (value) => value?.toLocaleString('vi-VN'),
-                                    color: '#fff',
-                                    font: { weight: 'bold' },
-                                    textStrokeColor: 'rgba(0,0,0,0.6)',
-                                    textStrokeWidth: 2
+                                    color: '#333', // Đổi màu chữ thành màu tối để dễ đọc trên nền trắng
+                                    font: {
+                                        weight: 'bold',
+                                        size: 10
+                                    }
                                 }
                             },
                             scales: {
@@ -2968,9 +2972,21 @@
                                 legend: { display: false },
                                 tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.x.toLocaleString('vi-VN')}` } },
                                 datalabels: {
+                                    anchor: 'end', // Đặt neo ở cuối thanh
+                                    align: 'end',  // Căn lề ở cuối thanh (bên ngoài)
+                                    offset: 4,     // Khoảng cách nhỏ từ cuối thanh
                                     formatter: (value) => value?.toLocaleString('vi-VN'),
-                                    color: '#fff', font: { size: 10, weight: 'bold' },
-                                    textStrokeColor: 'rgba(0,0,0,0.6)', textStrokeWidth: 2
+                                    color: (context) => {
+                                        // Lấy giá trị từ context để quyết định màu sắc
+                                        const value = context.dataset.data[context.dataIndex];
+                                        if (value > 0) return 'green';
+                                        if (value < 0) return 'red';
+                                        return '#666'; // Màu cho giá trị 0
+                                    },
+                                    font: {
+                                        size: 10,
+                                        weight: 'bold'
+                                    }
                                 }
                             },
                             scales: {
