@@ -104,6 +104,23 @@
             line-height: 1.1;
         }
 
+        /* === THÊM MỚI: Style cho chi tiết điểm săn === */
+        .hunt-breakdown {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+            justify-content: center;
+            margin-top: 5px;
+            font-size: 11px;
+            color: var(--dark-gray);
+        }
+        .hunt-breakdown span {
+            background-color: #e0e6eb;
+            padding: 1px 6px;
+            border-radius: var(--border-radius-sm);
+            white-space: nowrap;
+        }
+
         .title-wrapper h1 {
             font-size: 1.8em;
             /* Giảm nhẹ kích thước */
@@ -442,7 +459,8 @@
         /* === THÊM MỚI: Style cho dòng tổng kết === */
         .table-summary-row td {
             font-weight: bold;
-            background-color: #e9edf0; /* Giống màu header */
+            background-color: #e9edf0;
+            /* Giống màu header */
             border-top: 2px solid var(--medium-gray);
             color: var(--text-color);
         }
@@ -607,6 +625,29 @@
         .countdown-group {
             min-width: 280px;
             /* Điều chỉnh độ rộng nếu cần */
+        }
+
+        .time-input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .time-input-group label {
+            font-size: 12px;
+            color: var(--dark-gray);
+            margin-bottom: 2px;
+            text-align: center;
+        }
+
+        .time-input-group input::-webkit-outer-spin-button,
+        .time-input-group input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .time-input-group input[type=number] {
+            -moz-appearance: textfield;
+            /* Firefox */
         }
 
         #countdownDisplay {
@@ -928,8 +969,12 @@
         }
 
         /* === THÊM MỚI: Tùy chọn Hell Lính === */
-        #troopOptions, #pactOptions, #pactSpeedOptions, #troopExtraOptions {
-            display: none; /* Ẩn mặc định */
+        #troopOptions,
+        #pactOptions,
+        #pactSpeedOptions,
+        #troopExtraOptions {
+            display: none;
+            /* Ẩn mặc định */
             width: 100%;
             margin-top: 15px;
             padding-top: 15px;
@@ -941,9 +986,11 @@
             align-items: center;
         }
 
-        #troopExtraOptions select, #troopExtraOptions input {
+        #troopExtraOptions select,
+        #troopExtraOptions input {
             min-width: 120px;
-            flex-grow: 0 !important; /* Ngăn không cho co giãn quá lớn */
+            flex-grow: 0 !important;
+            /* Ngăn không cho co giãn quá lớn */
         }
 
         /* === THÊM MỚI: Energy Calculator Section === */
@@ -966,18 +1013,24 @@
         }
 
         .energy-grid {
-            display: flex; /* Chuyển sang flexbox */
-            flex-wrap: wrap; /* Cho phép các item xuống dòng */
-            justify-content: center; /* Căn giữa các item */
-            gap: 10px; /* Khoảng cách giữa các "viên thuốc" */
+            display: flex;
+            /* Chuyển sang flexbox */
+            flex-wrap: wrap;
+            /* Cho phép các item xuống dòng */
+            justify-content: center;
+            /* Căn giữa các item */
+            gap: 10px;
+            /* Khoảng cách giữa các "viên thuốc" */
             margin-bottom: 25px;
         }
 
         .energy-input-group {
-            display: inline-flex; /* Hiển thị như một khối inline */
+            display: inline-flex;
+            /* Hiển thị như một khối inline */
             align-items: center;
             border: 1px solid var(--medium-gray);
-            border-radius: 20px; /* Bo tròn để tạo hình viên thuốc */
+            border-radius: 20px;
+            /* Bo tròn để tạo hình viên thuốc */
             padding: 5px 10px;
             background-color: var(--white-color);
             transition: border-color var(--transition-speed);
@@ -997,14 +1050,16 @@
         }
 
         .energy-input-group input[type="number"] {
-            width: 40px; /* Độ rộng rất nhỏ */
+            width: 40px;
+            /* Độ rộng rất nhỏ */
             border: none;
             background: transparent;
             text-align: center;
             font-weight: bold;
             color: var(--primary-color);
             padding: 2px;
-            -moz-animation: textfield; /* Ẩn mũi tên tăng/giảm trên Firefox */
+            -moz-animation: textfield;
+            /* Ẩn mũi tên tăng/giảm trên Firefox */
         }
 
         .energy-input-group input[type="number"]:focus {
@@ -1021,6 +1076,54 @@
             font-size: 1.2em;
             font-weight: bold;
         }
+
+        /* === THÊM MỚI: Purchase Leaderboard Section === */
+        .purchase-leaderboard-section {
+            margin-top: 30px;
+            background: var(--white-color);
+            border-radius: var(--border-radius-md);
+            padding: 30px;
+            box-shadow: var(--box-shadow-medium);
+            border: 1px solid var(--light-gray);
+        }
+
+        .purchase-leaderboard-section h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+
+        .anonymous-box-item {
+            background-color: #fdf0e6;
+            border: 1px solid #e67e22;
+            padding: 15px;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .anonymous-box-item .name {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #d35400;
+        }
+
+        .purchase-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 20px; /* Khoảng cách giữa các item */
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .purchase-details span {
+            background-color: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: var(--border-radius-sm);
+        }
     </style>
 </head>
 
@@ -1035,6 +1138,7 @@
         <div class="header-stat">
             <span class="stat-label">Tổng Điểm Săn</span>
             <span id="totalPointsDisplay" class="stat-value">0</span>
+            <div id="totalHuntBreakdown" class="hunt-breakdown"></div>
         </div>
         <!-- === KẾT THÚC THÊM MỚI === -->
         <div class="input-actions-group">
@@ -1065,10 +1169,28 @@
                 <button class="btn btn-primary process-txt-btn" onclick="processTxtFile()">Xử lý TXT</button>
             </div>
             <!-- === THÊM MỚI: Input Đếm Ngược === -->
-            <div class="input-group countdown-group">
-                <input type="text" id="countdownInput" placeholder="nhập times" class="url-input">
-                <!-- Tái sử dụng class url-input -->
-                <button class="btn btn-info" onclick="startCountdown()">Tính Time Base</button> <!-- Nút màu khác -->
+            <div class="input-group countdown-group" style="flex-wrap: wrap; align-items: flex-end; gap: 10px;">
+                <div class="time-input-group">
+                    <label for="daysInput">Ngày</label>
+                    <input type="number" id="daysInput" placeholder="0" min="0" max="99" class="url-input"
+                        style="width: 50px; text-align: center; padding: 10px 5px;">
+                </div>
+                <div class="time-input-group">
+                    <label for="hoursInput">Giờ</label>
+                    <input type="number" id="hoursInput" placeholder="0" min="0" max="23" class="url-input"
+                        style="width: 50px; text-align: center; padding: 10px 5px;">
+                </div>
+                <div class="time-input-group">
+                    <label for="minutesInput">Phút</label>
+                    <input type="number" id="minutesInput" placeholder="0" min="0" max="59" class="url-input"
+                        style="width: 50px; text-align: center; padding: 10px 5px;">
+                </div>
+                <div class="time-input-group">
+                    <label for="secondsInput">Giây</label>
+                    <input type="number" id="secondsInput" placeholder="0" min="0" max="59" class="url-input"
+                        style="width: 50px; text-align: center; padding: 10px 5px;">
+                </div>
+                <button class="btn btn-info" onclick="calculateTimeBase()">Tính Ngược</button>
             </div>
             <!-- === KẾT THÚC THÊM MỚI === -->
             <!-- === THÊM MỚI: Hiển thị Đếm Ngược === -->
@@ -1142,11 +1264,12 @@
             <div class="debt-checker-controls">
                 <button class="btn btn-primary" onclick="runDebtCheck()">Kiểm Tra Nợ</button>
                 <label for="debtCheckFile" class="upload-label txt-label">Chọn file TXT</label>
-                <input type="file" id="debtCheckFile" accept=".txt" onchange="document.getElementById('debtCheckFileName').textContent = this.files[0]?.name || 'Chưa chọn file'">
+                <input type="file" id="debtCheckFile" accept=".txt"
+                    onchange="document.getElementById('debtCheckFileName').textContent = this.files[0]?.name || 'Chưa chọn file'">
                 <span class="file-name" id="debtCheckFileName">Chưa chọn file</span>
             </div>
             <div id="debtCheckResults">
-            
+
                 <!-- Kết quả sẽ được hiển thị ở đây -->
             </div>
         </div>
@@ -1165,8 +1288,8 @@
                 <button class="btn btn-primary" onclick="calculateHellEvent()">Tính toán</button>
                 <!-- Thêm tùy chọn cho Hell Khế Ước -->
                 <div id="pactSpeedOptions">
-                     <span>Tốc độ kết hợp (%): </span>
-                     <input type="number" id="pactSpeed" placeholder="Ví dụ: 391.1" value="391.1">
+                    <span>Tốc độ kết hợp (%): </span>
+                    <input type="number" id="pactSpeed" placeholder="Ví dụ: 391.1" value="391.1">
                 </div>
                 <!-- Thêm tùy chọn cho Hell Khế Ước -->
                 <div id="pactOptions">
@@ -1193,7 +1316,8 @@
                         <option value="infantry">Bộ</option>
                     </select>
                     <span>Tốc độ huấn luyện (%): </span>
-                    <input type="number" id="trainingSpeed" placeholder="Ví dụ: 522.38" value="522.38" class="url-input">
+                    <input type="number" id="trainingSpeed" placeholder="Ví dụ: 522.38" value="522.38"
+                        class="url-input">
                 </div>
                 <!-- === KẾT THÚC THÊM MỚI === -->
             </div>
@@ -1239,6 +1363,18 @@
         </div>
         <!-- === KẾT THÚC THÊM MỚI === -->
 
+        <!-- === THÊM MỚI: Bảng Xếp Hạng Nạp === -->
+        <div class="purchase-leaderboard-section">
+            <h2>💎 Bảng Xếp Hạng Nạp</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="displayPurchaseLeaderboard()">Cập nhật Bảng Xếp Hạng</button>
+            </div>
+            <div id="purchaseLeaderboardResults">
+                <!-- Kết quả sẽ được hiển thị ở đây -->
+            </div>
+        </div>
+        <!-- === KẾT THÚC THÊM MỚI === -->
+
     </div>
 
     <script>
@@ -1246,6 +1382,7 @@
         let statusChartInstance = null;
         let topPlayersChartInstance = null;
         let originalData = []; // Thêm dòng này
+        let rawExcelData = []; // Thêm dòng này để lưu dữ liệu thô từ Excel
         let processedData = [];
         let showQuaiTuan = false;
         let showIdColumn = false;
@@ -1281,6 +1418,7 @@
                     if (searchInput) searchInput.value = '';
 
 
+                    rawExcelData = jsonData; // Lưu dữ liệu thô
                     originalData = processData(jsonData); // Dữ liệu gốc
                     processedData = JSON.parse(JSON.stringify(originalData)); // Bản sao để chỉnh sửa
                     currentTab = 'missing';
@@ -1665,15 +1803,67 @@
                 // Hoặc gọi trực tiếp nếu không gặp vấn đề
                 renderCharts();
             }
+            displayPurchaseLeaderboard(); // Cập nhật BXH Nạp
         }
 
         // === THÊM MỚI: Hàm cập nhật tổng điểm ===
+        // Sửa đổi: Lấy dữ liệu từ dòng 'total' trong file Excel gốc
         function updateTotalPointsDisplay() {
-            const totalPoints = processedData.reduce((sum, item) => sum + item.points, 0);
             const displayElement = document.getElementById('totalPointsDisplay');
+            const breakdownElement = document.getElementById('totalHuntBreakdown');
+
+            if (!rawExcelData || rawExcelData.length < 2) {
+                if (displayElement) displayElement.textContent = '0';
+                if (breakdownElement) breakdownElement.innerHTML = '';
+                return;
+            }
+
+            // Tìm chỉ số các cột cần thiết một cách linh hoạt
+            const headers = rawExcelData[0].map(h => String(h).trim().toLowerCase());
+            const nameIndex = headers.indexOf("name");
+            const l1Index = headers.indexOf("l1 (hunt)");
+            const l2Index = headers.indexOf("l2 (hunt)");
+            const l3Index = headers.indexOf("l3 (hunt)");
+            const l4Index = headers.indexOf("l4 (hunt)");
+            const l5Index = headers.indexOf("l5 (hunt)");
+
+            // Kiểm tra xem tất cả các cột cần thiết có tồn tại không
+            if ([nameIndex, l1Index, l2Index, l3Index, l4Index, l5Index].some(index => index === -1)) {
+                console.warn("Không tìm thấy tất cả các cột cần thiết ('name', 'l1-l5 (hunt)') trong file Excel để tính tổng điểm.");
+                if (displayElement) displayElement.textContent = 'Lỗi';
+                if (breakdownElement) breakdownElement.innerHTML = '';
+                return;
+            }
+
+            // Tìm dòng có giá trị 'total' trong cột 'name'
+            const totalRow = rawExcelData.find(row => row && row[nameIndex] && String(row[nameIndex]).trim().toLowerCase() === 'total');
+
+            let totalPoints = 0;
+            let breakdownHtml = '';
+
+            if (totalRow) {
+                const l1 = parseInt(totalRow[l1Index]) || 0;
+                const l2 = parseInt(totalRow[l2Index]) || 0;
+                const l3 = parseInt(totalRow[l3Index]) || 0;
+                const l4 = parseInt(totalRow[l4Index]) || 0;
+                const l5 = parseInt(totalRow[l5Index]) || 0;
+                totalPoints = l2 + (l3 * 4) + (l4 * 16) + (l5 * 32);
+
+                // Tạo HTML cho phần chi tiết
+                breakdownHtml = `
+                    <span>L1: <strong>${l1.toLocaleString('vi-VN')}</strong></span>
+                    <span>L2: <strong>${l2.toLocaleString('vi-VN')}</strong></span>
+                    <span>L3: <strong>${l3.toLocaleString('vi-VN')}</strong></span>
+                    <span>L4: <strong>${l4.toLocaleString('vi-VN')}</strong></span>
+                    <span>L5: <strong>${l5.toLocaleString('vi-VN')}</strong></span>
+                `;
+            }
+
             if (displayElement) {
-                // Định dạng số cho dễ đọc (vd: 1.234.567)
                 displayElement.textContent = totalPoints.toLocaleString('vi-VN');
+            }
+            if (breakdownElement) {
+                breakdownElement.innerHTML = breakdownHtml;
             }
         }
         // === KẾT THÚC THÊM MỚI ===
@@ -1743,7 +1933,7 @@
         // Sửa lại hàm generateTable chỉ dùng cho các tab thường
         function generateTable(data, tabId) {
             if (!data || data.length === 0) return '<p class="empty">Không có dữ liệu</p>';
-        
+
             const showCheckbox = tabId === 'missing';
 
             // --- Bắt đầu: Tính toán cho dòng tổng kết ---
@@ -1787,7 +1977,7 @@
                 `;
             }
             // --- Kết thúc: Tính toán cho dòng tổng kết ---
-        
+
             // Bọc bảng trong div.table-responsive
             return `
             <div class="table-responsive"><table>
@@ -1853,7 +2043,7 @@
         `;
         }
 
-        
+
         function getStatusText(item) {
             const diff = item.points - item.target;
             if (diff < 0) return `Thiếu ${-diff}`;
@@ -1912,7 +2102,7 @@
         function processCorrections() {
             const selectedIds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
                 .map(checkbox => parseInt(checkbox.dataset.id));
-            
+
             if (selectedIds.length === 0) {
                 alert("Vui lòng chọn ít nhất một thành viên để cập nhật.");
                 return;
@@ -1958,130 +2148,131 @@
             document.body.classList.add('hide-quaituan');
             showTab('missing'); // Hiển thị tab mặc định
             toggleHellOptions(); // Gọi để hiển thị đúng options cho hell mặc định
+            displayPurchaseLeaderboard(); // Khởi tạo BXH Nạp
         });
         function exportToExcel() {
-    try {
-        const wb = XLSX.utils.book_new();
-        const cleanSheetName = (name) => name.replace(/[\/:*?[\]]/g, '-');
+            try {
+                const wb = XLSX.utils.book_new();
+                const cleanSheetName = (name) => name.replace(/[\/:*?[\]]/g, '-');
 
-        // Sắp xếp dữ liệu: "Thiếu" lên đầu, sau đó theo điểm giảm dần
-        const sortedData = [...processedData].sort((a, b) => {
-            const aIsMissing = a.status === 'missing';
-            const bIsMissing = b.status === 'missing';
+                // Sắp xếp dữ liệu: "Thiếu" lên đầu, sau đó theo điểm giảm dần
+                const sortedData = [...processedData].sort((a, b) => {
+                    const aIsMissing = a.status === 'missing';
+                    const bIsMissing = b.status === 'missing';
 
-            if (aIsMissing && !bIsMissing) return -1; // a (thiếu) lên trước b (không thiếu)
-            if (!aIsMissing && bIsMissing) return 1;  // b (thiếu) lên trước a (không thiếu)
+                    if (aIsMissing && !bIsMissing) return -1; // a (thiếu) lên trước b (không thiếu)
+                    if (!aIsMissing && bIsMissing) return 1;  // b (thiếu) lên trước a (không thiếu)
 
-            // Nếu cả hai cùng trạng thái (cùng thiếu hoặc cùng không), sắp xếp theo điểm giảm dần
-            return b.points - a.points;
-        });
+                    // Nếu cả hai cùng trạng thái (cùng thiếu hoặc cùng không), sắp xếp theo điểm giảm dần
+                    return b.points - a.points;
+                });
 
-        // Chuẩn bị dữ liệu để xuất từ dữ liệu đã sắp xếp
-        const wsData = [
-            ["User ID", "Name", "L1 (Hunt)", "L2 (Hunt)", "L3 (Hunt)", "L4 (Hunt)", "L5 (Hunt)", "Points Hunt", "Quái Tuần", "Thiếu", "Bù"],
-            ...sortedData.map(item => [
-                item.id,
-                item.name,
-                item.levels.l1,
-                item.levels.l2,
-                item.levels.l3,
-                item.levels.l4,
-                item.levels.l5,
-                item.points,
-                item.target,
-                item.points === item.target ? "Đủ" : 
-                    item.points < item.target ? `Thiếu ${item.target - item.points}` : `Dư ${item.points - item.target}`,
-                item.points < item.target ? `Bù ${(item.target - item.points) + 5}` : 0
-            ])
-        ];
+                // Chuẩn bị dữ liệu để xuất từ dữ liệu đã sắp xếp
+                const wsData = [
+                    ["User ID", "Name", "L1 (Hunt)", "L2 (Hunt)", "L3 (Hunt)", "L4 (Hunt)", "L5 (Hunt)", "Points Hunt", "Quái Tuần", "Thiếu", "Bù"],
+                    ...sortedData.map(item => [
+                        item.id,
+                        item.name,
+                        item.levels.l1,
+                        item.levels.l2,
+                        item.levels.l3,
+                        item.levels.l4,
+                        item.levels.l5,
+                        item.points,
+                        item.target,
+                        item.points === item.target ? "Đủ" :
+                            item.points < item.target ? `Thiếu ${item.target - item.points}` : `Dư ${item.points - item.target}`,
+                        item.points < item.target ? `Bù ${(item.target - item.points) + 5}` : 0
+                    ])
+                ];
 
-        // Create worksheet
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-        // Add column formatting
-        ws['!cols'] = [
-            { wch: 10 }, // User ID
-            { wch: 25 }, // Name
-            { wch: 8 },  // L1
-            { wch: 8 },  // L2
-            { wch: 8 },  // L3
-            { wch: 8 },  // L4
-            { wch: 8 },  // L5
-            { wch: 12 }, // Points Hunt
-            { wch: 12 }, // Quái Tuần
-            { wch: 15 }, // Thiếu
-            { wch: 10 }  // Bù
-        ];
+                // Add column formatting
+                ws['!cols'] = [
+                    { wch: 10 }, // User ID
+                    { wch: 25 }, // Name
+                    { wch: 8 },  // L1
+                    { wch: 8 },  // L2
+                    { wch: 8 },  // L3
+                    { wch: 8 },  // L4
+                    { wch: 8 },  // L5
+                    { wch: 12 }, // Points Hunt
+                    { wch: 12 }, // Quái Tuần
+                    { wch: 15 }, // Thiếu
+                    { wch: 10 }  // Bù
+                ];
 
-        // Add conditional formatting for "Thiếu" (yellow) and "Bù" (orange)
-        // Note: This requires using XLSX.utils.sheet_add_json with cell styling options
-        // or creating a separate XLSX file with styling (more complex)
-        
-        // Alternative approach: Create HTML table with styling and convert to Excel
-        // This will preserve basic colors but may not be perfect
-        
-        // For better formatting, we can use the xlsx-style library (not included by default)
-        // Here's a simpler approach that will work with basic Excel export:
-        
-        // Mark cells that need styling (will be processed by Excel)
-        wsData.forEach((row, rowIndex) => {
-            if (rowIndex === 0) return; // Skip header
-            
-            // Column J (Thiếu) - index 9
-            const thiếuCell = XLSX.utils.encode_cell({r: rowIndex, c: 9});
-            if (ws[thiếuCell] && ws[thiếuCell].v.includes("Thiếu")) {
-                ws[thiếuCell].s = { fill: { fgColor: { rgb: "FFFFFF00" } } }; // Yellow
+                // Add conditional formatting for "Thiếu" (yellow) and "Bù" (orange)
+                // Note: This requires using XLSX.utils.sheet_add_json with cell styling options
+                // or creating a separate XLSX file with styling (more complex)
+
+                // Alternative approach: Create HTML table with styling and convert to Excel
+                // This will preserve basic colors but may not be perfect
+
+                // For better formatting, we can use the xlsx-style library (not included by default)
+                // Here's a simpler approach that will work with basic Excel export:
+
+                // Mark cells that need styling (will be processed by Excel)
+                wsData.forEach((row, rowIndex) => {
+                    if (rowIndex === 0) return; // Skip header
+
+                    // Column J (Thiếu) - index 9
+                    const thiếuCell = XLSX.utils.encode_cell({ r: rowIndex, c: 9 });
+                    if (ws[thiếuCell] && ws[thiếuCell].v.includes("Thiếu")) {
+                        ws[thiếuCell].s = { fill: { fgColor: { rgb: "FFFFFF00" } } }; // Yellow
+                    }
+
+                    // Column K (Bù) - index 10
+                    const bùCell = XLSX.utils.encode_cell({ r: rowIndex, c: 10 });
+                    if (ws[bùCell] && typeof ws[bùCell].v === 'string' && ws[bùCell].v.startsWith("Bù")) {
+                        ws[bùCell].s = { fill: { fgColor: { rgb: "FFFFA500" } } }; // Màu cam
+                    }
+                });
+
+                // Thêm công thức dựa trên dữ liệu đã sắp xếp
+                sortedData.forEach((item, index) => {
+                    const rowNum = index + 2; // 1-based index, row 1 is header
+
+                    // Points Hunt formula (column H)
+                    const pointsCell = XLSX.utils.encode_cell({ r: rowNum - 1, c: 7 });
+                    ws[pointsCell] = {
+                        f: `D${rowNum}+(E${rowNum}*4)+(F${rowNum}*16)+(G${rowNum}*32)`,
+                        v: item.points
+                    };
+
+                    // Thiếu formula (column J)
+                    const thieuCell = XLSX.utils.encode_cell({ r: rowNum - 1, c: 9 });
+                    ws[thieuCell] = {
+                        f: `IF(H${rowNum}=I${rowNum}, "Đủ", IF(H${rowNum}<I${rowNum}, "Thiếu "&(I${rowNum}-H${rowNum}), "Dư "&(H${rowNum}-I${rowNum})))`,
+                        v: item.points === item.target ? "Đủ" :
+                            item.points < item.target ? `Thiếu ${item.target - item.points}` : `Dư ${item.points - item.target}`
+                    };
+
+                    // Bù formula (column K)
+                    const buCell = XLSX.utils.encode_cell({ r: rowNum - 1, c: 10 });
+                    ws[buCell] = {
+                        f: `IF(ISNUMBER(SEARCH("Thiếu",J${rowNum})), "Bù " & (I${rowNum}-H${rowNum}+5), 0)`,
+                        v: item.points < item.target ? `Bù ${(item.target - item.points) + 5}` : 0
+                    };
+                });
+
+                // Add worksheet to workbook
+                XLSX.utils.book_append_sheet(wb, ws, cleanSheetName("Báo cáo săn quái"));
+
+                // Generate filename
+                const today = new Date();
+                const fileName = `BaoCaoSanQuai_${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}.xlsx`;
+
+                // Export file
+                XLSX.writeFile(wb, fileName);
+                alert(`Xuất file Excel thành công: ${fileName}`);
+            } catch (error) {
+                console.error("Lỗi khi xuất Excel:", error);
+                alert(`Lỗi khi xuất Excel: ${error.message}`);
             }
-            
-            // Column K (Bù) - index 10
-            const bùCell = XLSX.utils.encode_cell({r: rowIndex, c: 10});
-            if (ws[bùCell] && typeof ws[bùCell].v === 'string' && ws[bùCell].v.startsWith("Bù")) {
-                ws[bùCell].s = { fill: { fgColor: { rgb: "FFFFA500" } } }; // Màu cam
-            }
-        });
-
-        // Thêm công thức dựa trên dữ liệu đã sắp xếp
-        sortedData.forEach((item, index) => {
-            const rowNum = index + 2; // 1-based index, row 1 is header
-            
-            // Points Hunt formula (column H)
-            const pointsCell = XLSX.utils.encode_cell({r: rowNum-1, c: 7});
-            ws[pointsCell] = { 
-                f: `D${rowNum}+(E${rowNum}*4)+(F${rowNum}*16)+(G${rowNum}*32)`,
-                v: item.points 
-            };
-            
-            // Thiếu formula (column J)
-            const thieuCell = XLSX.utils.encode_cell({r: rowNum-1, c: 9});
-            ws[thieuCell] = { 
-                f: `IF(H${rowNum}=I${rowNum}, "Đủ", IF(H${rowNum}<I${rowNum}, "Thiếu "&(I${rowNum}-H${rowNum}), "Dư "&(H${rowNum}-I${rowNum})))`,
-                v: item.points === item.target ? "Đủ" : 
-                    item.points < item.target ? `Thiếu ${item.target - item.points}` : `Dư ${item.points - item.target}`
-            };
-            
-            // Bù formula (column K)
-            const buCell = XLSX.utils.encode_cell({r: rowNum-1, c: 10});
-            ws[buCell] = { 
-                f: `IF(ISNUMBER(SEARCH("Thiếu",J${rowNum})), "Bù " & (I${rowNum}-H${rowNum}+5), 0)`,
-                v: item.points < item.target ? `Bù ${(item.target - item.points) + 5}` : 0
-            };
-        });
-
-        // Add worksheet to workbook
-        XLSX.utils.book_append_sheet(wb, ws, cleanSheetName("Báo cáo săn quái"));
-
-        // Generate filename
-        const today = new Date();
-        const fileName = `BaoCaoSanQuai_${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}.xlsx`;
-
-        // Export file
-        XLSX.writeFile(wb, fileName);
-        alert(`Xuất file Excel thành công: ${fileName}`);
-    } catch (error) {
-        console.error("Lỗi khi xuất Excel:", error);
-        alert(`Lỗi khi xuất Excel: ${error.message}`);
-    }
-}
+        }
 
         async function loadExcelFromUrl() {
             const rawUrl = document.getElementById('excelUrl').value.trim();
@@ -2200,7 +2391,7 @@
                 const searchInput = document.getElementById('searchInput');
                 if (searchInput) searchInput.value = '';
 
-
+                rawExcelData = jsonData; // Lưu dữ liệu thô
                 originalData = processData(jsonData);
                 processedData = JSON.parse(JSON.stringify(originalData));
                 currentTab = 'missing'; // Reset về tab mặc định
@@ -2310,201 +2501,203 @@
 
             return totalMs > 0 ? totalMs : null;
         }
-        function startCountdown() {
-            const inputElement = document.getElementById('countdownInput');
-            const displayElement = document.getElementById('countdownDisplay');
-            const durationString = inputElement.value;
+        function calculateTimeBase() {
+            // Lấy giá trị từ các input
+            const days = parseInt(document.getElementById('daysInput').value) || 0;
+            const hours = parseInt(document.getElementById('hoursInput').value) || 0;
+            const minutes = parseInt(document.getElementById('minutesInput').value) || 0;
+            const seconds = parseInt(document.getElementById('secondsInput').value) || 0;
 
-            // Dừng bộ đếm cũ nếu đang chạy
-            if (countdownIntervalId) {
-                clearInterval(countdownIntervalId);
-                countdownIntervalId = null;
-            }
+            // Tính tổng thời gian theo mili giây
+            const totalMs = (days * 24 * 60 * 60 * 1000) +
+                (hours * 60 * 60 * 1000) +
+                (minutes * 60 * 1000) +
+                (seconds * 1000);
 
-            const durationMs = parseDuration(durationString);
-
-            if (durationMs === null) {
-                displayElement.textContent = "Định dạng không hợp lệ!";
+            if (totalMs <= 0) {
+                alert("Vui lòng nhập thời gian lớn hơn 0");
                 return;
             }
 
-            countdownTargetTimestamp = Date.now() + durationMs;
+            // Tính thời điểm kết thúc
+            const now = new Date();
+            const endTime = new Date(now.getTime() + totalMs);
 
-            // Cập nhật hiển thị ngay lập tức
-            updateCountdownDisplay();
+            // Hiển thị kết quả
+            const displayElement = document.getElementById('countdownDisplay');
 
-            // Bắt đầu bộ đếm mới
-            countdownIntervalId = setInterval(updateCountdownDisplay, 1000); // Cập nhật mỗi giây
+            // Định dạng ngày tháng
+            const day = String(endTime.getDate()).padStart(2, '0');
+            const month = String(endTime.getMonth() + 1).padStart(2, '0');
+            const year = endTime.getFullYear();
+            const hoursStr = String(endTime.getHours()).padStart(2, '0');
+            const minutesStr = String(endTime.getMinutes()).padStart(2, '0');
+            const secondsStr = String(endTime.getSeconds()).padStart(2, '0');
+
+            displayElement.innerHTML = `
+        <div style="font-weight: bold; color: var(--primary-color);">
+            Thời gian kết thúc: ${day}/${month}/${year} ${hoursStr}:${minutesStr}:${secondsStr}
+        </div>
+        <div style="margin-top: 5px; font-size: 0.9em;">
+            (${formatDuration(totalMs / 1000)} từ bây giờ)
+        </div>
+    `;
         }
 
-        function updateCountdownDisplay() {
-            const displayElement = document.getElementById('countdownDisplay');
-            if (!countdownTargetTimestamp) {
-                displayElement.textContent = ""; // Xóa hiển thị nếu không có target
-                return;
-            }
+        function formatDuration(totalSeconds) {
+            totalSeconds = Math.round(totalSeconds);
 
-            const now = Date.now();
-            const remainingMs = countdownTargetTimestamp - now;
+            const days = Math.floor(totalSeconds / 86400);
+            totalSeconds %= 86400;
+            const hours = Math.floor(totalSeconds / 3600);
+            totalSeconds %= 3600;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
 
-            if (remainingMs <= 0) {
-                clearInterval(countdownIntervalId);
-                countdownIntervalId = null;
-                countdownTargetTimestamp = null;
-                displayElement.textContent = "⏰ Hết giờ!";
-                // Có thể thêm âm thanh báo hiệu ở đây nếu muốn
-                // Ví dụ: new Audio('path/to/sound.mp3').play();
-                return;
-            }
-            // Tạo đối tượng Date từ timestamp đích
-            const targetDate = new Date(countdownTargetTimestamp);
+            let parts = [];
+            if (days > 0) parts.push(`${days} ngày`);
+            if (hours > 0) parts.push(`${hours} giờ`);
+            if (minutes > 0) parts.push(`${minutes} phút`);
+            if (seconds > 0 || parts.length === 0) parts.push(`${seconds} giây`);
 
-            // Lấy các thành phần ngày, tháng, năm, giờ, phút, giây
-            const day = String(targetDate.getDate()).padStart(2, '0');
-            const month = String(targetDate.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0 nên cần +1
-            const year = targetDate.getFullYear();
-            const hours = String(targetDate.getHours()).padStart(2, '0');
-            const minutes = String(targetDate.getMinutes()).padStart(2, '0');
-            const seconds = String(targetDate.getSeconds()).padStart(2, '0');
-
-            // Định dạng chuỗi hiển thị ngày giờ cụ thể
-            const displayText = `Hẹn đến: ${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-            displayElement.textContent = displayText;
+            return parts.join(' ');
         }
+
+
 
         // === KẾT THÚC THÊM MỚI ===
 
         function exportMissingIdsToTxt() {
-    if (!processedData || processedData.length === 0) {
-        alert("Chưa có dữ liệu. Vui lòng tải file Excel trước.");
-        return;
-    }
+            if (!processedData || processedData.length === 0) {
+                alert("Chưa có dữ liệu. Vui lòng tải file Excel trước.");
+                return;
+            }
 
-    const missingIds = processedData
-    .filter(item => item.status === 'missing')
-    .map(item => ({
-        id: item.id,
-        debt: (item.target - item.points) + 5 // Lấy giá trị từ logic cột "Bù"
-    }));
+            const missingIds = processedData
+                .filter(item => item.status === 'missing')
+                .map(item => ({
+                    id: item.id,
+                    debt: (item.target - item.points) + 5 // Lấy giá trị từ logic cột "Bù"
+                }));
 
-    if (missingIds.length === 0) {
-    alert("Không có ID nào ở trạng thái 'Thiếu' để xuất.");
-    return;
-    }
+            if (missingIds.length === 0) {
+                alert("Không có ID nào ở trạng thái 'Thiếu' để xuất.");
+                return;
+            }
 
-    // Tạo nội dung file CSV
-    const csvContent = "User ID,Số quái cần bù\n" +
-    missingIds.map(item => `${item.id},${item.debt}`).join('\n');
+            // Tạo nội dung file CSV
+            const csvContent = "User ID,Số quái cần bù\n" +
+                missingIds.map(item => `${item.id},${item.debt}`).join('\n');
 
-    // Lấy ngày hiện tại và định dạng tên file
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-    const year = today.getFullYear();
-    const fileName = `${day}-${month}-${year}.txt`;
+            // Lấy ngày hiện tại và định dạng tên file
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+            const year = today.getFullYear();
+            const fileName = `${day}-${month}-${year}.txt`;
 
-    const blob = new Blob([csvContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    
-    URL.revokeObjectURL(url);
-    console.log(`Đã xuất file ${fileName}`);
-}
+            const blob = new Blob([csvContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.click();
 
-function runDebtCheck() {
-    const fileInput = document.getElementById('debtCheckFile');
-
-    if (fileInput.files.length === 0) {
-        alert("Vui lòng chọn file TXT chứa thông tin nợ.");
-        return;
-    }
-
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-        const fileContent = e.target.result;
-        const debtData = parseDebtData(fileContent);
-        if (debtData) {
-            displayDebtResults(debtData);
-        } else {
-            alert("Lỗi: Định dạng file TXT không hợp lệ.");
+            URL.revokeObjectURL(url);
+            console.log(`Đã xuất file ${fileName}`);
         }
-    };
 
-    reader.readAsText(file);
-}
+        function runDebtCheck() {
+            const fileInput = document.getElementById('debtCheckFile');
 
-function parseDebtData(fileContent) {
-    const lines = fileContent.trim().split('\n');
-    if (lines.length < 2) return null; // Ít nhất phải có header và 1 dòng dữ liệu
+            if (fileInput.files.length === 0) {
+                alert("Vui lòng chọn file TXT chứa thông tin nợ.");
+                return;
+            }
 
-    const header = lines.shift().trim();
-    if (header !== "User ID,Số quái cần bù") return null; // Kiểm tra header
+            const file = fileInput.files[0];
+            const reader = new FileReader();
 
-    const debtData = [];
-    for (const line of lines) {
-        const [id, debt] = line.trim().split(',');
-        if (!id || !debt || isNaN(parseInt(debt))) return null; // Kiểm tra dữ liệu hợp lệ
-        debtData.push({ id: id.trim(), debt: parseInt(debt) });
-    }
-    return debtData;
-}
-
-function displayDebtResults(debtData) {
-    const resultsContainer = document.getElementById('debtCheckResults');
-    resultsContainer.innerHTML = '';
-
-    if (!debtData || debtData.length === 0) {
-        resultsContainer.innerHTML = '<p class="empty">Không có dữ liệu nợ.</p>';
-        return;
-    }
-
-    // Lấy dữ liệu người chơi từ processedData (đã được tải từ file Excel)
-    if (!processedData || processedData.length === 0) {
-        resultsContainer.innerHTML = '<p class="empty">Vui lòng tải file Excel chứa dữ liệu người chơi trước.</p>';
-        return;
-    }
-
-    const results = debtData.map(debtItem => {
-        const user = processedData.find(u => String(u.id) === String(debtItem.id));
-        if (user) {
-            const currentDebt = Math.max(0, user.target - user.points);
-            const newTotalTarget = debtItem.debt + 56; // Cộng thêm 56 vào số nợ
-            const newRemainingDebt = Math.max(0, newTotalTarget - user.points);
-            return {
-                id: user.id,
-                name: user.name,
-                status: newRemainingDebt <= 0 ? "ĐÃ ĐỦ" : `CÒN NỢ ${newRemainingDebt}`,
-                points: user.points,
-                required: newTotalTarget
+            reader.onload = function (e) {
+                const fileContent = e.target.result;
+                const debtData = parseDebtData(fileContent);
+                if (debtData) {
+                    displayDebtResults(debtData);
+                } else {
+                    alert("Lỗi: Định dạng file TXT không hợp lệ.");
+                }
             };
-        } else {
-            return { id: debtItem.id, name: '', status: "Không tìm thấy", points: 0, required: 0 };
+
+            reader.readAsText(file);
         }
-    });
 
-    // Sắp xếp kết quả theo thứ tự: Nợ -> Đủ -> Không tìm thấy
-    results.sort((a, b) => {
-        const getPriority = (status) => {
-            if (status.startsWith("CÒN NỢ")) {
-                return 1; // Ưu tiên cao nhất
-            }
-            if (status.startsWith("ĐÃ ĐỦ")) {
-                return 2; // Ưu tiên thứ hai
-            }
-            if (status === "Không tìm thấy") {
-                return 3; // Ưu tiên thấp nhất
-            }
-            return 4; // Mặc định
-        };
-        return getPriority(a.status) - getPriority(b.status);
-    });
+        function parseDebtData(fileContent) {
+            const lines = fileContent.trim().split('\n');
+            if (lines.length < 2) return null; // Ít nhất phải có header và 1 dòng dữ liệu
 
-     let tableHtml = `
+            const header = lines.shift().trim();
+            if (header !== "User ID,Số quái cần bù") return null; // Kiểm tra header
+
+            const debtData = [];
+            for (const line of lines) {
+                const [id, debt] = line.trim().split(',');
+                if (!id || !debt || isNaN(parseInt(debt))) return null; // Kiểm tra dữ liệu hợp lệ
+                debtData.push({ id: id.trim(), debt: parseInt(debt) });
+            }
+            return debtData;
+        }
+
+        function displayDebtResults(debtData) {
+            const resultsContainer = document.getElementById('debtCheckResults');
+            resultsContainer.innerHTML = '';
+
+            if (!debtData || debtData.length === 0) {
+                resultsContainer.innerHTML = '<p class="empty">Không có dữ liệu nợ.</p>';
+                return;
+            }
+
+            // Lấy dữ liệu người chơi từ processedData (đã được tải từ file Excel)
+            if (!processedData || processedData.length === 0) {
+                resultsContainer.innerHTML = '<p class="empty">Vui lòng tải file Excel chứa dữ liệu người chơi trước.</p>';
+                return;
+            }
+
+            const results = debtData.map(debtItem => {
+                const user = processedData.find(u => String(u.id) === String(debtItem.id));
+                if (user) {
+                    const currentDebt = Math.max(0, user.target - user.points);
+                    const newTotalTarget = debtItem.debt + 56; // Cộng thêm 56 vào số nợ
+                    const newRemainingDebt = Math.max(0, newTotalTarget - user.points);
+                    return {
+                        id: user.id,
+                        name: user.name,
+                        status: newRemainingDebt <= 0 ? "ĐÃ ĐỦ" : `CÒN NỢ ${newRemainingDebt}`,
+                        points: user.points,
+                        required: newTotalTarget
+                    };
+                } else {
+                    return { id: debtItem.id, name: '', status: "Không tìm thấy", points: 0, required: 0 };
+                }
+            });
+
+            // Sắp xếp kết quả theo thứ tự: Nợ -> Đủ -> Không tìm thấy
+            results.sort((a, b) => {
+                const getPriority = (status) => {
+                    if (status.startsWith("CÒN NỢ")) {
+                        return 1; // Ưu tiên cao nhất
+                    }
+                    if (status.startsWith("ĐÃ ĐỦ")) {
+                        return 2; // Ưu tiên thứ hai
+                    }
+                    if (status === "Không tìm thấy") {
+                        return 3; // Ưu tiên thấp nhất
+                    }
+                    return 4; // Mặc định
+                };
+                return getPriority(a.status) - getPriority(b.status);
+            });
+
+            let tableHtml = `
          <div class="table-responsive">
              <table>
                  <thead>
@@ -2518,9 +2711,9 @@ function displayDebtResults(debtData) {
                  </thead>
                  <tbody>`;
 
-     results.forEach(item => {
-         const statusClass = item.status === "Không tìm thấy" ? "debt-status-not-found" : (item.status.startsWith("ĐÃ ĐỦ") ? "debt-status-sufficient" : "debt-status-in-debt");
-         tableHtml += `
+            results.forEach(item => {
+                const statusClass = item.status === "Không tìm thấy" ? "debt-status-not-found" : (item.status.startsWith("ĐÃ ĐỦ") ? "debt-status-sufficient" : "debt-status-in-debt");
+                tableHtml += `
                      <tr>
                          <td>${item.id}</td>
                          <td>${item.name || ''}</td>
@@ -2528,70 +2721,70 @@ function displayDebtResults(debtData) {
                          <td>${item.points || 0}</td>
                          <td>${item.required || 0}</td>
                      </tr>`;
-     });
+            });
 
-     tableHtml += `
+            tableHtml += `
                  </tbody>
              </table>
          </div>`;
-     resultsContainer.innerHTML = tableHtml;
- }
-
-    // === THÊM MỚI: Chức năng tính Hell Event ===
-     function toggleHellOptions() {
-        const eventType = document.getElementById('hellEventType').value;
-        const troopOptionsDiv = document.getElementById('troopOptions');
-        const pactOptionsDiv = document.getElementById('pactOptions');
-        const pactSpeedOptionsDiv = document.getElementById('pactSpeedOptions');
-        const troopExtraOptionsDiv = document.getElementById('troopExtraOptions');
-
-        pactOptionsDiv.style.display = 'none';
-        troopOptionsDiv.style.display = 'none';
-        pactSpeedOptionsDiv.style.display = 'none';
-        troopExtraOptionsDiv.style.display = 'none';
-
-        if (eventType === 'troop') {
-            troopOptionsDiv.style.display = 'flex';
-            troopExtraOptionsDiv.style.display = 'flex';
-            troopOptionsDiv.style.display = 'flex'; // Dùng flex để căn chỉnh
-            troopOptionsDiv.style.justifyContent = 'center';
-        } else if (eventType === 'pact') {
-            pactOptionsDiv.style.display = 'flex';
-            pactOptionsDiv.style.justifyContent = 'center';
-            pactSpeedOptionsDiv.style.display = 'flex';
-            pactSpeedOptionsDiv.style.justifyContent = 'center';
-        }
-    }
-
-     function calculateHellEvent() {
-        const eventType = document.getElementById('hellEventType').value;
-        const targetPointsInput = document.getElementById('hellPointsTarget');
-        const resultsDiv = document.getElementById('hellResults');
-
-        const targetPoints = parseInt(targetPointsInput.value);
-
-        if (isNaN(targetPoints) || targetPoints <= 0) {
-            alert("Vui lòng nhập một số điểm hợp lệ.");
-            return;
+            resultsContainer.innerHTML = tableHtml;
         }
 
-        let resultHtml = '';
-        let results;
+        // === THÊM MỚI: Chức năng tính Hell Event ===
+        function toggleHellOptions() {
+            const eventType = document.getElementById('hellEventType').value;
+            const troopOptionsDiv = document.getElementById('troopOptions');
+            const pactOptionsDiv = document.getElementById('pactOptions');
+            const pactSpeedOptionsDiv = document.getElementById('pactSpeedOptions');
+            const troopExtraOptionsDiv = document.getElementById('troopExtraOptions');
 
-        switch (eventType) {
-            case 'pact':
-                const selectedPacts = Array.from(document.querySelectorAll('.pact-option:checked')).map(cb => cb.value);
-                if (selectedPacts.length === 0) {
-                    alert("Vui lòng chọn ít nhất một loại khế để tính toán.");
-                    return;
-                }
-                const pactSpeed = parseFloat(document.getElementById('pactSpeed').value);
-                if (isNaN(pactSpeed)) {
-                    alert("Vui lòng nhập tốc độ kết hợp hợp lệ.");
-                    return;
-                }
-                results = calculatePactHell(targetPoints, selectedPacts, pactSpeed);
-                resultHtml = `
+            pactOptionsDiv.style.display = 'none';
+            troopOptionsDiv.style.display = 'none';
+            pactSpeedOptionsDiv.style.display = 'none';
+            troopExtraOptionsDiv.style.display = 'none';
+
+            if (eventType === 'troop') {
+                troopOptionsDiv.style.display = 'flex';
+                troopExtraOptionsDiv.style.display = 'flex';
+                troopOptionsDiv.style.display = 'flex'; // Dùng flex để căn chỉnh
+                troopOptionsDiv.style.justifyContent = 'center';
+            } else if (eventType === 'pact') {
+                pactOptionsDiv.style.display = 'flex';
+                pactOptionsDiv.style.justifyContent = 'center';
+                pactSpeedOptionsDiv.style.display = 'flex';
+                pactSpeedOptionsDiv.style.justifyContent = 'center';
+            }
+        }
+
+        function calculateHellEvent() {
+            const eventType = document.getElementById('hellEventType').value;
+            const targetPointsInput = document.getElementById('hellPointsTarget');
+            const resultsDiv = document.getElementById('hellResults');
+
+            const targetPoints = parseInt(targetPointsInput.value);
+
+            if (isNaN(targetPoints) || targetPoints <= 0) {
+                alert("Vui lòng nhập một số điểm hợp lệ.");
+                return;
+            }
+
+            let resultHtml = '';
+            let results;
+
+            switch (eventType) {
+                case 'pact':
+                    const selectedPacts = Array.from(document.querySelectorAll('.pact-option:checked')).map(cb => cb.value);
+                    if (selectedPacts.length === 0) {
+                        alert("Vui lòng chọn ít nhất một loại khế để tính toán.");
+                        return;
+                    }
+                    const pactSpeed = parseFloat(document.getElementById('pactSpeed').value);
+                    if (isNaN(pactSpeed)) {
+                        alert("Vui lòng nhập tốc độ kết hợp hợp lệ.");
+                        return;
+                    }
+                    results = calculatePactHell(targetPoints, selectedPacts, pactSpeed);
+                    resultHtml = `
                     <h3>Kết quả tối ưu cho ${targetPoints.toLocaleString('vi-VN')} điểm (Hell Khế Ước):</h3>
                     <ul>
                         ${results.pact4 > 0 ? `<li><strong>Khế Ước 4 (9,000 điểm):</strong> ${results.pact4.toLocaleString('vi-VN')} cái</li>` : ''}
@@ -2605,10 +2798,10 @@ function displayDebtResults(debtData) {
                         <strong>💎 Chi phí Gem (ước tính): ${results.totalGems.toLocaleString('vi-VN')}</strong>
                     </p>
                 `;
-                break;
-            case 'maze':
-                results = calculateMazeHell(targetPoints);
-                resultHtml = `
+                    break;
+                case 'maze':
+                    results = calculateMazeHell(targetPoints);
+                    resultHtml = `
                     <h3>Kết quả cho ${targetPoints.toLocaleString('vi-VN')} điểm (Hell Mê Hồn Trận):</h3>
                     <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
                         <h4>Chỉ dùng Quái vật ưu việt (6,000 điểm):</h4>
@@ -2631,68 +2824,68 @@ function displayDebtResults(debtData) {
                         </p>
                     </div>
                 `;
-                break;
-            case 'troop':
-                const selectedTiers = Array.from(document.querySelectorAll('.troop-option:checked')).map(cb => cb.value);
-                if (selectedTiers.length === 0) {
-                    alert("Vui lòng chọn ít nhất một loại lính để tính toán.");
-                    return;
-                }
-                // Đọc các tùy chọn mới
-                const t4Type = document.getElementById('t4TroopType').value;
-                const trainingSpeed = parseFloat(document.getElementById('trainingSpeed').value);
-                if (isNaN(trainingSpeed)) {
-                    alert("Vui lòng nhập Tốc độ huấn luyện hợp lệ.");
-                    return;
-                }
+                    break;
+                case 'troop':
+                    const selectedTiers = Array.from(document.querySelectorAll('.troop-option:checked')).map(cb => cb.value);
+                    if (selectedTiers.length === 0) {
+                        alert("Vui lòng chọn ít nhất một loại lính để tính toán.");
+                        return;
+                    }
+                    // Đọc các tùy chọn mới
+                    const t4Type = document.getElementById('t4TroopType').value;
+                    const trainingSpeed = parseFloat(document.getElementById('trainingSpeed').value);
+                    if (isNaN(trainingSpeed)) {
+                        alert("Vui lòng nhập Tốc độ huấn luyện hợp lệ.");
+                        return;
+                    }
 
-                results = calculateTroopHell(targetPoints, selectedTiers);
+                    results = calculateTroopHell(targetPoints, selectedTiers);
 
-                // Tính toán chi phí tài nguyên và thời gian cho tất cả các loại lính
-                let totalBaseTimeSeconds = 0;
-                const resources = { food: 0, wood: 0, stone: 0, ore: 0, gold: 0 };
+                    // Tính toán chi phí tài nguyên và thời gian cho tất cả các loại lính
+                    let totalBaseTimeSeconds = 0;
+                    const resources = { food: 0, wood: 0, stone: 0, ore: 0, gold: 0 };
 
-                const baseTimes = { t4: 120, t3: 48, t2: 30, t1: 6 };
-                const resourceCosts = {
-                    t4: { rss: 700, gold: 350 },
-                    t3: { rss: 350, gold: 175 },
-                    t2: { rss: 60,  gold: 3 },
-                    t1: { rss: 50,  gold: 25 }
-                };
+                    const baseTimes = { t4: 120, t3: 48, t2: 30, t1: 6 };
+                    const resourceCosts = {
+                        t4: { rss: 700, gold: 350 },
+                        t3: { rss: 350, gold: 175 },
+                        t2: { rss: 60, gold: 3 },
+                        t1: { rss: 50, gold: 25 }
+                    };
 
-                for (const tier of ['t4', 't3', 't2', 't1']) {
-                    const count = results[tier];
-                    if (count > 0) {
-                        // Tính tổng thời gian cơ bản
-                        totalBaseTimeSeconds += count * baseTimes[tier];
+                    for (const tier of ['t4', 't3', 't2', 't1']) {
+                        const count = results[tier];
+                        if (count > 0) {
+                            // Tính tổng thời gian cơ bản
+                            totalBaseTimeSeconds += count * baseTimes[tier];
 
-                        // Tính tổng tài nguyên
-                        const cost = resourceCosts[tier];
-                        resources.gold += count * cost.gold;
-                        
-                        switch (t4Type) { // Dùng chung loại lính cho tất cả các tier
-                            case 'archer': // Cung: Lúa, Đá, Gỗ
-                                resources.food += count * cost.rss;
-                                resources.stone += count * cost.rss;
-                                resources.wood += count * cost.rss;
-                                break;
-                            case 'cavalry': // Kỵ: Lúa, Đá, Quặng
-                                resources.food += count * cost.rss;
-                                resources.stone += count * cost.rss;
-                                resources.ore += count * cost.rss;
-                                break;
-                            case 'infantry': // Bộ: Lúa, Gỗ, Quặng
-                                resources.food += count * cost.rss;
-                                resources.wood += count * cost.rss;
-                                resources.ore += count * cost.rss;
-                                break;
+                            // Tính tổng tài nguyên
+                            const cost = resourceCosts[tier];
+                            resources.gold += count * cost.gold;
+
+                            switch (t4Type) { // Dùng chung loại lính cho tất cả các tier
+                                case 'archer': // Cung: Lúa, Đá, Gỗ
+                                    resources.food += count * cost.rss;
+                                    resources.stone += count * cost.rss;
+                                    resources.wood += count * cost.rss;
+                                    break;
+                                case 'cavalry': // Kỵ: Lúa, Đá, Quặng
+                                    resources.food += count * cost.rss;
+                                    resources.stone += count * cost.rss;
+                                    resources.ore += count * cost.rss;
+                                    break;
+                                case 'infantry': // Bộ: Lúa, Gỗ, Quặng
+                                    resources.food += count * cost.rss;
+                                    resources.wood += count * cost.rss;
+                                    resources.ore += count * cost.rss;
+                                    break;
+                            }
                         }
                     }
-                }
 
-                const finalTimeSeconds = totalBaseTimeSeconds / (1 + trainingSpeed / 100);
+                    const finalTimeSeconds = totalBaseTimeSeconds / (1 + trainingSpeed / 100);
 
-                resultHtml = `
+                    resultHtml = `
                     <h3>Kết quả tối ưu cho ${targetPoints.toLocaleString('vi-VN')} điểm (Hell Lính):</h3>
                     <ul>
                         ${results.t4 > 0 ? `<li><strong>Lính T4 (15 điểm):</strong> ${results.t4.toLocaleString('vi-VN')}</li>` : ''}
@@ -2716,212 +2909,316 @@ function displayDebtResults(debtData) {
                         </ul>
                     </div>
                 `;
-                break;
-        }
-
-        // Hiển thị kết quả
-        resultsDiv.style.display = 'block';
-        resultsDiv.innerHTML = resultHtml;
-    }
-
-    function formatDuration(totalSeconds) {
-        if (totalSeconds <= 0) return "0 giây";
-
-        totalSeconds = Math.round(totalSeconds);
-
-        const days = Math.floor(totalSeconds / 86400);
-        totalSeconds %= 86400;
-        const hours = Math.floor(totalSeconds / 3600);
-        totalSeconds %= 3600;
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-
-        let parts = [];
-        if (days > 0) parts.push(`${days}d`);
-        if (hours > 0) parts.push(`${String(hours).padStart(2, '0')}h`);
-        if (minutes > 0) parts.push(`${String(minutes).padStart(2, '0')}m`);
-        if (seconds > 0 || parts.length === 0) parts.push(`${String(seconds).padStart(2, '0')}s`);
-
-        return parts.join(' ');
-    }
-
-    function calculateGemsForTime(seconds) {
-        if (seconds <= 0) return 0;
-
-        // Data points: [time_in_seconds, gem_cost] sorted by time
-        const dataPoints = [
-            [2200, 198],      // Based on 1xP2 or 2xP1
-            [16494, 822],     // Based on 15xP1
-            [17594, 865],     // Based on 3xP4
-            [32988, 1417],    // Based on 15xP2
-            [54979, 2031],    // Based on 15xP3
-            [87966, 3053]     // Based on 15xP4
-        ];
-
-        // Handle extrapolation for values smaller than the first point
-        if (seconds < dataPoints[0][0]) {
-            const rate = dataPoints[0][1] / dataPoints[0][0]; // gems per second for the first segment
-            return Math.ceil(seconds * rate);
-        }
-
-        // Find the two points to interpolate between
-        for (let i = 0; i < dataPoints.length - 1; i++) {
-            const p1 = dataPoints[i];
-            const p2 = dataPoints[i + 1];
-            if (seconds >= p1[0] && seconds <= p2[0]) {
-                // Linear interpolation: y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)
-                const gems = p1[1] + (seconds - p1[0]) * (p2[1] - p1[1]) / (p2[0] - p1[0]);
-                return Math.ceil(gems);
+                    break;
             }
+
+            // Hiển thị kết quả
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = resultHtml;
         }
 
-        // Handle extrapolation for values larger than the last point
-        const lastPoint = dataPoints[dataPoints.length - 1];
-        const secondLastPoint = dataPoints[dataPoints.length - 2];
-        const lastRate = (lastPoint[1] - secondLastPoint[1]) / (lastPoint[0] - secondLastPoint[0]);
-        const gems = lastPoint[1] + (seconds - lastPoint[0]) * lastRate;
-        return Math.ceil(gems);
-    }
+        function formatDuration(totalSeconds) {
+            if (totalSeconds <= 0) return "0 giây";
 
-    function calculatePactHell(targetPoints, selectedPacts, speedPercent) {
-        const pactValues = {
-            // Base times recalculated based on user's data to match 391.1% speed
-            pact4: { points: 9000, baseTime: 28800 }, // ~5864s @ 391.1% -> 28800 base
-            pact3: { points: 4800, baseTime: 18000 }, // ~3665s @ 391.1% -> 18000 base
-            pact2: { points: 2400, baseTime: 10800 }, // ~2200s @ 391.1% -> 10800 base
-            pact1: { points: 1200, baseTime: 5400  }  // ~1100s @ 391.1% -> 5400 base
-        };
+            totalSeconds = Math.round(totalSeconds);
 
-        let remainingPoints = targetPoints;
-        const counts = { pact4: 0, pact3: 0, pact2: 0, pact1: 0 };
+            const days = Math.floor(totalSeconds / 86400);
+            totalSeconds %= 86400;
+            const hours = Math.floor(totalSeconds / 3600);
+            totalSeconds %= 3600;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
 
-        const pactsInOrder = ['pact4', 'pact3', 'pact2', 'pact1'];
+            let parts = [];
+            if (days > 0) parts.push(`${days}d`);
+            if (hours > 0) parts.push(`${String(hours).padStart(2, '0')}h`);
+            if (minutes > 0) parts.push(`${String(minutes).padStart(2, '0')}m`);
+            if (seconds > 0 || parts.length === 0) parts.push(`${String(seconds).padStart(2, '0')}s`);
 
-        pactsInOrder.forEach(pact => {
-            if (selectedPacts.includes(pact)) {
-                const pactPointValue = pactValues[pact].points;
-                const lowestSelectedPact = pactsInOrder.filter(p => selectedPacts.includes(p)).pop();
+            return parts.join(' ');
+        }
 
-                if (pact === lowestSelectedPact && remainingPoints > 0) {
-                    counts[pact] = Math.ceil(remainingPoints / pactPointValue);
-                    remainingPoints = 0;
-                } else {
-                    counts[pact] = Math.floor(remainingPoints / pactPointValue);
-                    remainingPoints %= pactPointValue;
+        function calculateGemsForTime(seconds) {
+            if (seconds <= 0) return 0;
+
+            // Data points: [time_in_seconds, gem_cost] sorted by time
+            const dataPoints = [
+                [2200, 198],      // Based on 1xP2 or 2xP1
+                [16494, 822],     // Based on 15xP1
+                [17594, 865],     // Based on 3xP4
+                [32988, 1417],    // Based on 15xP2
+                [54979, 2031],    // Based on 15xP3
+                [87966, 3053]     // Based on 15xP4
+            ];
+
+            // Handle extrapolation for values smaller than the first point
+            if (seconds < dataPoints[0][0]) {
+                const rate = dataPoints[0][1] / dataPoints[0][0]; // gems per second for the first segment
+                return Math.ceil(seconds * rate);
+            }
+
+            // Find the two points to interpolate between
+            for (let i = 0; i < dataPoints.length - 1; i++) {
+                const p1 = dataPoints[i];
+                const p2 = dataPoints[i + 1];
+                if (seconds >= p1[0] && seconds <= p2[0]) {
+                    // Linear interpolation: y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)
+                    const gems = p1[1] + (seconds - p1[0]) * (p2[1] - p1[1]) / (p2[0] - p1[0]);
+                    return Math.ceil(gems);
                 }
             }
-        });
 
-        const totalBaseTime = (counts.pact4 * pactValues.pact4.baseTime) + (counts.pact3 * pactValues.pact3.baseTime) + (counts.pact2 * pactValues.pact2.baseTime) + (counts.pact1 * pactValues.pact1.baseTime);
-        const finalTimeInSeconds = totalBaseTime / (1 + (speedPercent / 100));
-        const totalPointsAchieved = (counts.pact4 * pactValues.pact4.points) + (counts.pact3 * pactValues.pact3.points) + (counts.pact2 * pactValues.pact2.points) + (counts.pact1 * pactValues.pact1.points);
-        const totalGems = calculateGemsForTime(finalTimeInSeconds);
-
-        return { ...counts, totalPointsAchieved, totalTime: finalTimeInSeconds, totalGems };
-    }
-
-    function calculateMazeHell(targetPoints) {
-        const mazeValues = {
-            elite: { points: 6000, stars: 1000 },
-            normal: { points: 200, stars: 100 }
-        };
-
-        // Kịch bản 1: Chỉ dùng Quái vật ưu việt
-        const eliteCount = Math.ceil(targetPoints / mazeValues.elite.points);
-        const elitePointsAchieved = eliteCount * mazeValues.elite.points;
-        const eliteStars = eliteCount * mazeValues.elite.stars;
-
-        // Kịch bản 2: Chỉ dùng Quái vật bình thường
-        const normalCount = Math.ceil(targetPoints / mazeValues.normal.points);
-        const normalPointsAchieved = normalCount * mazeValues.normal.points;
-        const normalStars = normalCount * mazeValues.normal.stars;
-
-        return {
-            eliteOnly: {
-                count: eliteCount,
-                points: elitePointsAchieved,
-                stars: eliteStars
-            },
-            normalOnly: {
-                count: normalCount,
-                points: normalPointsAchieved,
-                stars: normalStars
-            }
-        };
-    }
-
-    function calculateTroopHell(targetPoints, selectedTiers) {
-        const troopValues = {
-            t4: { points: 15, might: 36 },
-            t3: { points: 5, might: 24 },
-            t2: { points: 2, might: 8 },
-            t1: { points: 1, might: 2 }
-        };
-
-        let remainingPoints = targetPoints;
-        const counts = { t4: 0, t3: 0, t2: 0, t1: 0 };
-
-        const tiersInOrder = ['t4', 't3', 't2', 't1'];
-
-        tiersInOrder.forEach((tier, index) => {
-            // Chỉ tính toán nếu tier này được chọn
-            if (selectedTiers.includes(tier)) {
-                const tierValue = troopValues[tier].points;
-                
-                // Nếu là tier cuối cùng trong danh sách được chọn, phải làm tròn lên
-                const isLastSelectedTier = selectedTiers.indexOf(tier) === selectedTiers.length - 1;
-
-                if (isLastSelectedTier && remainingPoints > 0) {
-                    counts[tier] = Math.ceil(remainingPoints / tierValue);
-                    remainingPoints = 0; // Đã xử lý xong
-                } else {
-                    counts[tier] = Math.floor(remainingPoints / tierValue);
-                    remainingPoints %= tierValue;
-                }
-            }
-        });
-
-        const totalPointsAchieved = (counts.t4 * troopValues.t4.points) +
-                                  (counts.t3 * troopValues.t3.points) +
-                                  (counts.t2 * troopValues.t2.points) +
-                                  (counts.t1 * troopValues.t1.points);
-
-        const totalMightGained = (counts.t4 * troopValues.t4.might) +
-                                 (counts.t3 * troopValues.t3.might) +
-                                 (counts.t2 * troopValues.t2.might) +
-                                 (counts.t1 * troopValues.t1.might);
-
-        return { ...counts, totalPointsAchieved, totalMightGained };
-    }
-
-    function calculateEnergy() {
-        const getVal = (id) => parseInt(document.getElementById(id).value) || 0;
-
-        const energyItems = {
-            '1k': { count: getVal('energy1k'), energy: 1000, gems: 250 },
-            '2k': { count: getVal('energy2k'), energy: 2000, gems: 475 },
-            '5k': { count: getVal('energy5k'), energy: 5000, gems: 1125 },
-            '10k': { count: getVal('energy10k'), energy: 10000, gems: 2000 },
-            '20k': { count: getVal('energy20k'), energy: 20000, gems: 3500 }, // Đã điều chỉnh từ 35000
-            '50k': { count: getVal('energy50k'), energy: 50000, gems: 7500 }
-        };
-
-        let totalEnergy = 0;
-        let totalGems = 0;
-
-        for (const key in energyItems) {
-            const item = energyItems[key];
-            totalEnergy += item.count * item.energy;
-            totalGems += item.count * item.gems;
+            // Handle extrapolation for values larger than the last point
+            const lastPoint = dataPoints[dataPoints.length - 1];
+            const secondLastPoint = dataPoints[dataPoints.length - 2];
+            const lastRate = (lastPoint[1] - secondLastPoint[1]) / (lastPoint[0] - secondLastPoint[0]);
+            const gems = lastPoint[1] + (seconds - lastPoint[0]) * lastRate;
+            return Math.ceil(gems);
         }
 
-        const resultsDiv = document.getElementById('energyResults');
-        resultsDiv.style.display = 'block';
-        resultsDiv.innerHTML = `
+        function calculatePactHell(targetPoints, selectedPacts, speedPercent) {
+            const pactValues = {
+                // Base times recalculated based on user's data to match 391.1% speed
+                pact4: { points: 9000, baseTime: 28800 }, // ~5864s @ 391.1% -> 28800 base
+                pact3: { points: 4800, baseTime: 18000 }, // ~3665s @ 391.1% -> 18000 base
+                pact2: { points: 2400, baseTime: 10800 }, // ~2200s @ 391.1% -> 10800 base
+                pact1: { points: 1200, baseTime: 5400 }  // ~1100s @ 391.1% -> 5400 base
+            };
+
+            let remainingPoints = targetPoints;
+            const counts = { pact4: 0, pact3: 0, pact2: 0, pact1: 0 };
+
+            const pactsInOrder = ['pact4', 'pact3', 'pact2', 'pact1'];
+
+            pactsInOrder.forEach(pact => {
+                if (selectedPacts.includes(pact)) {
+                    const pactPointValue = pactValues[pact].points;
+                    const lowestSelectedPact = pactsInOrder.filter(p => selectedPacts.includes(p)).pop();
+
+                    if (pact === lowestSelectedPact && remainingPoints > 0) {
+                        counts[pact] = Math.ceil(remainingPoints / pactPointValue);
+                        remainingPoints = 0;
+                    } else {
+                        counts[pact] = Math.floor(remainingPoints / pactPointValue);
+                        remainingPoints %= pactPointValue;
+                    }
+                }
+            });
+
+            const totalBaseTime = (counts.pact4 * pactValues.pact4.baseTime) + (counts.pact3 * pactValues.pact3.baseTime) + (counts.pact2 * pactValues.pact2.baseTime) + (counts.pact1 * pactValues.pact1.baseTime);
+            const finalTimeInSeconds = totalBaseTime / (1 + (speedPercent / 100));
+            const totalPointsAchieved = (counts.pact4 * pactValues.pact4.points) + (counts.pact3 * pactValues.pact3.points) + (counts.pact2 * pactValues.pact2.points) + (counts.pact1 * pactValues.pact1.points);
+            const totalGems = calculateGemsForTime(finalTimeInSeconds);
+
+            return { ...counts, totalPointsAchieved, totalTime: finalTimeInSeconds, totalGems };
+        }
+
+        function calculateMazeHell(targetPoints) {
+            const mazeValues = {
+                elite: { points: 6000, stars: 1000 },
+                normal: { points: 200, stars: 100 }
+            };
+
+            // Kịch bản 1: Chỉ dùng Quái vật ưu việt
+            const eliteCount = Math.ceil(targetPoints / mazeValues.elite.points);
+            const elitePointsAchieved = eliteCount * mazeValues.elite.points;
+            const eliteStars = eliteCount * mazeValues.elite.stars;
+
+            // Kịch bản 2: Chỉ dùng Quái vật bình thường
+            const normalCount = Math.ceil(targetPoints / mazeValues.normal.points);
+            const normalPointsAchieved = normalCount * mazeValues.normal.points;
+            const normalStars = normalCount * mazeValues.normal.stars;
+
+            return {
+                eliteOnly: {
+                    count: eliteCount,
+                    points: elitePointsAchieved,
+                    stars: eliteStars
+                },
+                normalOnly: {
+                    count: normalCount,
+                    points: normalPointsAchieved,
+                    stars: normalStars
+                }
+            };
+        }
+
+        function calculateTroopHell(targetPoints, selectedTiers) {
+            const troopValues = {
+                t4: { points: 15, might: 36 },
+                t3: { points: 5, might: 24 },
+                t2: { points: 2, might: 8 },
+                t1: { points: 1, might: 2 }
+            };
+
+            let remainingPoints = targetPoints;
+            const counts = { t4: 0, t3: 0, t2: 0, t1: 0 };
+
+            const tiersInOrder = ['t4', 't3', 't2', 't1'];
+
+            tiersInOrder.forEach((tier, index) => {
+                // Chỉ tính toán nếu tier này được chọn
+                if (selectedTiers.includes(tier)) {
+                    const tierValue = troopValues[tier].points;
+
+                    // Nếu là tier cuối cùng trong danh sách được chọn, phải làm tròn lên
+                    const isLastSelectedTier = selectedTiers.indexOf(tier) === selectedTiers.length - 1;
+
+                    if (isLastSelectedTier && remainingPoints > 0) {
+                        counts[tier] = Math.ceil(remainingPoints / tierValue);
+                        remainingPoints = 0; // Đã xử lý xong
+                    } else {
+                        counts[tier] = Math.floor(remainingPoints / tierValue);
+                        remainingPoints %= tierValue;
+                    }
+                }
+            });
+
+            const totalPointsAchieved = (counts.t4 * troopValues.t4.points) +
+                (counts.t3 * troopValues.t3.points) +
+                (counts.t2 * troopValues.t2.points) +
+                (counts.t1 * troopValues.t1.points);
+
+            const totalMightGained = (counts.t4 * troopValues.t4.might) +
+                (counts.t3 * troopValues.t3.might) +
+                (counts.t2 * troopValues.t2.might) +
+                (counts.t1 * troopValues.t1.might);
+
+            return { ...counts, totalPointsAchieved, totalMightGained };
+        }
+
+        function calculateEnergy() {
+            const getVal = (id) => parseInt(document.getElementById(id).value) || 0;
+
+            const energyItems = {
+                '1k': { count: getVal('energy1k'), energy: 1000, gems: 250 },
+                '2k': { count: getVal('energy2k'), energy: 2000, gems: 475 },
+                '5k': { count: getVal('energy5k'), energy: 5000, gems: 1125 },
+                '10k': { count: getVal('energy10k'), energy: 10000, gems: 2000 },
+                '20k': { count: getVal('energy20k'), energy: 20000, gems: 3500 }, // Đã điều chỉnh từ 35000
+                '50k': { count: getVal('energy50k'), energy: 50000, gems: 7500 }
+            };
+
+            let totalEnergy = 0;
+            let totalGems = 0;
+
+            for (const key in energyItems) {
+                const item = energyItems[key];
+                totalEnergy += item.count * item.energy;
+                totalGems += item.count * item.gems;
+            }
+
+            const resultsDiv = document.getElementById('energyResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
             <div style="color: var(--primary-color);">Tổng năng lượng: ${totalEnergy.toLocaleString('vi-VN')}</div>
-            <div style="color: var(--success-color); margin-top: 10px;">Quy đổi thành: ${totalGems.toLocaleString('vi-VN')} 💎</div>
+            <div style="color: var(--success-color); margin-top: 10px;">Quy đổi thành: ${totalGems.toLocaleString('vi-VN')} <img src="//statics.igg.com/game/lo/images/project/game_tool/default/baobing-icon-7.jpg"></div>
         `;
-    }
+        }
+
+        // === THÊM MỚI: Chức năng Bảng Xếp Hạng Nạp ===
+        function displayPurchaseLeaderboard() {
+            const resultsContainer = document.getElementById('purchaseLeaderboardResults');
+            if (!rawExcelData || rawExcelData.length < 2) {
+                resultsContainer.innerHTML = '<p class="empty">Vui lòng tải file Excel để xem bảng xếp hạng.</p>';
+                return;
+            }
+
+            // 1. Tìm chỉ số các cột
+            const headers = rawExcelData[0].map(h => String(h).trim().toLowerCase());
+            const colIndex = {
+                name: headers.indexOf("name"),
+                l1: headers.indexOf("l1 (purchase)"),
+                l2: headers.indexOf("l2 (purchase)"),
+                l3: headers.indexOf("l3 (purchase)"),
+                l4: headers.indexOf("l4 (purchase)"),
+                l5: headers.indexOf("l5 (purchase)")
+            };
+
+            // Kiểm tra xem tất cả các cột cần thiết có tồn tại không
+            if (Object.values(colIndex).some(index => index === -1)) {
+                resultsContainer.innerHTML = '<p class="empty">Lỗi: File Excel thiếu các cột cần thiết (name, L1-L5 (Purchase)).</p>';
+                console.warn("Không tìm thấy tất cả các cột Purchase cần thiết.");
+                return;
+            }
+
+            // 2. Xử lý dữ liệu
+            let leaderboard = [];
+            let anonymousBox = null;
+
+            for (let i = 1; i < rawExcelData.length; i++) {
+                const row = rawExcelData[i];
+                if (!row || row.length === 0) continue;
+
+                const name = row[colIndex.name] || '';
+                const l1 = parseInt(row[colIndex.l1]) || 0;
+                const l2 = parseInt(row[colIndex.l2]) || 0;
+                const l3 = parseInt(row[colIndex.l3]) || 0;
+                const l4 = parseInt(row[colIndex.l4]) || 0;
+                const l5 = parseInt(row[colIndex.l5]) || 0;
+
+                const totalDiamonds = (l1 * 200) + (l2 * 499) + (l3 * 1999) + (l4 * 4999) + (l5 * 9999);
+
+                if (totalDiamonds > 0) {
+                    if (String(name).trim().toLowerCase() === 'anonymous') {
+                        anonymousBox = {
+                            name: 'Hộp Ẩn Danh',
+                            diamonds: totalDiamonds,
+                            l1, l2, l3, l4, l5 // Lưu lại chi tiết
+                        };
+                    } else if (name) {
+                        leaderboard.push({
+                            name: name, diamonds: totalDiamonds, l1, l2, l3, l4, l5
+                        });
+                    }
+                }
+            }
+
+            // 3. Sắp xếp bảng xếp hạng
+            leaderboard.sort((a, b) => b.diamonds - a.diamonds);
+
+            // 4. Tạo HTML để hiển thị
+            let html = '';
+
+            if (anonymousBox) {
+                html += `
+                    <div class="anonymous-box-item">
+                        <div>
+                            <div class="name">${anonymousBox.name}</div>
+                            <div class="stat-value" style="margin: 5px 0;">${anonymousBox.diamonds.toLocaleString('vi-VN')} 💎</div>
+                            <div class="stat-label">Tổng Kim Cương Xanh</div>
+                        </div>
+                        <div class="purchase-details">
+                            ${anonymousBox.l1 > 0 ? `<span>L1: <strong>${anonymousBox.l1}</strong></span>` : ''}
+                            ${anonymousBox.l2 > 0 ? `<span>L2: <strong>${anonymousBox.l2}</strong></span>` : ''}
+                            ${anonymousBox.l3 > 0 ? `<span>L3: <strong>${anonymousBox.l3}</strong></span>` : ''}
+                            ${anonymousBox.l4 > 0 ? `<span>L4: <strong>${anonymousBox.l4}</strong></span>` : ''}
+                            ${anonymousBox.l5 > 0 ? `<span>L5: <strong>${anonymousBox.l5}</strong></span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (leaderboard.length > 0) {
+                html += `<div class="table-responsive"><table><thead><tr><th>Hạng</th><th>Tên</th><th>Tổng KCX</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>L5</th></tr></thead><tbody>
+                    ${leaderboard.map((player, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${player.name}</td>
+                            <td><strong>${player.diamonds.toLocaleString('vi-VN')} 💎</strong></td>
+                            <td>${player.l1 > 0 ? player.l1 : '-'}</td>
+                            <td>${player.l2 > 0 ? player.l2 : '-'}</td>
+                            <td>${player.l3 > 0 ? player.l3 : '-'}</td>
+                            <td>${player.l4 > 0 ? player.l4 : '-'}</td>
+                            <td>${player.l5 > 0 ? player.l5 : '-'}</td>
+                        </tr>`).join('')}
+                </tbody></table></div>`;
+            } else if (!anonymousBox) {
+                html = '<p class="empty">Không có dữ liệu nạp để hiển thị.</p>';
+            }
+
+            resultsContainer.innerHTML = html;
+        }
     </script>
 </body>
 
