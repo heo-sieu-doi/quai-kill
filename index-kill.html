@@ -577,6 +577,20 @@
         #chartModal .chart-controls select {
             padding: 5px;
         }
+
+        /* --- Watermark Style --- */
+        /* Watermark is now positioned relative to #tableWrapper */
+
+        #watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg); /* Căn giữa và xoay */
+            color: rgba(128, 128, 128, 0.1); /* Màu xám rất nhạt để không che nội dung */
+            font-weight: bold;
+            pointer-events: none; /* Không cho phép click vào chữ */
+            z-index: 100; /* Đảm bảo chữ nằm trên nền bảng nhưng dưới các modal */
+        }
     </style>
 </head>
 
@@ -696,7 +710,10 @@
         </div>
 
         <div id="tableContainer">
-            <table id="comparisonTable">
+            <div id="tableWrapper" style="position: relative; display: inline-block;">
+                <!-- Wrapper to contain table and watermark -->
+                <div id="watermark">FvN</div>
+                <table id="comparisonTable">
                 <thead>
                     <!-- Dòng tiêu đề chính -->
                     <tr>
@@ -764,6 +781,7 @@
                     <!-- Dữ liệu sẽ được thêm vào đây -->
                 </tbody>
             </table>
+            </div>
         </div>
 
         <!-- Container for the new comparison view -->
@@ -1244,6 +1262,7 @@
 
             // Hiển thị tổng
             displayTotals();
+            updateWatermark();
         }
 
         function toggleCompactView() {
@@ -1265,6 +1284,9 @@
                 mainHeaders.forEach(th => th.setAttribute('colspan', '3')); // Trả colspan về 3
                 if (subHeaderRow) subHeaderRow.style.display = ''; // Hiện lại hàng tiêu đề phụ
             }
+            // Update watermark size after view toggles
+            // Use a small timeout to allow the DOM to update its layout
+            setTimeout(updateWatermark, 50);
         }
 
         // Các hàm tiện ích
@@ -1823,6 +1845,17 @@
             sortTable('name', 'asc');
         }
 
+        function updateWatermark() {
+            const tableWrapper = document.getElementById('tableWrapper');
+            const watermark = document.getElementById('watermark');
+            if (tableWrapper && watermark) {
+                // Adjust font size to be ~25% of the table's width.
+                // This makes the watermark scale with the table content and prevents overflow.
+                const fontSize = tableWrapper.offsetWidth * 0.25;
+                watermark.style.fontSize = `${fontSize}px`;
+            }
+        }
+
         // Khởi tạo sự kiện
         window.onload = function () {
             document.getElementById('searchInput').addEventListener('keyup', function (event) {
@@ -1830,6 +1863,8 @@
                     searchTable();
                 }
             });
+
+            window.addEventListener('resize', updateWatermark);
 
             // Thêm sự kiện để xử lý việc chọn file và tự động tải
             document.getElementById('juneFile').addEventListener('change', function (e) {
@@ -2125,20 +2160,22 @@
                     originalTableBody.innerHTML = '';
                     rowsPerImage[i].forEach(row => originalTableBody.appendChild(row));
 
-                    // Chụp ảnh bảng
-                    const canvas = await html2canvas(tableElement, {
+                    // Chụp ảnh container để bao gồm cả bảng và watermark
+                    const captureTarget = document.getElementById('tableWrapper');
+                    const canvas = await html2canvas(captureTarget, {
                         scale: 1.5,
                         useCORS: true,
                         logging: false,
                         backgroundColor: '#ffffff',
-                        width: tableElement.scrollWidth,
-                        height: tableElement.scrollHeight,
+                        width: captureTarget.scrollWidth,
+                        height: captureTarget.scrollHeight,
                     });
 
-                    // Tải ảnh xuống
+                    // Lấy tháng hiện tại để đặt tên file
+                    const currentMonth = new Date().getMonth() + 1;
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL('image/png');
-                    link.download = `Exported_Image_${i + 1}.png`;
+                    link.download = `kill thang ${currentMonth} anh ${i + 1}.png`;
                     link.click();
                 }
             } catch (error) {
@@ -2840,29 +2877,34 @@
             document.getElementById('overallComparisonChartModal').style.display = 'block';
         }
 
-        function exportComparisonChartPDF() {
-            const charts = document.getElementById('overallChartContainer');
+        async function exportComparisonChartPDF() {
+            const chartsContainer = document.getElementById('overallChartContainer');
 
-            if (!charts) {
+            if (!chartsContainer || chartsContainer.children.length === 0) {
                 alert("Không tìm thấy biểu đồ để xuất PDF!");
                 return;
             }
 
-            const opt = {
-                margin: 0.2,
-                filename: 'bieu-do-so-sanh.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
+            const loading = showLoading("Đang tạo file PDF, vui lòng chờ...");
 
-            html2pdf().set(opt).from(charts).save();
+            try {
+                const opt = {
+                    margin: 0.2,
+                    filename: 'bieu-do-so-sanh.pdf',
+                    image: { type: 'jpeg', quality: 1 },
+                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+
+                await html2pdf().set(opt).from(chartsContainer).save();
+            } catch (error) {
+                console.error("Lỗi khi xuất PDF:", error);
+                alert("Đã xảy ra lỗi khi tạo file PDF. Vui lòng kiểm tra console (F12).");
+            } finally {
+                loading.remove();
+            }
         }
-
-
     </script>
-
-
 </body>
 
 </html>
