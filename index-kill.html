@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
@@ -306,10 +306,6 @@
             background-color: #f9f9f9;
         }
 
-        .priority-row {
-            background-color: #fffacd !important;
-        }
-
         .hidden-col {
             display: none;
         }
@@ -319,12 +315,6 @@
             padding: 8px;
             width: 100%;
             box-sizing: border-box;
-        }
-
-        .priority-label {
-            display: block;
-            margin: 10px 0 5px 0;
-            font-weight: bold;
         }
 
         .action-buttons {
@@ -348,82 +338,6 @@
             /* Override width: 100% */
         }
 
-        /* === NEW STYLES FOR COMPARISON VIEW === */
-        #comparisonViewContainer {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            background-color: #fcfcfc;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .comparison-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #9c27b0;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .comparison-header h2 {
-            margin: 0;
-            color: #9c27b0;
-            font-size: 1.5em;
-        }
-
-        .comparison-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 4px;
-        }
-
-        .comparison-controls label {
-            font-weight: bold;
-        }
-
-        .comparison-controls select,
-        .comparison-controls button {
-            padding: 8px 12px;
-            font-size: 14px;
-        }
-
-        .comparison-controls input[type="text"] {
-            padding: 8px 12px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            flex-grow: 1;
-        }
-
-        .priority-checkbox-list {
-            max-height: 150px;
-            /* Giới hạn chiều cao */
-            overflow-y: auto;
-            /* Thêm thanh cuộn khi cần */
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #fff;
-            flex-basis: 100%;
-            /* Chiếm toàn bộ chiều rộng trong flex container */
-        }
-
-        .priority-checkbox-list label {
-            display: block;
-            /* Mỗi checkbox một dòng */
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-weight: normal;
-            /* Bỏ bold mặc định của label */
-        }
-
         .file-name-display {
             display: block;
             margin-top: 5px;
@@ -432,20 +346,6 @@
             font-size: 12px;
             min-height: 1em;
             /* Giữ khoảng trống */
-        }
-
-        #comparisonResult {
-            width: 100%;
-            overflow-x: auto;
-            /* Thêm thanh cuộn ngang khi cần */
-        }
-
-        #comparisonResult table {
-            margin-top: 0;
-        }
-
-        #comparisonResult th {
-            background-color: #f5eef8;
         }
 
         /* === NEW STYLES FOR DETAILED VIEW === */
@@ -756,18 +656,6 @@
             </div>
         </div>
 
-        <div class="filter-controls">
-            <div class="filter-section">
-                <label class="priority-label">ID ưu tiên (cách nhau bằng dấu phẩy):</label>
-                <input type="text" id="priorityIds" class="priority-input"
-                    placeholder="Nhập các ID ưu tiên, ví dụ: 123,456,789"
-                    value="416381060,765602761,417896120,537487142,360966484" />
-                <div class="action-buttons">
-                    <button onclick="applyPriorityFilter()" class="secondary">Áp dụng lọc</button>
-                </div>
-            </div>
-        </div>
-
         <div class="controls">
             <div style="flex: 1;">
                 <input type="text" id="searchInput" placeholder="Tìm theo tên hoặc ID..." />
@@ -775,7 +663,6 @@
                     <button onclick="searchTable()">Tìm kiếm</button>
                     <button onclick="showDetailedView()" class="secondary">Xem chi tiết</button>
                     <button id="compactViewBtn" onclick="toggleCompactView()" class="tertiary">Tinh gọn</button>
-                    <button onclick="showComparisonView()" class="quaternary">So sánh với Ưu tiên</button>
                     <button onclick="sortTable('killsDiff', 'asc')" class="secondary">Sắp xếp Kills (Tăng)</button>
                     <button onclick="sortTable('killsDiff', 'desc')" class="secondary">Sắp xếp Kills (Giảm)</button>
                     <button onclick="toggleIdColumn()" class="tertiary">Ẩn/Hiện ID</button>
@@ -880,7 +767,7 @@
         </div>
 
         <!-- Container for the new comparison view -->
-        <div id="comparisonViewContainer" style="display: none;"></div>
+
 
         <!-- Container for the new detailed vertical view -->
         <div id="detailedViewContainer" style="display: none;"></div>
@@ -936,6 +823,9 @@
                 <div class="chart-controls">
                     <label for="playerSelectChart">Chọn người chơi:</label>
                     <select id="playerSelectChart" onchange="updateChart()"></select>
+
+                    <label for="playerCompareChart">Người chơi 2 (so sánh):</label>
+                    <select id="playerCompareChart" onchange="updateChart()"></select>
                 </div>
                 <div style="position: relative; height:60vh; width:100%">
                     <canvas id="statsChart"></canvas>
@@ -970,7 +860,6 @@
         let currentData = [];
         let showIdColumn = true;
         window.showMonthlyDataOverall = false; // Track whether to show monthly data or total diff
-        let priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
         let currentSort = { column: 'name', direction: 'asc' };
         let selectedMonths = {
             june: 6, // Mặc định là tháng 6
@@ -995,6 +884,18 @@
             { key: 'successful_defenses', name: 'Phòng thủ Thành công', groupClass: 'group-defenses-cell' },
             { key: 'victories', name: 'Chiến Thắng', groupClass: 'group-victories-cell' }
         ];
+
+        // Hàm định dạng số lớn (triệu, tỷ) cho các trục biểu đồ
+        const formatVietnameseTick = (value) => {
+            if (value === 0) return '0';
+            const absVal = Math.abs(value);
+            const sign = value < 0 ? '-' : '';
+            if (absVal >= 1e12) return sign + (absVal / 1e12).toFixed(2).replace(/\.00$|\.0$/, '') + ' nghìn tỷ';
+            if (absVal >= 1e9) return sign + (absVal / 1e9).toFixed(2).replace(/\.00$|\.0$/, '') + ' tỷ';
+            if (absVal >= 1e6) return sign + (absVal / 1e6).toFixed(2).replace(/\.00$|\.0$/, '') + ' triệu';
+            if (absVal >= 1e3) return sign + (absVal / 1e3).toFixed(0) + 'k';
+            return value.toLocaleString('vi-VN');
+        };
 
         // Hàm tải dữ liệu với logic ưu tiên
         function loadData(type) {
@@ -1241,7 +1142,6 @@
                         if (!juneStats && !julyStats) return;
 
                         const killsDiff = calculateDifference(julyStats?.kills, juneStats?.kills);
-                        const isPriority = priorityIds.includes(userId);
 
                         currentData.push({
                             userId,
@@ -1250,8 +1150,7 @@
                             juneStats,
                             julyStats,
                             killsDiff,
-                            hasBothData: juneStats && julyStats,
-                            isPriority
+                            hasBothData: juneStats && julyStats
                         });
                     });
 
@@ -1266,49 +1165,6 @@
             }, 100);
         }
 
-
-        // Hàm cập nhật ID ưu tiên
-        function updatePriorityIds() {
-            const input = document.getElementById('priorityIds').value;
-            priorityIds = input.split(',')
-                .map(id => id.trim())
-                .filter(id => id !== '');
-
-            currentData.forEach(item => {
-                item.isPriority = priorityIds.includes(item.userId);
-            });
-        }
-
-        // Hàm áp dụng bộ lọc ưu tiên
-        function applyPriorityFilter() {
-            updatePriorityIds();
-
-            const sortedData = [...currentData].sort((a, b) => {
-                // Logic ưu tiên
-                const aIsPriority = a.isPriority;
-                const bIsPriority = b.isPriority;
-
-                if (aIsPriority && !bIsPriority) return -1;
-                if (!aIsPriority && bIsPriority) return 1;
-
-                // Nếu cả hai cùng trạng thái ưu tiên (hoặc cùng không), sắp xếp theo tiêu chí hiện tại
-                if (currentSort.column === 'killsDiff') {
-                    if (a.hasBothData && b.hasBothData) {
-                        return currentSort.direction === 'asc' ? a.killsDiff - b.killsDiff : b.killsDiff - a.killsDiff;
-                    }
-                    if (!a.hasBothData && !b.hasBothData) return 0;
-                    if (!a.hasBothData) return 1;
-                    if (!b.hasBothData) return -1;
-                } else { // Sắp xếp theo tên
-                    return currentSort.direction === 'asc'
-                        ? a.name.localeCompare(b.name)
-                        : b.name.localeCompare(a.name);
-                }
-                return 0;
-            });
-
-            displaySortedData(sortedData);
-        }
 
         // Hàm sắp xếp bảng
         function sortTable(column, direction) {
@@ -1350,11 +1206,10 @@
 
 
             sortedData.forEach((item, index) => {
-                const { userId, name, rank, juneStats, julyStats, hasBothData, isPriority } = item;
+                const { userId, name, rank, juneStats, julyStats, hasBothData } = item;
                 const row = document.createElement('tr');
 
                 if (!hasBothData) row.classList.add('missing-data-row');
-                if (isPriority) row.classList.add('priority-row');
 
                 // Tạo HTML cho các chỉ số bằng cách lặp qua mảng cấu hình
                 let statsHtml = '';
@@ -1635,85 +1490,6 @@
             const container = document.getElementById('detailedViewContainer');
             container.innerHTML = selectionHtml;
             container.style.display = 'block';
-        }
-
-        function performMultiComparison() {
-            const memberId = document.getElementById('comparisonMemberSelect').value;
-            if (!memberId) {
-                alert("Vui lòng chọn thành viên chính để so sánh.");
-                return;
-            }
-
-            const selectedPriorityIds = Array.from(document.querySelectorAll('.priority-compare-checkbox:checked')).map(cb => cb.value);
-
-            if (selectedPriorityIds.length === 0) {
-                alert("Vui lòng chọn ít nhất một thành viên ưu tiên để so sánh.");
-                return;
-            }
-
-            const userToCompare = currentData.find(item => item.userId === memberId);
-            const priorityUsers = selectedPriorityIds.map(id => currentData.find(item => item.userId === id));
-
-            renderComparisonResult(userToCompare, priorityUsers);
-        }
-
-
-        function renderComparisonResult(mainUser, comparisonUsers) {
-            const resultContainer = document.getElementById('comparisonResult');
-            const statMapping = {
-                might: "Might", kills: "Kills", enemies_captured: "Kẻ Thù Bị Bắt", enemies_destroyed: "Kẻ Thù Tiêu Diệt",
-                enemy_wounded: "Quân Địch Bị Thương", troops_killed: "Quân Đội Đã Giết", troops_lost: "Số Quân Tổn Thất",
-                troops_wounded: "Quân Đội Bị Thương", losses: "Thua", successful_attacks: "Tấn công Thành công",
-                successful_defenses: "Phòng thủ Thành công", victories: "Chiến Thắng"
-            };
-
-            const shortenName = (name) => name.length > 15 ? name.substring(0, 12) + '...' : name;
-
-            // Build table headers dynamically
-            let headerHtml = `
-                <th style="text-align: left;">Chỉ số</th>
-                <th class="positive">${shortenName(mainUser.name)}</th>
-            `;
-            comparisonUsers.forEach(user => {
-                headerHtml += `<th>${shortenName(user.name)}</th>`;
-            });
-
-            let tableHtml = `
-                <h4>So sánh Tổng (Tháng 7 vs Tháng 6)</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            ${headerHtml}
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            for (const key in statMapping) {
-                let rowHtml = `<tr><td class="stat-name">${statMapping[key]}</td>`;
-
-                // Main user's diff
-                const mainUserDiff = calculateDifference(
-                    mainUser.julyStats ? mainUser.julyStats[key] : undefined,
-                    mainUser.juneStats ? mainUser.juneStats[key] : undefined
-                );
-                rowHtml += `<td style="text-align: right;">${formatDifference(mainUserDiff)}</td>`;
-
-                // Comparison users' diffs
-                comparisonUsers.forEach(user => {
-                    const comparisonUserDiff = calculateDifference(
-                        user.julyStats ? user.julyStats[key] : undefined,
-                        user.juneStats ? user.juneStats[key] : undefined
-                    );
-                    rowHtml += `<td style="text-align: right;">${formatDifference(comparisonUserDiff)}</td>`;
-                });
-
-                rowHtml += '</tr>';
-                tableHtml += rowHtml;
-            }
-
-            tableHtml += `</tbody></table>`;
-            resultContainer.innerHTML = tableHtml;
         }
 
         // Chức năng xuất ảnh được lấy từ file index.html theo yêu cầu
@@ -2041,10 +1817,7 @@
 
         function resetTable() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('priorityIds').value = '416381060,765602761,417896120,537487142,360966484';
-            priorityIds = ['416381060', '765602761', '417896120', '537487142', '360966484'];
-            hideComparisonView();
-            hideDetailedView();
+            document.body.classList.remove('compact-view');
             document.body.classList.remove('compact-view');
             document.getElementById('compactViewBtn').textContent = 'Tinh gọn';
             sortTable('name', 'asc');
@@ -2097,9 +1870,6 @@
                     document.getElementById('julyFileName').textContent = '';
                 }
             });
-
-            // Khởi tạo giá trị mặc định cho priorityIds
-            document.getElementById('priorityIds').value = priorityIds.join(',');
 
             // === TỰ ĐỘNG ĐIỀN URL MẶC ĐỊNH TỪC TỪ GITHUB ===
             // Người dùng sẽ cần nhấn nút "Tải Dữ Liệu" để bắt đầu
@@ -2675,7 +2445,9 @@
 
         function showChartModal() {
             const playerSelect = document.getElementById('playerSelectChart');
+            const playerCompareSelect = document.getElementById('playerCompareChart');
             playerSelect.innerHTML = ''; // Xóa các lựa chọn cũ
+            playerCompareSelect.innerHTML = ''; // Xóa các lựa chọn cũ
 
             const eligiblePlayers = currentData.filter(p => p.hasBothData);
 
@@ -2686,11 +2458,23 @@
 
             eligiblePlayers.sort((a, b) => a.name.localeCompare(b.name)); // Sắp xếp theo tên
 
+            // Thêm lựa chọn "Không so sánh" cho dropdown thứ 2
+            const noneOption = document.createElement('option');
+            noneOption.value = ""; // Giá trị rỗng để xác định không chọn
+            noneOption.textContent = "--- Không so sánh ---";
+            playerCompareSelect.appendChild(noneOption);
+
+            // Điền danh sách người chơi vào cả hai dropdown
             eligiblePlayers.forEach(player => {
-                const option = document.createElement('option');
-                option.value = player.userId;
-                option.textContent = player.name;
-                playerSelect.appendChild(option);
+                const option1 = document.createElement('option');
+                option1.value = player.userId;
+                option1.textContent = player.name;
+                playerSelect.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = player.userId;
+                option2.textContent = player.name;
+                playerCompareSelect.appendChild(option2);
             });
 
             document.getElementById('chartModal').style.display = 'block';
@@ -2710,91 +2494,118 @@
                 chartInstance.destroy();
             }
 
-            const playerId = document.getElementById('playerSelectChart').value;
-            const player = currentData.find(p => p.userId === playerId);
+            const playerId1 = document.getElementById('playerSelectChart').value;
+            const playerId2 = document.getElementById('playerCompareChart').value;
 
-            if (!player) return;
+            const player1 = currentData.find(p => p.userId === playerId1);
+            // Xử lý trường hợp không chọn người chơi 2 (giá trị rỗng)
+            const player2 = playerId2 ? currentData.find(p => p.userId === playerId2) : null;
 
+            if (!player1) return;
+
+            // Cấu hình các chỉ số, màu sắc và trục Y tương ứng
+            // Đồng bộ với 'Biểu đồ so sánh'
             const statsToChart = [
-                { key: 'kills', label: 'Kills', yAxisID: 'y' },
-                { key: 'enemies_destroyed', label: 'Kẻ Thù Tiêu Diệt', yAxisID: 'y1' },
-                { key: 'enemy_wounded', label: 'Quân Địch Bị Thương', yAxisID: 'y' },
-                { key: 'troops_lost', label: 'Số Quân Tổn Thất', yAxisID: 'y' }
+                { key: 'enemies_destroyed', label: 'Kẻ Thù Tiêu Diệt', yAxisID: 'y1', color: 'rgba(54, 162, 235, 0.7)' },
+                { key: 'kills', label: 'Kills', yAxisID: 'y', color: 'rgba(75, 192, 192, 0.7)' },
+                { key: 'enemy_wounded', label: 'Quân Địch Bị Thương', yAxisID: 'y', color: 'rgba(255, 206, 86, 0.7)' },
+                { key: 'troops_lost', label: 'Số Quân Tổn Thất', yAxisID: 'y', color: 'rgba(255, 99, 132, 0.7)' }
             ];
 
-            const labels = statsToChart.map(s => s.label);
+            // Nhãn trên trục X sẽ là tên người chơi
+            const labels = [player1.name];
+            if (player2) {
+                labels.push(player2.name);
+            }
 
-            const datasets = statsToChart.map((stat, index) => {
-                const value = calculateDifference(player.julyStats?.[stat.key], player.juneStats?.[stat.key]) || 0;
-
-                let backgroundColor;
-                if (stat.key === 'troops_lost') {
-                    backgroundColor = value <= 0 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(255, 99, 132, 0.7)';
-                } else {
-                    backgroundColor = value >= 0 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(255, 99, 132, 0.7)';
+            // Tạo một dataset cho mỗi chỉ số để có thể gán trục Y khác nhau
+            const datasets = statsToChart.map(stat => {
+                const data = [
+                    calculateDifference(player1.julyStats?.[stat.key], player1.juneStats?.[stat.key]) || 0
+                ];
+                if (player2) {
+                    data.push(calculateDifference(player2.julyStats?.[stat.key], player2.juneStats?.[stat.key]) || 0);
                 }
-
-                // Create a dataset for each stat
                 return {
                     label: stat.label,
-                    data: labels.map((_, i) => i === index ? value : null), // Only one value per dataset
-                    backgroundColor: backgroundColor,
-                    borderWidth: 1,
-                    yAxisID: stat.yAxisID
+                    data: data,
+                    backgroundColor: stat.color, // Sử dụng màu cố định
+                    yAxisID: stat.yAxisID, // Gán trục Y cho toàn bộ dataset này
+                    borderWidth: 1
                 };
             });
 
             const ctx = document.getElementById('statsChart').getContext('2d');
             chartInstance = new Chart(ctx, {
-
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
+                data: { labels, datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { // To make tooltips work better with this setup
-                        mode: 'index',
-                        intersect: false,
-                    },
+                    interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        title: { display: true, text: `Biến động chỉ số của: ${player.name}`, font: { size: 16 } },
-                        legend: { display: false }, // Legend is redundant with x-axis labels
-                        tooltip: {
-                            callbacks: {
-                                // Show only the tooltip for the non-null value
-                                label: function (context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
+                        title: {
+                            display: true,
+                            text: player2 ? `So sánh ${player1.name} và ${player2.name}` : `Biểu đồ ${player1.name}`,
+                            font: { size: 16 }
+                        },
+                        legend: { position: 'top' },
+                        datalabels: {
+                            formatter: (value) => value?.toLocaleString('vi-VN'),
+                            font: { weight: 'bold' },
+                            anchor: 'end', // Luôn neo vào cuối thanh
+                            align: (context) => {
+                                const value = context.dataset.data[context.dataIndex];
+                                if (value === null || value === undefined) return 'top';
 
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y.toLocaleString();
-                                    }
-                                    return label;
+                                const chart = context.chart;
+                                const scaleId = context.dataset.yAxisID || 'y';
+                                const scale = chart.scales[scaleId];
+                                const scaleMax = scale.max;
+                                const scaleMin = scale.min;
+
+                                if (value >= 0) {
+                                    // Nếu giá trị dương gần đỉnh, căn lề dưới (bên trong)
+                                    return value > scaleMax * 0.85 ? 'bottom' : 'top';
+                                } else {
+                                    // Nếu giá trị âm gần đáy, căn lề trên (bên trong)
+                                    return value < scaleMin * 0.85 ? 'top' : 'bottom';
                                 }
-                            }
+                            },
+                            color: (context) => {
+                                const value = context.dataset.data[context.dataIndex];
+                                if (value === null || value === undefined) return '#444';
+
+                                const chart = context.chart;
+                                const scaleId = context.dataset.yAxisID || 'y';
+                                const scale = chart.scales[scaleId];
+                                const scaleMax = scale.max;
+                                const scaleMin = scale.min;
+
+                                const isInside = (value >= 0 && value > scaleMax * 0.85) || (value < 0 && value < scaleMin * 0.85);
+                                return isInside ? '#444' : '#444'; // Chữ trắng nếu ở trong, đen nếu ở ngoài
+                            },
+                            offset: 4
                         }
                     },
                     scales: {
+                        x: {
+                            // Đây là trục danh mục (tên người chơi)
+                        },
                         y: {
                             type: 'linear',
                             display: true,
                             position: 'left',
                             title: { display: true, text: 'Kills / Bị thương / Tổn thất' },
-                            ticks: { callback: (value) => value.toLocaleString() }
+                            ticks: { callback: formatVietnameseTick }
                         },
                         y1: {
                             type: 'linear',
                             display: true,
                             position: 'right',
                             title: { display: true, text: 'Kẻ Thù Tiêu Diệt' },
-                            ticks: { callback: (value) => value.toLocaleString() },
-                            // This is crucial to prevent the grid lines from overlapping
-                            grid: { drawOnChartArea: false, },
+                            ticks: { callback: formatVietnameseTick },
+                            grid: { drawOnChartArea: false } // Không vẽ lưới cho trục phụ để đỡ rối
                         }
                     }
                 }
@@ -2808,6 +2619,27 @@
         }
 
         function showOverallComparisonChart() {
+            const getLabelAlign = (context) => {
+                const value = context.dataset.data[context.dataIndex];
+                if (value === null || value === undefined) return 'end';
+
+                const chart = context.chart;
+                const scaleId = context.dataset.xAxisID || 'x';
+                const scale = chart.scales[scaleId];
+                const scaleMax = scale.max;
+                const scaleMin = scale.min;
+
+                // If value is positive and near the max edge
+                if (value > 0 && value > scaleMax * 0.85) {
+                    return 'start'; // Align inside
+                }
+                // If value is negative and near the min edge
+                if (value < 0 && value < scaleMin * 0.85) {
+                    return 'start'; // Align inside
+                }
+
+                return 'end'; // Align outside
+            };
             const container = document.getElementById('overallChartContainer');
             container.innerHTML = ''; // Xóa các biểu đồ cũ
 
@@ -2829,18 +2661,6 @@
 
             }
 
-            // Định dạng số
-            const formatVietnameseTick = (value) => {
-                if (value === 0) return '0';
-                const absVal = Math.abs(value);
-                const sign = value < 0 ? '-' : '';
-                if (absVal >= 1e12) return sign + (absVal / 1e12).toFixed(2).replace(/\.00$|\.0$/, '') + ' nghìn tỷ';
-                if (absVal >= 1e9) return sign + (absVal / 1e9).toFixed(2).replace(/\.00$|\.0$/, '') + ' tỷ';
-                if (absVal >= 1e6) return sign + (absVal / 1e6).toFixed(2).replace(/\.00$|\.0$/, '') + ' triệu';
-                if (absVal >= 1e3) return sign + (absVal / 1e3).toFixed(0) + 'k';
-                return value.toLocaleString('vi-VN');
-            };
-
             const statsConfig = [
                 { key: 'enemies_destroyed', label: 'Kẻ Thù Tiêu Diệt', colorJune: 'rgba(54, 162, 235, 0.7)', colorJuly: 'rgba(54, 162, 235, 0.35)', xAxisID: 'x1' },
                 { key: 'kills', label: 'Kills', colorJune: 'rgba(75, 192, 192, 0.7)', colorJuly: 'rgba(75, 192, 192, 0.35)', xAxisID: 'x' },
@@ -2851,7 +2671,6 @@
 
             eligiblePlayers.forEach((player, index) => {
                 const playerChartContainer = document.createElement('div');
-                playerChartContainer.style.height = '350px';
                 playerChartContainer.style.position = 'relative';
                 playerChartContainer.style.marginBottom = '40px';
 
@@ -2861,8 +2680,10 @@
 
                 let chartConfig;
 
-                if (window.showMonthlyDataOverall) {          
-                
+                if (window.showMonthlyDataOverall) {
+                    // Tăng chiều cao cho chế độ xem này vì nó có nhiều dòng và 2 trục X, cần thêm không gian
+                    playerChartContainer.style.height = '350px';
+
                     // CHẾ ĐỘ 1: Mỗi tháng 1 dòng riêng biệt, có 2 trục giá trị
                     const labels = [];
                     const datasets = [];
@@ -2875,10 +2696,8 @@
                         datasets.push({
                             label: `${stat.label} - Tháng ${selectedMonths.june}`,
                             data: labels.map(l => l === `${stat.label} - Tháng ${selectedMonths.june}` ? (player.juneStats?.[stat.key] || 0) : null),
-                            backgroundColor: 'rgba(59, 130, 246, 0.75)', // xanh
-                            barPercentage: 3,
-                            categoryPercentage: 0.9,
-                            maxBarThickness: 42,
+                            backgroundColor: 'rgba(59, 130, 246, 0.75)', // Xanh dương cho tháng 6
+                            barPercentage: 0.8,
                             xAxisID: stat.xAxisID
                         });
 
@@ -2886,10 +2705,8 @@
                         datasets.push({
                             label: `${stat.label} - Tháng ${selectedMonths.july}`,
                             data: labels.map(l => l === `${stat.label} - Tháng ${selectedMonths.july}` ? (player.julyStats?.[stat.key] || 0) : null),
-                            backgroundColor: 'rgba(234, 88, 12, 0.75)', // cam
-                            barPercentage: 5,
-                            categoryPercentage: 0.9,
-                            maxBarThickness: 42,
+                            backgroundColor: 'rgba(234, 88, 12, 0.75)', // Cam cho tháng 7
+                            barPercentage: 0.8,
                             xAxisID: stat.xAxisID
                         });
                     });
@@ -2916,15 +2733,17 @@
                                     }
                                 },
                                 datalabels: {
-                                    anchor: 'end', // Di chuyển nhãn ra cuối thanh
-                                    align: 'end',  // Căn lề nhãn ở cuối thanh
-                                    offset: 4,     // Thêm một chút khoảng cách từ cuối thanh
+                                    anchor: 'end',
                                     formatter: (value) => value?.toLocaleString('vi-VN'),
-                                    color: '#333', // Đổi màu chữ thành màu tối để dễ đọc trên nền trắng
                                     font: {
                                         weight: 'bold',
-                                        size: 10
-                                    }
+                                        size: 13
+                                    },
+                                    align: (context) => getLabelAlign(context),
+                                    color: (context) => {
+                                        return getLabelAlign(context) === 'start' ? '#fff' : '#333';
+                                    },
+                                    offset: 4
                                 }
                             },
                             scales: {
@@ -2940,6 +2759,9 @@
                                     title: { display: true, text: 'Kẻ Thù Tiêu Diệt' },
                                     grid: { drawOnChartArea: false },
                                     ticks: { callback: formatVietnameseTick }
+                                },
+                                y: {
+                                    stacked: true // Chồng các dataset lên nhau để kiểm soát chiều cao thanh
                                 }
                             }
                         }
@@ -2949,6 +2771,9 @@
 
                 else {
                     // CHẾ ĐỘ 2: Tổng chênh lệch (giữ nguyên)
+                    // Giữ nguyên chiều cao gốc cho chế độ xem này
+                    playerChartContainer.style.height = '350px';
+
                     chartConfig = {
                         type: 'bar',
                         data: {
@@ -2956,10 +2781,17 @@
                             datasets: statsConfig.map((stat, i) => ({
                                 label: stat.label,
                                 data: chartLabels.map((_, j) => i === j ? (calculateDifference(player.julyStats?.[stat.key], player.juneStats?.[stat.key]) || 0) : null),
-                                backgroundColor: stat.colorJune,
-                                barPercentage: 3,        // tăng độ rộng thanh
-                                categoryPercentage: 0.9,
-                                maxBarThickness: 42,
+                                backgroundColor: (context) => {
+                                    const value = context.dataset.data[context.dataIndex];
+                                    if (value === null || value === undefined) return 'transparent';
+                                    // Logic màu: Xanh lá cho chỉ số tốt, đỏ cho chỉ số xấu
+                                    // Riêng 'Số Quân Tổn Thất' thì ngược lại
+                                    if (stat.key === 'troops_lost') {
+                                        return value > 0 ? 'rgba(255, 99, 132, 0.7)' : 'rgba(75, 192, 192, 0.7)';
+                                    }
+                                    return value >= 0 ? 'rgba(75, 192, 192, 0.7)' : 'rgba(255, 99, 132, 0.7)';
+                                },
+                                barPercentage: 0.8,
                                 xAxisID: stat.xAxisID
                             }))
                         },
@@ -2972,26 +2804,31 @@
                                 legend: { display: false },
                                 tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.x.toLocaleString('vi-VN')}` } },
                                 datalabels: {
-                                    anchor: 'end', // Đặt neo ở cuối thanh
-                                    align: 'end',  // Căn lề ở cuối thanh (bên ngoài)
-                                    offset: 4,     // Khoảng cách nhỏ từ cuối thanh
+                                    anchor: 'end',
                                     formatter: (value) => value?.toLocaleString('vi-VN'),
+                                    font: {
+                                        size: 13,
+                                        weight: 'bold'
+                                    },
+                                    align: (context) => getLabelAlign(context),
                                     color: (context) => {
-                                        // Lấy giá trị từ context để quyết định màu sắc
+                                        if (getLabelAlign(context) === 'start') {
+                                            return '#fff'; // White when inside
+                                        }
                                         const value = context.dataset.data[context.dataIndex];
                                         if (value > 0) return 'green';
                                         if (value < 0) return 'red';
-                                        return '#666'; // Màu cho giá trị 0
+                                        return '#666';
                                     },
-                                    font: {
-                                        size: 10,
-                                        weight: 'bold'
-                                    }
+                                    offset: 4
                                 }
                             },
                             scales: {
                                 x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Kills / Bị thương / Tổn thất' }, ticks: { callback: formatVietnameseTick } },
-                                x1: { type: 'linear', position: 'top', title: { display: true, text: 'Kẻ Thù Tiêu Diệt' }, grid: { drawOnChartArea: false }, ticks: { callback: formatVietnameseTick } }
+                                x1: { type: 'linear', position: 'top', title: { display: true, text: 'Kẻ Thù Tiêu Diệt' }, grid: { drawOnChartArea: false }, ticks: { callback: formatVietnameseTick } },
+                                y: {
+                                    stacked: true // Áp dụng stacked để kiểm soát bố cục và chiều cao thanh
+                                }
                             }
                         }
                     };
@@ -3004,23 +2841,23 @@
         }
 
         function exportComparisonChartPDF() {
-    const charts = document.getElementById('overallChartContainer');
+            const charts = document.getElementById('overallChartContainer');
 
-    if (!charts) {
-        alert("Không tìm thấy biểu đồ để xuất PDF!");
-        return;
-    }
+            if (!charts) {
+                alert("Không tìm thấy biểu đồ để xuất PDF!");
+                return;
+            }
 
-    const opt = {
-        margin:       0.2,
-        filename:     'bieu-do-so-sanh.pdf',
-        image:        { type: 'jpeg', quality: 1 },
-        html2canvas:  { scale: 2, useCORS: true, logging: false },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
+            const opt = {
+                margin: 0.2,
+                filename: 'bieu-do-so-sanh.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
 
-    html2pdf().set(opt).from(charts).save();
-}
+            html2pdf().set(opt).from(charts).save();
+        }
 
 
     </script>
