@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
     <style>
         /* --- Biến và Thiết lập Cơ bản --- */
         :root {
@@ -468,7 +469,7 @@
         /* Input trong bảng */
         .target-input {
             width: 70px;
-            padding: 6px 8px;
+            padding: 8px 10px;
             border: 1px solid var(--medium-gray);
             border-radius: var(--border-radius-sm);
             text-align: center;
@@ -570,6 +571,9 @@
             /* Khoảng cách giữa các biểu đồ */
             margin-bottom: 25px;
             /* Khoảng cách trước nút cập nhật */
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .chart-wrapper {
@@ -1246,6 +1250,10 @@
                 <div class="chart-wrapper">
                     <canvas id="statusChart"></canvas>
                 </div>
+                <!-- === THÊM MỚI: Wrapper cho biểu đồ phân loại quái === -->
+                <div class="chart-wrapper">
+                    <canvas id="monsterDistributionChart"></canvas>
+                </div>
                 <div class="chart-wrapper">
                     <canvas id="topPlayersChart"></canvas>
                 </div>
@@ -1378,8 +1386,10 @@
     </div>
 
     <script>
+        Chart.register(ChartDataLabels); // Đăng ký plugin toàn cục để hiển thị số liệu
         // Khai báo biến lưu dữ liệu
         let statusChartInstance = null;
+        let monsterDistributionChartInstance = null; // Thêm biến cho biểu đồ mới
         let topPlayersChartInstance = null;
         let originalData = []; // Thêm dòng này
         let rawExcelData = []; // Thêm dòng này để lưu dữ liệu thô từ Excel
@@ -1681,15 +1691,32 @@
                 excess: processedData.filter(item => item.status === 'excess').length,
             };
 
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            // Dữ liệu cho Biểu đồ Phân loại Quái
+            const monsterTotals = processedData.reduce((acc, item) => {
+                acc.l1 += item.levels.l1 || 0;
+                acc.l2 += item.levels.l2 || 0;
+                acc.l3 += item.levels.l3 || 0;
+                acc.l4 += item.levels.l4 || 0;
+                acc.l5 += item.levels.l5 || 0;
+                return acc;
+            }, { l1: 0, l2: 0, l3: 0, l4: 0, l5: 0 });
 
-            // Hủy biểu đồ cũ nếu tồn tại
+            // Tính tổng điểm cho mỗi loại quái
+            const monsterPoints = {
+                l1: 0, // L1 không có điểm
+                l2: (monsterTotals.l2 || 0) * 1,
+                l3: (monsterTotals.l3 || 0) * 4,
+                l4: (monsterTotals.l4 || 0) * 16,
+                l5: (monsterTotals.l5 || 0) * 32,
+            };
+
+            // --- Biểu đồ 1: Tỷ lệ Trạng thái ---
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
             if (statusChartInstance) {
                 statusChartInstance.destroy();
             }
-
             statusChartInstance = new Chart(statusCtx, {
-                type: 'doughnut', // Hoặc 'pie'
+                type: 'pie', // Dùng pie cho đơn giản
                 data: {
                     labels: ['Thiếu', 'Đủ', 'Dư'],
                     datasets: [{
@@ -1700,7 +1727,7 @@
                             'rgb(46, 204, 113)', // Success color (Đủ)
                             'rgb(231, 76, 60)'   // Danger color (Dư)
                         ],
-                        hoverOffset: 4
+                        hoverOffset: 4,
                     }]
                 },
                 options: {
@@ -1709,6 +1736,83 @@
                         title: {
                             display: true,
                             text: 'Tỷ lệ trạng thái săn quái'
+                        },
+                        legend: {
+                            position: 'top',
+                        },
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if (value === 0) return '';
+                                const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                if (total === 0) return '';
+                                const percentage = (value * 100 / total).toFixed(1) + '%';
+                                return percentage;
+                            },
+                            color: '#fff',
+                            font: {
+                                weight: 'bold'
+                            },
+                            textStrokeColor: 'black',
+                            textStrokeWidth: 1
+                        }
+                    }
+                }
+            });
+
+            // --- Biểu đồ 2: Phân loại Quái (với %) ---
+            const monsterCtx = document.getElementById('monsterDistributionChart').getContext('2d');
+            if (monsterDistributionChartInstance) {
+                monsterDistributionChartInstance.destroy();
+            }
+            monsterDistributionChartInstance = new Chart(monsterCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Quái L2', 'Quái L3', 'Quái L4', 'Quái L5'], // Bỏ L1 vì điểm = 0
+                    datasets: [{
+                        label: 'Tỷ lệ điểm quái',
+                        // Bỏ L1 vì điểm = 0
+                        data: [monsterPoints.l2, monsterPoints.l3, monsterPoints.l4, monsterPoints.l5],
+                        backgroundColor: [
+                            '#778beb', // L2 - Tím
+                            '#f7b731', // L3 - Vàng
+                            '#eb3b5a', // L4 - Đỏ
+                            '#2d98da'  // L5 - Xanh dương
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        datalabels: {
+                            formatter: (value, ctx) => {
+                                if (value === 0) {
+                                    return '';
+                                }
+                                const sum = ctx.chart.data.datasets[ctx.datasetIndex].data.reduce((a, b) => a + b, 0);
+                                if (sum === 0) {
+                                    return '';
+                                }
+                                const percentage = (value * 100 / sum).toFixed(1) + '%';
+                                return percentage;
+                            },
+                            color: '#fff',
+                            font: { weight: 'bold' },
+                            textStrokeColor: 'black',
+                            textStrokeWidth: 1
+                        },
+                        title: {
+                            display: true,
+                            text: 'Tỷ lệ điểm theo loại quái'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.raw;
+                                    return `${label}: ${value.toLocaleString('vi-VN')} điểm`;
+                                }
+                            }
                         }
                     }
                 }
