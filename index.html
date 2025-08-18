@@ -626,6 +626,11 @@
             display: none;
         }
 
+        body.hide-bu-column .bu-column {
+            /* Thêm class để ẩn cột Bù */
+            display: none;
+        }
+
         .countdown-group {
             min-width: 280px;
             /* Điều chỉnh độ rộng nếu cần */
@@ -1214,10 +1219,22 @@
                 <input type="text" id="searchInput" placeholder="🔍 Tìm theo Tên hoặc ID..." class="url-input"
                     oninput="filterCurrentTable()">
             </div>
+            <!-- === THÊM MỚI: Tùy chỉnh Mục tiêu và Bù === -->
+            <div class="input-group" style="flex-grow: 0; min-width: auto; align-items: center;">
+                <label for="globalTargetInput" style="white-space: nowrap; margin-right: 5px;">Mục tiêu chung:</label>
+                <input type="number" id="globalTargetInput" value="56" class="url-input" style="width: 60px; padding: 10px 8px;">
+                <button class="btn btn-primary" onclick="applyGlobalTarget()" style="margin-left: 5px;">Áp dụng</button>
+            </div>
+            <div class="input-group" style="flex-grow: 0; min-width: auto; align-items: center;">
+                <label for="compensationValueInput" style="white-space: nowrap; margin-right: 5px;">Mức bù:</label>
+                <input type="number" id="compensationValueInput" value="5" class="url-input" style="width: 60px; padding: 10px 8px;">
+            </div>
+            <!-- === KẾT THÚC THÊM MỚI === -->
             <!-- === KẾT THÚC THÊM MỚI === -->
             <!-- Thêm class 'btn' và 'btn-toggle' -->
             <button class="btn btn-toggle" onclick="toggleQuaiTuan()">Ẩn/Hiện Quái Tuần</button>
             <button class="btn btn-toggle" onclick="toggleIdColumn()">Ẩn/Hiện ID</button>
+            <button class="btn btn-toggle" onclick="toggleBuColumn()">Ẩn/Hiện Bù</button>
             <!-- Thêm class 'btn' và 'btn-export' -->
             <button class="btn btn-export export-image-btn" onclick="exportToImage()">📸 Xuất Ảnh</button>
             <div class="tab">
@@ -1396,7 +1413,8 @@
         let processedData = [];
         let showQuaiTuan = false;
         let showIdColumn = false;
-        let currentTab = 'missing';
+        let showBuColumn = false; // Bù ẩn mặc định
+        let currentTab = 'missing'; 
         // === THÊM MỚI: Biến cho Countdown ===
         let countdownIntervalId = null;
         let countdownTargetTimestamp = null;
@@ -1655,7 +1673,7 @@
                         l4: parseInt(row[colIndex.l4]) || 0,
                         l5: parseInt(row[colIndex.l5]) || 0
                     },
-                    target: 56,
+                target: parseInt(document.getElementById('globalTargetInput')?.value) || 56,
                     status: 'missing'
                 };
 
@@ -2013,8 +2031,7 @@
                     if (!originalData || originalData.length === 0) {
                         originalDataForTab = [];
                     } else {
-                        const correctedIds = processedData.filter(item => item.corrected).map(item => item.id);
-                        originalDataForTab = originalData.filter(item => correctedIds.includes(item.id));
+                        originalDataForTab = processedData.filter(item => item.corrected);
                     }
                     break;
             }
@@ -2040,6 +2057,8 @@
 
             const showCheckbox = tabId === 'missing';
 
+            const compensationValue = parseInt(document.getElementById('compensationValueInput')?.value) || 0;
+
             // --- Bắt đầu: Tính toán cho dòng tổng kết ---
             let footerHtml = '';
             if (tabId === 'sufficient' || tabId === 'corrected') {
@@ -2054,7 +2073,7 @@
                         const missing = item.target - item.points;
                         if (missing > 0) {
                             acc.thieu += missing;
-                            acc.bu += missing + 5;
+                            acc.bu += missing + compensationValue;
                         }
                     }
                     return acc;
@@ -2065,6 +2084,7 @@
                 footerHtml = `
                     <tfoot>
                         <tr class="table-summary-row">
+                            <td></td> <!-- For STT -->
                             <td class="id-column"></td> <!-- Cột ID để trống -->
                             <td><strong>Tổng cộng</strong></td> <!-- Chữ 'Tổng cộng' ở cột Tên -->
                             <td>${format(totals.l1)}</td>
@@ -2075,7 +2095,7 @@
                             <td class="quai-tuan-column"></td>
                             <td>${format(totals.points)}</td>
                             <td>${tabId === 'corrected' ? format(totals.thieu) : ''}</td>
-                            ${tabId === 'corrected' ? `<td>${format(totals.bu)}</td>` : ''}
+                            ${tabId === 'corrected' ? `<td class="bu-column">${format(totals.bu)}</td>` : ''}
                         </tr>
                     </tfoot>
                 `;
@@ -2087,6 +2107,7 @@
             <div class="table-responsive"><table>
                     <thead>
                         <tr>
+                            <th>STT</th>
                             ${showCheckbox ? '<th></th>' : ''}
                             <th class="id-column">ID</th>
                             <th>Tên</th>
@@ -2098,12 +2119,13 @@
                             <th class="quai-tuan-column">Quái Tuần</th>
                             <th>Points Hunt</th>
                             <th>${tabId === 'sufficient' ? 'Dư' : 'Thiếu'}</th>
-                            ${tabId !== 'sufficient' ? '<th>Bù</th>' : ''}
+                            ${tabId !== 'sufficient' ? '<th class="bu-column">Bù</th>' : ''}
                         </tr>
                     </thead>
                     <tbody>
-                        ${data.map(item => `
+                        ${data.map((item, index) => `
                             <tr>
+                                <td>${index + 1}</td>
                                 ${showCheckbox ? `
                                     <td><input type="checkbox" data-id="${item.id}"></td>
                                 ` : ''}
@@ -2126,7 +2148,7 @@
                     item.target - item.points}
                                 </td>
                                 ${tabId !== 'sufficient' ? `
-                                    <td>${(item.target - item.points) + 5}</td>
+                                    <td class="bu-column">${(item.target - item.points) + compensationValue}</td>
                                 ` : ''}
                             </tr>
                         `).join('')}
@@ -2202,6 +2224,12 @@
             // Không cần render lại bảng vì CSS sẽ xử lý việc ẩn/hiện
         }
 
+        function toggleBuColumn() {
+            showBuColumn = !showBuColumn;
+            // Thêm/xóa class 'hide-bu-column' trên thẻ body
+            document.body.classList.toggle('hide-bu-column', !showBuColumn);
+        }
+
         // Hàm xử lý cập nhật mục chọn
         function processCorrections() {
             const selectedIds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
@@ -2245,6 +2273,25 @@
             btn.onclick = exportToExcel;
             document.querySelector('.toolbar').appendChild(btn);
         }
+
+        function applyGlobalTarget() {
+            const globalTarget = parseInt(document.getElementById('globalTargetInput').value);
+            if (isNaN(globalTarget) || globalTarget < 0) {
+                alert("Vui lòng nhập mục tiêu hợp lệ.");
+                return;
+            }
+
+            if (!processedData || processedData.length === 0) {
+                alert("Chưa có dữ liệu để áp dụng mục tiêu.");
+                return;
+            }
+
+            processedData.forEach(item => {
+                item.target = globalTarget;
+                updateStatus(item); // Recalculate status
+            });
+            updateUI(); // Refresh the entire UI
+        }
         // Gọi showTab ban đầu để ẩn các tab không active
         document.addEventListener('DOMContentLoaded', () => {
             // Thêm class để ẩn cột ID và Quái Tuần mặc định
@@ -2252,6 +2299,7 @@
             document.body.classList.add('hide-quaituan');
             showTab('missing'); // Hiển thị tab mặc định
             toggleHellOptions(); // Gọi để hiển thị đúng options cho hell mặc định
+            document.body.classList.toggle('hide-bu-column', !showBuColumn); // Đặt trạng thái ban đầu cho cột Bù
             displayPurchaseLeaderboard(); // Khởi tạo BXH Nạp
         });
         function exportToExcel() {
@@ -2271,6 +2319,7 @@
                     return b.points - a.points;
                 });
 
+                const compensationValue = parseInt(document.getElementById('compensationValueInput')?.value) || 5;
                 // Chuẩn bị dữ liệu để xuất từ dữ liệu đã sắp xếp
                 const wsData = [
                     ["User ID", "Name", "L1 (Hunt)", "L2 (Hunt)", "L3 (Hunt)", "L4 (Hunt)", "L5 (Hunt)", "Points Hunt", "Quái Tuần", "Thiếu", "Bù"],
@@ -2286,7 +2335,7 @@
                         item.target,
                         item.points === item.target ? "Đủ" :
                             item.points < item.target ? `Thiếu ${item.target - item.points}` : `Dư ${item.points - item.target}`,
-                        item.points < item.target ? `Bù ${(item.target - item.points) + 5}` : 0
+                        item.points < item.target ? `Bù ${(item.target - item.points) + compensationValue}` : 0
                     ])
                 ];
 
@@ -2357,8 +2406,8 @@
                     // Bù formula (column K)
                     const buCell = XLSX.utils.encode_cell({ r: rowNum - 1, c: 10 });
                     ws[buCell] = {
-                        f: `IF(ISNUMBER(SEARCH("Thiếu",J${rowNum})), "Bù " & (I${rowNum}-H${rowNum}+5), 0)`,
-                        v: item.points < item.target ? `Bù ${(item.target - item.points) + 5}` : 0
+                        f: `IF(ISNUMBER(SEARCH("Thiếu",J${rowNum})), "Bù " & (I${rowNum}-H${rowNum}+${compensationValue}), 0)`,
+                        v: item.points < item.target ? `Bù ${(item.target - item.points) + compensationValue}` : 0
                     };
                 });
 
@@ -2528,17 +2577,17 @@
             return /(\.xlsx?$)|(docs\.google\.com\/spreadsheets\/d\/)/i.test(url);
         }
 
-        // Hàm xử lý thay đổi giá trị Quái Tuần
+        // Hàm xử lý thay đổi giá trị Quái Tuần cho từng thành viên
         document.addEventListener('change', function (e) {
             if (e.target.classList.contains('target-input')) {
                 const id = parseInt(e.target.dataset.id);
-                const newTarget = parseInt(e.target.value) || 56;
+                const newTarget = parseInt(e.target.value) || 0; // Nếu rỗng, coi như là 0
 
                 const user = processedData.find(item => item.id === id);
                 if (user) {
                     user.target = newTarget;
-                    calculatePoints(user);
-                    updateUI();
+                    updateStatus(user); // Cập nhật lại trạng thái
+                    updateUI(); // Cập nhật lại toàn bộ giao diện để thay đổi được phản ánh
                 }
             }
         });
@@ -2677,11 +2726,12 @@
                 return;
             }
 
+            const compensationValue = parseInt(document.getElementById('compensationValueInput')?.value) || 5;
             const missingIds = processedData
                 .filter(item => item.status === 'missing')
                 .map(item => ({
                     id: item.id,
-                    debt: (item.target - item.points) + 5 // Lấy giá trị từ logic cột "Bù"
+                    debt: (item.target - item.points) + compensationValue // Lấy giá trị từ logic cột "Bù"
                 }));
 
             if (missingIds.length === 0) {
@@ -2806,6 +2856,7 @@
              <table>
                  <thead>
                      <tr>
+                         <th>STT</th>
                          <th>ID</th>
                          <th>Tên</th>
                          <th>Trạng thái</th>
@@ -2815,10 +2866,11 @@
                  </thead>
                  <tbody>`;
 
-            results.forEach(item => {
+            results.forEach((item, index) => {
                 const statusClass = item.status === "Không tìm thấy" ? "debt-status-not-found" : (item.status.startsWith("ĐÃ ĐỦ") ? "debt-status-sufficient" : "debt-status-in-debt");
                 tableHtml += `
                      <tr>
+                         <td>${index + 1}</td>
                          <td>${item.id}</td>
                          <td>${item.name || ''}</td>
                          <td class="${statusClass}">${item.status}</td>
@@ -3304,7 +3356,7 @@
             }
 
             if (leaderboard.length > 0) {
-                html += `<div class="table-responsive"><table><thead><tr><th>Hạng</th><th>Tên</th><th>Tổng KCX</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>L5</th></tr></thead><tbody>
+                html += `<div class="table-responsive"><table><thead><tr><th>STT</th><th>Tên</th><th>Tổng KCX</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>L5</th></tr></thead><tbody>
                     ${leaderboard.map((player, index) => `
                         <tr>
                             <td>${index + 1}</td>
