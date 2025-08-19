@@ -9,9 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -583,13 +582,14 @@
 
         #watermark {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-30deg); /* Căn giữa và xoay */
-            color: rgba(128, 128, 128, 0.1); /* Màu xám rất nhạt để không che nội dung */
+            top: 50%; /* Căn giữa theo chiều dọc */
+            left: 50%; /* Căn giữa theo chiều ngang */
+            transform: translate(-50%, -50%) rotate(90deg); /* Xoay 90 độ */
+            color: rgb(72 70 70 / 10%); /* Màu xám rất nhạt để không che nội dung */
             font-weight: bold;
             pointer-events: none; /* Không cho phép click vào chữ */
             z-index: 100; /* Đảm bảo chữ nằm trên nền bảng nhưng dưới các modal */
+            white-space: nowrap; /* Ngăn chữ bị xuống dòng khi xoay */
         }
     </style>
 </head>
@@ -863,7 +863,6 @@
                     <!-- Biểu đồ sẽ được render ở đây -->
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-                    <button onclick="exportComparisonChartPDF()">📄 Xuất PDF</button>
                     <button onclick="hideOverallComparisonChart()" class="tertiary">Đóng</button>
                 </div>
             </div>
@@ -879,10 +878,59 @@
         let showIdColumn = true;
         window.showMonthlyDataOverall = false; // Track whether to show monthly data or total diff
         let currentSort = { column: 'name', direction: 'asc' };
+        let overallChartInstances = []; // Store chart instances for PDF export
         let selectedMonths = {
             june: 6, // Mặc định là tháng 6
             july: 7  // Mặc định là tháng 7
         };
+
+        // Hàm tính toán vị trí label cho biểu đồ, hỗ trợ cả biểu đồ ngang và dọc
+        // Trả về 'align' value ('start'/'end' cho ngang, 'top'/'bottom' cho dọc)
+        function getLabelAlign(context) {
+            const value = context.dataset.data[context.dataIndex];
+            if (value === null || value === undefined) return 'end';
+
+            const chart = context.chart;
+            const ctx = chart.ctx;
+            const chartArea = chart.chartArea;
+            const isHorizontal = chart.options.indexAxis === 'y';
+
+            const datalabelsOptions = chart.options.plugins.datalabels || {};
+            const fontOptions = datalabelsOptions.font || {};
+            const fontSize = fontOptions.size || Chart.defaults.font.size;
+            const fontWeight = fontOptions.weight || Chart.defaults.font.weight || 'normal';
+            const fontFamily = fontOptions.family || Chart.defaults.font.family;
+            const fontStyle = fontOptions.style || Chart.defaults.font.style || 'normal';
+            ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+            const offset = datalabelsOptions.offset || 4;
+
+            if (isHorizontal) {
+                // --- Logic cho Biểu đồ Ngang ---
+                const scale = chart.scales[context.dataset.xAxisID || 'x'];
+                const text = value.toLocaleString('vi-VN');
+                const textWidth = ctx.measureText(text).width;
+                const pixel = scale.getPixelForValue(value);
+
+                if (value >= 0) {
+                    if (pixel + offset + textWidth > chartArea.right) return 'start';
+                } else {
+                    if (pixel - offset - textWidth < chartArea.left) return 'start';
+                }
+                return 'end';
+            } else {
+                // --- Logic cho Biểu đồ Dọc ---
+                const scale = chart.scales[context.dataset.yAxisID || 'y'];
+                const textHeight = fontSize; // Dùng chiều cao font làm giá trị ước tính
+                const pixel = scale.getPixelForValue(value);
+
+                if (value >= 0) {
+                    if (pixel - offset - textHeight < chartArea.top) return 'bottom'; // 'bottom' căn lề vào trong
+                } else {
+                    if (pixel + offset + textHeight > chartArea.bottom) return 'top'; // 'top' căn lề vào trong
+                }
+                return value >= 0 ? 'top' : 'bottom'; // Mặc định: 'top' cho số dương, 'bottom' cho số âm
+            }
+        }
 
         // Đăng ký plugin datalabels cho tất cả các biểu đồ
         Chart.register(ChartDataLabels);
@@ -1849,9 +1897,20 @@
             const tableWrapper = document.getElementById('tableWrapper');
             const watermark = document.getElementById('watermark');
             if (tableWrapper && watermark) {
-                // Adjust font size to be ~25% of the table's width.
-                // This makes the watermark scale with the table content and prevents overflow.
-                const fontSize = tableWrapper.offsetWidth * 0.25;
+                // Watermark được xoay 90 độ. Chiều cao trực quan của nó là chiều rộng ban đầu của chữ,
+                // và chiều rộng trực quan của nó là chiều cao ban đầu của chữ (tức là kích thước phông chữ).
+
+                // Ràng buộc 1: Chiều cao trực quan phải vừa với chiều cao của bảng.
+                // Tỷ lệ rộng/cao của chữ "FvN" là khoảng 1.8.
+                // => fontSize <= tableWrapper.offsetHeight / 1.8
+                const maxHeightFontSize = tableWrapper.offsetHeight / 1.8;
+
+                // Ràng buộc 2: Chiều rộng trực quan phải vừa với chiều rộng của bảng.
+                // Thêm một chút lề (ví dụ: 90%) để không bị quá sát.
+                const maxWidthFontSize = tableWrapper.offsetWidth * 0.9;
+
+                // Kích thước phông chữ cuối cùng phải thỏa mãn cả hai ràng buộc.
+                const fontSize = Math.min(maxHeightFontSize, maxWidthFontSize);
                 watermark.style.fontSize = `${fontSize}px`;
             }
         }
@@ -2160,6 +2219,10 @@
                     originalTableBody.innerHTML = '';
                     rowsPerImage[i].forEach(row => originalTableBody.appendChild(row));
 
+                    // Cập nhật lại kích thước watermark cho vừa với bảng tạm và chờ DOM cập nhật
+                    updateWatermark();
+                    await new Promise(resolve => setTimeout(resolve, 50));
+
                     // Chụp ảnh container để bao gồm cả bảng và watermark
                     const captureTarget = document.getElementById('tableWrapper');
                     const canvas = await html2canvas(captureTarget, {
@@ -2185,6 +2248,9 @@
                 // Khôi phục bảng gốc
                 originalTableBody.innerHTML = '';
                 originalRows.forEach(row => originalTableBody.appendChild(row));
+
+                // Cập nhật lại watermark cho bảng đầy đủ
+                updateWatermark();
 
                 // Khôi phục nút
                 exportButton.textContent = originalButtonText;
@@ -2590,37 +2656,13 @@
                         datalabels: {
                             formatter: (value) => value?.toLocaleString('vi-VN'),
                             font: { weight: 'bold' },
-                            anchor: 'end', // Luôn neo vào cuối thanh
-                            align: (context) => {
-                                const value = context.dataset.data[context.dataIndex];
-                                if (value === null || value === undefined) return 'top';
-
-                                const chart = context.chart;
-                                const scaleId = context.dataset.yAxisID || 'y';
-                                const scale = chart.scales[scaleId];
-                                const scaleMax = scale.max;
-                                const scaleMin = scale.min;
-
-                                if (value >= 0) {
-                                    // Nếu giá trị dương gần đỉnh, căn lề dưới (bên trong)
-                                    return value > scaleMax * 0.85 ? 'bottom' : 'top';
-                                } else {
-                                    // Nếu giá trị âm gần đáy, căn lề trên (bên trong)
-                                    return value < scaleMin * 0.85 ? 'top' : 'bottom';
-                                }
-                            },
+                            anchor: 'end',
+                            align: getLabelAlign, // Sử dụng hàm chung
                             color: (context) => {
+                                const align = getLabelAlign(context);
                                 const value = context.dataset.data[context.dataIndex];
-                                if (value === null || value === undefined) return '#444';
-
-                                const chart = context.chart;
-                                const scaleId = context.dataset.yAxisID || 'y';
-                                const scale = chart.scales[scaleId];
-                                const scaleMax = scale.max;
-                                const scaleMin = scale.min;
-
-                                const isInside = (value >= 0 && value > scaleMax * 0.85) || (value < 0 && value < scaleMin * 0.85);
-                                return isInside ? '#444' : '#444'; // Chữ trắng nếu ở trong, đen nếu ở ngoài
+                                const isInside = (value >= 0 && align === 'bottom') || (value < 0 && align === 'top');
+                                return isInside ? '#fff' : '#444'; // Trắng nếu ở trong, đen nếu ở ngoài
                             },
                             offset: 4
                         }
@@ -2651,33 +2693,22 @@
 
         function hideOverallComparisonChart() {
             document.getElementById('overallComparisonChartModal').style.display = 'none';
-            // Xóa nội dung container để hủy các biểu đồ và giải phóng bộ nhớ
-            document.getElementById('overallChartContainer').innerHTML = '';
+            // Hủy các instance biểu đồ để giải phóng bộ nhớ và reset trạng thái
+            overallChartInstances.forEach(c => c.destroy());
+            overallChartInstances = [];
+
+            document.getElementById('overallChartContainer').innerHTML = ''; // Dọn dẹp DOM
         }
 
         function showOverallComparisonChart() {
-            const getLabelAlign = (context) => {
-                const value = context.dataset.data[context.dataIndex];
-                if (value === null || value === undefined) return 'end';
+            const isMobile = window.innerWidth < 768; // Thêm biến kiểm tra màn hình di động
 
-                const chart = context.chart;
-                const scaleId = context.dataset.xAxisID || 'x';
-                const scale = chart.scales[scaleId];
-                const scaleMax = scale.max;
-                const scaleMin = scale.min;
-
-                // If value is positive and near the max edge
-                if (value > 0 && value > scaleMax * 0.85) {
-                    return 'start'; // Align inside
-                }
-                // If value is negative and near the min edge
-                if (value < 0 && value < scaleMin * 0.85) {
-                    return 'start'; // Align inside
-                }
-
-                return 'end'; // Align outside
-            };
             const container = document.getElementById('overallChartContainer');
+
+            // Clear previous instances before creating new ones
+            overallChartInstances.forEach(c => c.destroy());
+            overallChartInstances = [];
+
             container.innerHTML = ''; // Xóa các biểu đồ cũ
 
             const eligiblePlayers = currentData.filter(p => p.hasBothData);
@@ -2760,7 +2791,7 @@
                                     display: true,
                                     text: `${index + 1}. ${player.name}`,
                                     align: 'start',
-                                    font: { size: 16, weight: 'bold' },
+                                    font: { size: isMobile ? 14 : 16, weight: 'bold' }, // Giảm cỡ chữ tiêu đề trên di động
                                     padding: { bottom: 10 }
                                 },
                                 legend: { display: false }, // legend không cần vì label đã có tháng
@@ -2774,9 +2805,9 @@
                                     formatter: (value) => value?.toLocaleString('vi-VN'),
                                     font: {
                                         weight: 'bold',
-                                        size: 13
+                                        size: isMobile ? 11 : 13 // Giảm cỡ chữ chỉ số trên di động
                                     },
-                                    align: (context) => getLabelAlign(context),
+                                    align: getLabelAlign,
                                     color: (context) => {
                                         return getLabelAlign(context) === 'start' ? '#fff' : '#333';
                                     },
@@ -2837,17 +2868,17 @@
                             responsive: true,
                             maintainAspectRatio: false,
                             plugins: {
-                                title: { display: true, text: `${index + 1}. ${player.name}`, align: 'start', font: { size: 15, weight: 'bold' }, padding: { bottom: 5 } },
+                                title: { display: true, text: `${index + 1}. ${player.name}`, align: 'start', font: { size: isMobile ? 13 : 15, weight: 'bold' }, padding: { bottom: 5 } },
                                 legend: { display: false },
                                 tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.x.toLocaleString('vi-VN')}` } },
                                 datalabels: {
                                     anchor: 'end',
                                     formatter: (value) => value?.toLocaleString('vi-VN'),
                                     font: {
-                                        size: 13,
+                                        size: isMobile ? 11 : 13, // Giảm cỡ chữ chỉ số trên di động
                                         weight: 'bold'
                                     },
-                                    align: (context) => getLabelAlign(context),
+                                    align: getLabelAlign,
                                     color: (context) => {
                                         if (getLabelAlign(context) === 'start') {
                                             return '#fff'; // White when inside
@@ -2871,39 +2902,13 @@
                     };
                 }
 
-                new Chart(canvas.getContext('2d'), chartConfig);
+                const chart = new Chart(canvas.getContext('2d'), chartConfig);
+                overallChartInstances.push(chart); // Store instance for PDF export
             });
 
             document.getElementById('overallComparisonChartModal').style.display = 'block';
         }
 
-        async function exportComparisonChartPDF() {
-            const chartsContainer = document.getElementById('overallChartContainer');
-
-            if (!chartsContainer || chartsContainer.children.length === 0) {
-                alert("Không tìm thấy biểu đồ để xuất PDF!");
-                return;
-            }
-
-            const loading = showLoading("Đang tạo file PDF, vui lòng chờ...");
-
-            try {
-                const opt = {
-                    margin: 0.2,
-                    filename: 'bieu-do-so-sanh.pdf',
-                    image: { type: 'jpeg', quality: 1 },
-                    html2canvas: { scale: 2, useCORS: true, logging: false },
-                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                };
-
-                await html2pdf().set(opt).from(chartsContainer).save();
-            } catch (error) {
-                console.error("Lỗi khi xuất PDF:", error);
-                alert("Đã xảy ra lỗi khi tạo file PDF. Vui lòng kiểm tra console (F12).");
-            } finally {
-                loading.remove();
-            }
-        }
     </script>
 </body>
 
