@@ -1484,11 +1484,13 @@
                 Dán danh sách ID vào ô bên dưới để kiểm tra
             </p>
             <div class="debt-checker-controls">
-                <button class="btn btn-primary" onclick="runDebtCheck()">Kiểm Tra Nợ</button>
+                <button class="btn btn-primary" onclick="runDebtCheck()">Kiểm Tra Nợ từ File TXT</button>
                 <label for="debtCheckFile" class="upload-label txt-label">Chọn file TXT</label>
                 <input type="file" id="debtCheckFile" accept=".txt"
                     onchange="document.getElementById('debtCheckFileName').textContent = this.files[0]?.name || 'Chưa chọn file'">
                 <span class="file-name" id="debtCheckFileName">Chưa chọn file</span>
+                <!-- === THÊM MỚI: Nút xóa danh sách nợ lưu trữ === -->
+                <button class="btn btn-danger" onclick="clearStoredDebt()">Xóa Danh Sách Nợ Đã Lưu</button>
             </div>
             <div id="debtCheckResults">
 
@@ -1617,6 +1619,7 @@
         let countdownTargetTimestamp = null;
         // === KẾT THÚC THÊM MỚI ===        
         const localStorageKey = 'fvnMonsterHuntData'; // Key để lưu dữ liệu
+        const debtListStorageKey = 'fvnMonsterHuntStoredDebt'; // Key để lưu danh sách nợ
         // === THÊM MỚI: Logic cho dropdown ===
         function toggleDropdown(event) {
             document.getElementById("displayOptionsDropdown").classList.toggle("show");
@@ -2167,6 +2170,7 @@
                 // Hoặc gọi trực tiếp nếu không gặp vấn đề
                 renderCharts();
             }
+            checkStoredDebtAgainstNewData(); // Kiểm tra lại danh sách nợ mỗi khi UI cập nhật
             displayPurchaseLeaderboard(); // Cập nhật BXH Nạp
         }
 
@@ -2580,6 +2584,7 @@
                 document.getElementById('toggleQuaiTuanCheckbox').checked = showQuaiTuan;
                 document.getElementById('toggleBuCheckbox').checked = showBuColumn;
                 document.body.classList.toggle('hide-bu-column', !showBuColumn);
+                loadAndDisplayStoredDebt(); // Tải và hiển thị danh sách nợ đã lưu
                 displayPurchaseLeaderboard(); // Khởi tạo BXH Nạp
             }
         });
@@ -2587,11 +2592,23 @@
         // === THÊM MỚI: Chức năng Bookmark ===
         function bookmarkData() {
             if (processedData.length === 0) {
-                alert("Không có dữ liệu để lưu.");
+                alert("Không có dữ liệu để lưu trạng thái.");
                 const bookmarkCheckbox = document.getElementById('toggleBookmarkCheckbox');
                 if (bookmarkCheckbox) bookmarkCheckbox.checked = false; // Hoàn tác lại checkbox
                 return;
             }
+
+            // --- THÊM MỚI: Lưu danh sách thiếu vào mục nợ ---
+            const missingPlayers = processedData.filter(item => item.status === 'missing');
+            const compensationValue = parseInt(document.getElementById('compensationValueInput')?.value) || 5;
+            const debtList = missingPlayers.map(item => ({
+                id: item.id,
+                name: item.name, // Lưu lại tên để hiển thị
+                debt: (item.target - item.points) + compensationValue
+            }));
+            localStorage.setItem(debtListStorageKey, JSON.stringify(debtList));
+            checkStoredDebtAgainstNewData(); // Hiển thị ngay danh sách vừa lưu
+            // --- KẾT THÚC THÊM MỚI ---
 
             const dataToSave = {
                 processedData: processedData,
@@ -2604,7 +2621,7 @@
             };
 
             localStorage.setItem(localStorageKey, JSON.stringify(dataToSave));
-            alert("Đã lưu lại danh sách và cài đặt hiện tại vào trình duyệt!");
+            alert("Đã lưu trạng thái thành công! Danh sách thiếu đã được cập nhật trong mục 'Kiểm Tra Nợ'.");
         }
 
         function loadBookmarkedData() {
@@ -2633,6 +2650,7 @@
                 if (bookmarkCheckbox) bookmarkCheckbox.checked = true;
 
                 showTab('missing'); // Hiển thị tab mặc định
+                checkStoredDebtAgainstNewData(); // Kiểm tra danh sách nợ với dữ liệu vừa tải
                 updateUI(); // Cập nhật toàn bộ UI
                 console.log("Đã tải thành công dữ liệu từ bộ nhớ trình duyệt.");
             } else {
@@ -2642,9 +2660,50 @@
 
         function clearBookmark() {
             localStorage.removeItem(localStorageKey);
-            alert("Đã xóa trạng thái đã lưu. Dữ liệu hiện tại sẽ mất khi bạn tải lại trang.");
+            alert("Đã bỏ lưu trạng thái. Dữ liệu chính sẽ mất khi bạn tải lại trang (danh sách nợ vẫn được giữ lại).");
         }
-        // === KẾT THÚC THÊM MỚI ===
+
+        // === THÊM MỚI: Các hàm xử lý danh sách nợ lưu trữ ===
+        function loadAndDisplayStoredDebt() {
+            const storedDebtJSON = localStorage.getItem(debtListStorageKey);
+            if (storedDebtJSON) {
+                const debtList = JSON.parse(storedDebtJSON);
+                // Nếu chưa có dữ liệu chính, chỉ hiển thị danh sách nợ tĩnh
+                if (processedData.length === 0) {
+                    displayStaticDebtList(debtList);
+                }
+            }
+        }
+
+        function checkStoredDebtAgainstNewData() {
+            const storedDebtJSON = localStorage.getItem(debtListStorageKey);
+            if (storedDebtJSON && processedData.length > 0) {
+                const debtList = JSON.parse(storedDebtJSON);
+                displayDebtResults(debtList, "Kết quả kiểm tra danh sách nợ đã lưu");
+            }
+        }
+
+        function displayStaticDebtList(debtList) {
+            const resultsContainer = document.getElementById('debtCheckResults');
+            if (!debtList || debtList.length === 0) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+            let tableHtml = `<h3>Danh sách nợ đã lưu từ lần trước</h3><div class="table-responsive"><table><thead><tr><th class="stt-column">STT</th><th class="id-column">ID</th><th class="name-column">Tên</th><th class="required-column">Nợ cũ</th></tr></thead><tbody>`;
+            debtList.forEach((item, index) => {
+                tableHtml += `<tr><td class="stt-column">${index + 1}</td><td class="id-column">${item.id}</td><td class="name-column">${item.name}</td><td class="required-column">${item.debt}</td></tr>`;
+            });
+            tableHtml += `</tbody></table></div>`;
+            resultsContainer.innerHTML = tableHtml;
+        }
+
+        function clearStoredDebt() {
+            if (confirm('Bạn có chắc muốn xóa vĩnh viễn danh sách nợ đã lưu?')) {
+                localStorage.removeItem(debtListStorageKey);
+                document.getElementById('debtCheckResults').innerHTML = '';
+                alert('Đã xóa danh sách nợ đã lưu.');
+            }
+        }
 
         function exportToExcel() {
             try {
@@ -3118,7 +3177,7 @@
 
             reader.onload = function (e) {
                 const fileContent = e.target.result;
-                const debtData = parseDebtData(fileContent);
+                const debtData = parseDebtDataFromTxt(fileContent);
                 if (debtData) {
                     displayDebtResults(debtData);
                 } else {
@@ -3129,7 +3188,7 @@
             reader.readAsText(file);
         }
 
-        function parseDebtData(fileContent) {
+        function parseDebtDataFromTxt(fileContent) {
             const lines = fileContent.trim().split('\n');
             if (lines.length < 2) return null; // Ít nhất phải có header và 1 dòng dữ liệu
 
@@ -3145,9 +3204,10 @@
             return debtData;
         }
 
-        function displayDebtResults(debtData) {
+        function displayDebtResults(debtData, title = "Kết quả kiểm tra nợ từ file TXT") {
             const resultsContainer = document.getElementById('debtCheckResults');
-            resultsContainer.innerHTML = '';
+            // Thêm tiêu đề để phân biệt
+            resultsContainer.innerHTML = `<h3>${title}</h3>`;
 
             if (!debtData || debtData.length === 0) {
                 resultsContainer.innerHTML = '<p class="empty">Không có dữ liệu nợ.</p>';
@@ -3163,7 +3223,7 @@
             const results = debtData.map(debtItem => {
                 const user = processedData.find(u => String(u.id) === String(debtItem.id));
                 if (user) {
-                    const currentDebt = Math.max(0, user.target - user.points);
+                    // Yêu cầu mới: cộng nợ cũ vào mục tiêu tuần này
                     const newTotalTarget = debtItem.debt + 56; // Cộng thêm 56 vào số nợ
                     const newRemainingDebt = Math.max(0, newTotalTarget - user.points);
                     return {
@@ -3174,7 +3234,7 @@
                         required: newTotalTarget
                     };
                 } else {
-                    return { id: debtItem.id, name: '', status: "Không tìm thấy", points: 0, required: 0 };
+                    return { id: debtItem.id, name: debtItem.name || '', status: "Không tìm thấy", points: 0, required: debtItem.debt };
                 }
             });
 
@@ -3227,7 +3287,7 @@
                  </tbody>
              </table>
          </div>`;
-            resultsContainer.innerHTML = tableHtml;
+            resultsContainer.innerHTML += tableHtml; // Dùng += để thêm vào sau tiêu đề
         }
 
         // === THÊM MỚI: Chức năng tính Hell Event ===
