@@ -859,6 +859,28 @@
                 margin-top: 15px;
             }
 
+            /* === THÊM MỚI: Tối ưu dropdown và actions trên mobile === */
+            .actions-group {
+                flex-direction: column;
+                width: 100%;
+                align-items: stretch; /* Đảm bảo các item con cũng giãn ra */
+            }
+
+            .dropdown {
+                width: 100%; /* Đảm bảo dropdown container chiếm đủ rộng */
+            }
+
+            .dropdown-content {
+                position: static; /* Bỏ position absolute, hiển thị như block bình thường */
+                box-shadow: none; /* Bỏ shadow */
+                border: none;
+                border-top: 1px solid var(--light-gray); /* Thêm đường kẻ trên để phân cách */
+                width: 100%;
+                margin-top: 8px; /* Thêm khoảng cách với nút cha */
+                background-color: #fdfdfd; /* Nền sáng hơn chút để phân biệt */
+                border-radius: 0; /* Bỏ bo góc trên mobile */
+            }
+
             .input-actions-group {
                 justify-content: center;
                 /* Căn giữa các control */
