@@ -327,6 +327,111 @@
             align-items: center;
         }
 
+        /* === THÊM MỚI: Cụm cài đặt nhỏ gọn === */
+        .settings-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-shrink: 0;
+            /* Ngăn không cho co lại */
+        }
+
+        .input-group-compact {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .input-group-compact label {
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .input-group-compact .url-input {
+            width: 60px;
+            padding: 8px;
+            font-size: 14px;
+            height: auto;
+            line-height: 1.2;
+        }
+
+        .btn-icon {
+            padding: 8px 12px !important;
+            font-size: 16px;
+            line-height: 1;
+            min-width: auto;
+        }
+
+        /* === THÊM MỚI: Style cho nút Xóa === */
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--white-color);
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        /* === THÊM MỚI: Cụm hành động và dropdown === */
+        .actions-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--white-color);
+            min-width: 180px;
+            box-shadow: var(--box-shadow-medium);
+            z-index: 10;
+            border-radius: var(--border-radius-md);
+            padding: 8px;
+            border: 1px solid var(--light-gray);
+            right: 0;
+            margin-top: 5px;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-content label {
+            font-weight: 500;
+            color: var(--text-color);
+            padding: 8px 12px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border-radius: var(--border-radius-sm);
+            transition: background-color var(--transition-speed);
+        }
+
+        .dropdown-content label:hover {
+            background-color: var(--light-gray);
+        }
+
+        .dropdown-content input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .dropdown-content hr {
+            border: none;
+            border-top: 1px solid var(--light-gray);
+            margin: 6px 0;
+        }
+
         /* === THÊM MỚI: Style cho ô tìm kiếm === */
         .search-group {
             flex-grow: 1;
@@ -336,7 +441,7 @@
         }
 
         #searchInput {
-            width: 100%;
+            width: 56%;
             /* Chiếm toàn bộ chiều rộng của .search-group */
             box-sizing: border-box;
             /* Đảm bảo padding không làm tràn */
@@ -414,24 +519,77 @@
         }
 
         .table-responsive>table {
-            min-width: 800px;
-            width: 100%;
             border-collapse: collapse;
             /* Đảm bảo border collapse */
             margin-top: 0;
             /* Xóa margin top mặc định */
-            table-layout: fixed;
+            table-layout: auto;
         }
 
         th,
         td {
-            padding: 12px 15px;
-            /* Tăng padding cho thoáng */
+            padding: 12px 10px; /* Điều chỉnh padding */
             text-align: center;
             border-bottom: 1px solid var(--light-gray);
-            white-space: nowrap;
-            /* Ngăn nội dung cell xuống dòng */
+            white-space: nowrap; /* Mặc định không xuống dòng */
+            overflow: hidden; /* Ẩn nội dung tràn */
+            text-overflow: ellipsis; /* Hiển thị '...' cho nội dung bị cắt */
         }
+
+        /* === THÊM MỚI: Style cho cột STT === */
+        .stt-column {
+            width: 50px; /* Độ rộng cố định */
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+
+        /* === THÊM MỚI: Style cho cột checkbox === */
+        .checkbox-column {
+            width: 45px;
+            padding: 0 !important; /* Ghi đè padding mặc định của cell */
+        }
+
+        /* === THÊM MỚI: Style cho cột và nút Ghim === */
+        .pin-column {
+            width: 50px;
+            padding: 0 !important;
+        }
+
+        .btn-pin {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4em;
+            padding: 0;
+            opacity: 0.25;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-pin:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        .btn-pin.pinned {
+            opacity: 1;
+            color: #f39c12; /* Gold color */
+        }
+
+        /* === THÊM MỚI: Tối ưu độ rộng các cột khác === */
+        .id-column { width: 90px; }
+        .name-column {
+            text-align: left; /* Căn trái cho dễ đọc */
+            /* white-space: normal; Bỏ xuống dòng theo yêu cầu mới */
+            /* word-break: break-word; */
+        }
+        .level-column { width: 50px; }
+        .quai-tuan-column { width: 90px; }
+        .points-column { width: 100px; }
+        .status-column { width: 80px; }
+        .bu-column { width: 80px; }
+        .kcx-column { width: 140px; }
+        .debt-status-col { width: 120px; }
+        .required-column { width: 90px; }
 
         th {
             background: #e9edf0;
@@ -450,6 +608,15 @@
         tbody tr:nth-child(even) {
             background-color: #f9fafb;
             /* Zebra striping */
+        }
+
+        /* === THÊM MỚI: Style cho dòng được ghim === */
+        tr.pinned-row {
+            background-color: #fffbe6 !important; /* Light yellow, !important to override zebra striping */
+        }
+
+        tr.pinned-row:hover {
+            background-color: #fff6cf !important; /* Slightly darker yellow on hover */
         }
 
         tbody tr:hover {
@@ -1219,24 +1386,32 @@
                 <input type="text" id="searchInput" placeholder="🔍 Tìm theo Tên hoặc ID..." class="url-input"
                     oninput="filterCurrentTable()">
             </div>
-            <!-- === THÊM MỚI: Tùy chỉnh Mục tiêu và Bù === -->
-            <div class="input-group" style="flex-grow: 0; min-width: auto; align-items: center;">
-                <label for="globalTargetInput" style="white-space: nowrap; margin-right: 5px;">Mục tiêu chung:</label>
-                <input type="number" id="globalTargetInput" value="56" class="url-input" style="width: 60px; padding: 10px 8px;">
-                <button class="btn btn-primary" onclick="applyGlobalTarget()" style="margin-left: 5px;">Áp dụng</button>
+            <!-- === THÊM MỚI: Cụm cài đặt nhỏ gọn === -->
+            <div class="settings-group">
+                <div class="input-group-compact">
+                    <label for="globalTargetInput">Mục tiêu:</label>
+                    <input type="number" id="globalTargetInput" value="63" class="url-input">
+                    <button class="btn btn-primary btn-icon" onclick="applyGlobalTarget()" title="Áp dụng mục tiêu">✓</button>
+                </div>
+                <div class="input-group-compact">
+                    <label for="compensationValueInput">Bù:</label>
+                    <input type="number" id="compensationValueInput" value="5" class="url-input">
+                </div>
             </div>
-            <div class="input-group" style="flex-grow: 0; min-width: auto; align-items: center;">
-                <label for="compensationValueInput" style="white-space: nowrap; margin-right: 5px;">Mức bù:</label>
-                <input type="number" id="compensationValueInput" value="5" class="url-input" style="width: 60px; padding: 10px 8px;">
+            <!-- === THÊM MỚI: Cụm hành động và tùy chọn hiển thị === -->
+            <div class="actions-group">
+                <div class="dropdown">
+                    <button class="btn btn-toggle" onclick="toggleDropdown(event)">⚙️ Hiển thị</button>
+                    <div id="displayOptionsDropdown" class="dropdown-content">
+                        <label><input type="checkbox" id="toggleIdCheckbox" onchange="toggleIdColumn()"> Hiện ID</label>
+                        <label><input type="checkbox" id="toggleQuaiTuanCheckbox" onchange="toggleQuaiTuan()"> Hiện Quái Tuần</label>
+                        <label><input type="checkbox" id="toggleBuCheckbox" onchange="toggleBuColumn()"> Hiện Bù</label>
+                        <hr>
+                        <label><input type="checkbox" id="toggleBookmarkCheckbox" onchange="handleBookmarkToggle(this)"> Lưu trạng thái</label>
+                    </div>
+                </div>
+                <button class="btn btn-export export-image-btn" onclick="exportToImage()">📸 Xuất Ảnh</button>
             </div>
-            <!-- === KẾT THÚC THÊM MỚI === -->
-            <!-- === KẾT THÚC THÊM MỚI === -->
-            <!-- Thêm class 'btn' và 'btn-toggle' -->
-            <button class="btn btn-toggle" onclick="toggleQuaiTuan()">Ẩn/Hiện Quái Tuần</button>
-            <button class="btn btn-toggle" onclick="toggleIdColumn()">Ẩn/Hiện ID</button>
-            <button class="btn btn-toggle" onclick="toggleBuColumn()">Ẩn/Hiện Bù</button>
-            <!-- Thêm class 'btn' và 'btn-export' -->
-            <button class="btn btn-export export-image-btn" onclick="exportToImage()">📸 Xuất Ảnh</button>
             <div class="tab">
                 <!-- Thêm class 'btn' cho các nút tab -->
                 <button class="btn active" onclick="showTab('missing')">Thiếu (<span
@@ -1413,12 +1588,40 @@
         let processedData = [];
         let showQuaiTuan = false;
         let showIdColumn = false;
-        let showBuColumn = false; // Bù ẩn mặc định
+        let showBuColumn = true; // Sửa: Bù hiện mặc định
         let currentTab = 'missing'; 
         // === THÊM MỚI: Biến cho Countdown ===
         let countdownIntervalId = null;
         let countdownTargetTimestamp = null;
         // === KẾT THÚC THÊM MỚI ===        
+        const localStorageKey = 'fvnMonsterHuntData'; // Key để lưu dữ liệu
+        // === THÊM MỚI: Logic cho dropdown ===
+        function toggleDropdown(event) {
+            document.getElementById("displayOptionsDropdown").classList.toggle("show");
+        }
+
+        // Đóng dropdown nếu click ra ngoài
+        window.onclick = function (event) {
+            if (!event.target.closest('.dropdown')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        // === KẾT THÚC THÊM MỚI ===
+        // === THÊM MỚI: Logic cho Bookmark Toggle ===
+        function handleBookmarkToggle(checkbox) {
+            if (checkbox.checked) {
+                bookmarkData();
+            } else {
+                clearBookmark();
+            }
+        }
+        // === KẾT THÚC THÊM MỚI ===
         // Xử lý hiển thị tên file
         document.getElementById('excelFile').addEventListener('change', function (e) {
             document.getElementById('excelFileName').textContent = this.files[0]?.name || 'Chưa chọn file';
@@ -1529,120 +1732,135 @@
             reader.readAsText(txtFile);
         }
 
-        /* ▼▼▼ Thêm hàm xuất ảnh ở đây ▼▼▼ */
         async function exportToImage() {
             if (!processedData.length) {
                 alert("Vui lòng tải file Excel trước!");
                 return;
             }
-
+        
             const contentDivId = `${currentTab}Content`;
             const contentDiv = document.getElementById(contentDivId);
-
-            if (!contentDiv) {
-                alert("Không tìm thấy nội dung để chụp ảnh.");
-                return;
-            }
-
-            // Tìm chính xác thẻ table bên trong div responsive
             const tableElement = contentDiv.querySelector('.table-responsive > table');
-
+        
             if (!tableElement) {
                 alert(`Không tìm thấy bảng dữ liệu trong tab "${currentTab}" để xuất ảnh.`);
                 return;
             }
-
-            // --- Chuẩn bị chụp: Tạm thời sửa style ---
-            const thElements = tableElement.querySelectorAll('th');
-            const originalThStyles = [];
-            thElements.forEach(th => {
-                originalThStyles.push(th.style.position); // Lưu style gốc
-                th.style.position = 'static'; // Tạm thời bỏ sticky
-            });
-            // Có thể cần tạm thời bỏ overflow trên container nếu vẫn lỗi
-            // const responsiveDiv = contentDiv.querySelector('.table-responsive');
-            // const originalOverflow = responsiveDiv.style.overflowX;
-            // responsiveDiv.style.overflowX = 'visible';
-
-
+        
             // --- Phản hồi UI ---
             const exportButton = document.querySelector('.export-image-btn');
             const originalButtonText = exportButton.textContent;
             exportButton.textContent = '📸 Đang xử lý...';
             exportButton.disabled = true;
-
-            // --- Trì hoãn và Chụp ---
-            setTimeout(async () => {
-                let stylesRestored = false;
-                const restoreStyles = () => {
-                    if (!stylesRestored) {
-                        thElements.forEach((th, index) => {
-                            th.style.position = originalThStyles[index] || ''; // Khôi phục style gốc
-                        });
-                        // if (responsiveDiv) responsiveDiv.style.overflowX = originalOverflow; // Khôi phục overflow
-                        stylesRestored = true;
-                        console.log("Đã khôi phục style.");
-                    }
-                };
-
+        
+            // === BƯỚC 1: Mở tab mới NGAY LẬP TỨC ===
+            // Đây là hành động đồng bộ với click của người dùng, giúp tránh bị chặn bởi pop-up blocker trên Safari.
+            const newWindow = window.open('', '_blank');
+        
+            // === BƯỚC 2: Xử lý nếu tab bị chặn ===
+            if (!newWindow) {
+                alert("Mở tab mới bị chặn. Sẽ tự động tải file ảnh về máy.");
+        
+                // Chuyển sang phương thức tải về
                 try {
-                    console.log("Bắt đầu chụp ảnh bảng:", tableElement);
-                    console.log("Kích thước chụp (scrollWidth x scrollHeight):", tableElement.scrollWidth, tableElement.scrollHeight);
-
-                    const canvas = await html2canvas(tableElement, { // Chụp trực tiếp tableElement
+                    const thElements = tableElement.querySelectorAll('th');
+                    const originalThStyles = [];
+                    thElements.forEach(th => {
+                        originalThStyles.push(th.style.position);
+                        th.style.position = 'static';
+                    });
+        
+                    const canvas = await html2canvas(tableElement, {
                         scale: 1.5,
                         useCORS: true,
                         logging: false,
                         backgroundColor: '#ffffff',
-                        // --- THAY ĐỔI QUAN TRỌNG ---
-                        width: tableElement.scrollWidth,   // Đặt chiều rộng canvas bằng chiều rộng nội dung thực tế của bảng
-                        height: tableElement.scrollHeight, // Đặt chiều cao canvas bằng chiều cao nội dung thực tế của bảng
-                        // Bỏ scrollX/Y và windowWidth/Height
-                        // scrollX: 0,
-                        // scrollY: 0, // Không cần scrollY vì chụp trực tiếp table
-                        // windowWidth: tableElement.scrollWidth, // Dùng width thay thế
-                        // windowHeight: tableElement.scrollHeight // Dùng height thay thế
-                        // --- KẾT THÚC THAY ĐỔI ---
+                        width: tableElement.scrollWidth,
+                        height: tableElement.scrollHeight
                     });
-                    console.log("Đã tạo canvas");
-
-                    restoreStyles(); // Khôi phục style ngay
-
-                    const imageDataUrl = canvas.toDataURL('image/png');
-                    console.log("ImageDataUrl (đầu):", imageDataUrl.substring(0, 100));
-
-                    // --- Mở ảnh trong tab mới ---
-                    const newWindow = window.open();
-                    if (newWindow) {
-                        newWindow.document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                        <head><title>Báo cáo ${currentTab}</title></head>
-                        <body style="margin:0;">
-                            <img src="${imageDataUrl}" alt="Báo cáo ${currentTab}" style="max-width: 100%; display: block;">
-                        </body>
-                    </html>`);
-                        newWindow.document.close();
-                    } else {
-                        alert("Không thể mở tab mới. Vui lòng kiểm tra cài đặt chặn pop-up của trình duyệt và thử lại.");
-                    }
-
+        
+                    thElements.forEach((th, index) => {
+                        th.style.position = originalThStyles[index] || '';
+                    });
+        
+                    canvas.toBlob(function(blob) {
+                        if (!blob) { throw new Error("Không thể tạo Blob từ canvas."); }
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        const today = new Date();
+                        const fileName = `BaoCao_${currentTab}_${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}.png`;
+                        link.download = fileName;
+                        link.href = url;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                    }, 'image/png');
                 } catch (error) {
-                    console.error('Lỗi xuất ảnh:', error);
-                    alert(`Xuất ảnh thất bại! Lỗi: ${error.message}. Vui lòng thử lại hoặc kiểm tra console.`);
-                    restoreStyles(); // Đảm bảo khôi phục nếu lỗi
+                    console.error('Lỗi khi xuất ảnh (phương thức tải về):', error);
+                    alert(`Xuất ảnh thất bại! Lỗi: ${error.message}.`);
                 } finally {
-                    // --- Khôi phục nút ---
                     exportButton.textContent = originalButtonText;
                     exportButton.disabled = false;
-                    console.log("Hoàn tất xử lý xuất ảnh.");
                 }
-            }, 150); // Giữ nguyên độ trễ
+                return; // Dừng hàm
+            }
+        
+            // === BƯỚC 3: Nếu tab được mở, hiển thị thông báo chờ ===
+            try {
+                newWindow.document.write('<!DOCTYPE html><html><head><title>Đang tạo ảnh...</title></head><body style="margin:0; background:#f0f0f0; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;"><h2>🖼️ Đang tạo ảnh, vui lòng chờ...</h2></body></html>');
+                newWindow.document.close();
+            } catch (e) {
+                console.warn("Không thể ghi vào tab mới, có thể do cross-origin. Sẽ thử điều hướng trực tiếp.");
+            }
+        
+            // === BƯỚC 4: Tạo ảnh và cập nhật tab mới (dùng setTimeout để render) ===
+            const thElements = tableElement.querySelectorAll('th');
+            const originalThStyles = [];
+            thElements.forEach(th => {
+                originalThStyles.push(th.style.position);
+                th.style.position = 'static';
+            });
+        
+            setTimeout(async () => {
+                try {
+                    const canvas = await html2canvas(tableElement, {
+                        scale: 1.5,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff',
+                        width: tableElement.scrollWidth,
+                        height: tableElement.scrollHeight,
+                    });
+        
+                    const imageDataUrl = canvas.toDataURL('image/png');
+        
+                    // Cập nhật nội dung của tab mới với ảnh đã tạo
+                    newWindow.document.open();
+                    newWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                            <head><title>Báo cáo ${currentTab}</title></head>
+                            <body style="margin:0;">
+                                <img src="${imageDataUrl}" alt="Báo cáo ${currentTab}" style="max-width: 100%; display: block;">
+                            </body>
+                        </html>`);
+                    newWindow.document.close();
+        
+                } catch (error) {
+                    console.error('Lỗi khi tạo ảnh và cập nhật tab mới:', error);
+                    try {
+                        newWindow.document.body.innerHTML = `<h2>Rất tiếc, đã xảy ra lỗi khi tạo ảnh: ${error.message}</h2>`;
+                    } catch (e) {}
+                } finally {
+                    thElements.forEach((th, index) => {
+                        th.style.position = originalThStyles[index] || '';
+                    });
+                    exportButton.textContent = originalButtonText;
+                    exportButton.disabled = false;
+                }
+            }, 150);
         }
-
-
-
-        /* ▲▲▲ Kết thúc phần thêm hàm ▲▲▲ */
 
         function processData(data) {
             const result = [];
@@ -1673,8 +1891,10 @@
                         l4: parseInt(row[colIndex.l4]) || 0,
                         l5: parseInt(row[colIndex.l5]) || 0
                     },
-                target: parseInt(document.getElementById('globalTargetInput')?.value) || 56,
-                    status: 'missing'
+                    target: parseInt(document.getElementById('globalTargetInput')?.value) || 56,
+                    status: 'missing',
+                    corrected: false, // Thêm để đồng bộ
+                    isPinned: false   // Thêm trạng thái ghim
                 };
 
                 calculatePoints(item);
@@ -2020,7 +2240,17 @@
 
             switch (tabId) {
                 case 'missing':
-                    originalDataForTab = processedData.filter(item => item.status === 'missing');
+                    // Lấy những người chơi được ghim, sắp xếp theo Points Hunt giảm dần
+                    const pinnedUsers = processedData
+                        .filter(item => item.isPinned)
+                        .sort((a, b) => b.points - a.points); // Sửa: Sắp xếp theo điểm săn (Points Hunt)
+
+                    // Lấy những người chơi thiếu điểm và chưa được ghim
+                    const unpinnedMissingUsers = processedData
+                        .filter(item => !item.isPinned && item.status === 'missing');
+                    
+                    // Kết hợp 2 danh sách: người được ghim sẽ luôn ở trên đầu
+                    originalDataForTab = [...pinnedUsers, ...unpinnedMissingUsers];
                     break;
                 case 'sufficient':
                     originalDataForTab = [...processedData]
@@ -2084,17 +2314,18 @@
                 footerHtml = `
                     <tfoot>
                         <tr class="table-summary-row">
-                            <td></td> <!-- For STT -->
-                            <td class="id-column"></td> <!-- Cột ID để trống -->
-                            <td><strong>Tổng cộng</strong></td> <!-- Chữ 'Tổng cộng' ở cột Tên -->
-                            <td>${format(totals.l1)}</td>
-                            <td>${format(totals.l2)}</td>
-                            <td>${format(totals.l3)}</td>
-                            <td>${format(totals.l4)}</td>
-                            <td>${format(totals.l5)}</td>
+                            <td class="pin-column"></td> <!-- Thêm ô trống cho cột ghim -->
+                            <td class="stt-column"></td> <!-- For STT -->
+                            <td class="id-column"></td>
+                            <td class="name-column"><strong>Tổng cộng</strong></td>
+                            <td class="level-column">${format(totals.l1)}</td>
+                            <td class="level-column">${format(totals.l2)}</td>
+                            <td class="level-column">${format(totals.l3)}</td>
+                            <td class="level-column">${format(totals.l4)}</td>
+                            <td class="level-column">${format(totals.l5)}</td>
                             <td class="quai-tuan-column"></td>
-                            <td>${format(totals.points)}</td>
-                            <td>${tabId === 'corrected' ? format(totals.thieu) : ''}</td>
+                            <td class="points-column">${format(totals.points)}</td>
+                            <td class="status-column">${tabId === 'corrected' ? format(totals.thieu) : ''}</td>
                             ${tabId === 'corrected' ? `<td class="bu-column">${format(totals.bu)}</td>` : ''}
                         </tr>
                     </tfoot>
@@ -2107,48 +2338,59 @@
             <div class="table-responsive"><table>
                     <thead>
                         <tr>
-                            <th>STT</th>
-                            ${showCheckbox ? '<th></th>' : ''}
+                            ${showCheckbox ? '<th class="checkbox-column"></th>' : ''}
+                            <th class="pin-column" title="Ghim">📌</th>
+                            <th class="stt-column">STT</th>
                             <th class="id-column">ID</th>
-                            <th>Tên</th>
-                            <th>1</th>
-                            <th>2</th>
-                            <th>3</th>
-                            <th>4</th>
-                            <th>5</th>
+                            <th class="name-column">Tên</th>
+                            <th class="level-column">1</th>
+                            <th class="level-column">2</th>
+                            <th class="level-column">3</th>
+                            <th class="level-column">4</th>
+                            <th class="level-column">5</th>
                             <th class="quai-tuan-column">Quái Tuần</th>
-                            <th>Points Hunt</th>
-                            <th>${tabId === 'sufficient' ? 'Dư' : 'Thiếu'}</th>
+                            <th class="points-column">Points Hunt</th>
+                            <th class="status-column">${tabId === 'sufficient' ? 'Dư' : 'Thiếu'}</th>
                             ${tabId !== 'sufficient' ? '<th class="bu-column">Bù</th>' : ''}
                         </tr>
                     </thead>
                     <tbody>
                         ${data.map((item, index) => `
-                            <tr>
-                                <td>${index + 1}</td>
+                            <tr class="${item.isPinned ? 'pinned-row' : ''}">
                                 ${showCheckbox ? `
-                                    <td><input type="checkbox" data-id="${item.id}"></td>
+                                    <td class="checkbox-column"><input type="checkbox" data-id="${item.id}"></td>
                                 ` : ''}
+                                <td class="pin-column">
+                                    <button class="btn-pin ${item.isPinned ? 'pinned' : ''}" onclick="togglePin(${item.id})" title="Ghim/Bỏ ghim">📌</button>
+                                </td>
+                                <td class="stt-column">${index + 1}</td>
                                 <td class="id-column">${item.id}</td>
-                                <td>${item.name}</td>
-                                <td>${item.levels.l1}</td>
-                                <td>${item.levels.l2}</td>
-                                <td>${item.levels.l3}</td>
-                                <td>${item.levels.l4}</td>
-                                <td>${item.levels.l5}</td>
+                                <td class="name-column">${item.name}</td>
+                                <td class="level-column">${item.levels.l1}</td>
+                                <td class="level-column">${item.levels.l2}</td>
+                                <td class="level-column">${item.levels.l3}</td>
+                                <td class="level-column">${item.levels.l4}</td>
+                                <td class="level-column">${item.levels.l5}</td>
                                 <td class="quai-tuan-column">
                                     <input type="number"
                                            value="${item.target}"
                                            data-id="${item.id}"
                                            class="target-input">
                                 </td>
-                                <td>${item.points}</td>
-                                <td>${tabId === 'sufficient' ?
-                    Math.max(item.points - item.target, 0) :
-                    item.target - item.points}
-                                </td>
+                                <td class="points-column">${item.points}</td>
+                                <td class="status-column">${
+                                    tabId === 'sufficient'
+                                        ? Math.max(item.points - item.target, 0)
+                                        : (item.isPinned && item.points > item.target
+                                            ? `Dư ${item.points - item.target}`
+                                            : Math.max(0, item.target - item.points))
+                                }</td>
                                 ${tabId !== 'sufficient' ? `
-                                    <td class="bu-column">${(item.target - item.points) + compensationValue}</td>
+                                    <td class="bu-column">${
+                                        (item.isPinned && item.points > item.target)
+                                            ? 0
+                                            : (Math.max(0, item.target - item.points)) + compensationValue
+                                    }</td>
                                 ` : ''}
                             </tr>
                         `).join('')}
@@ -2230,6 +2472,15 @@
             document.body.classList.toggle('hide-bu-column', !showBuColumn);
         }
 
+        // === THÊM MỚI: Hàm ghim/bỏ ghim một người chơi ===
+        function togglePin(id) {
+            const user = processedData.find(item => item.id === id);
+            if (user) {
+                user.isPinned = !user.isPinned;
+                updateUI(); // Cập nhật lại toàn bộ giao diện
+            }
+        }
+
         // Hàm xử lý cập nhật mục chọn
         function processCorrections() {
             const selectedIds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
@@ -2271,7 +2522,7 @@
             btn.className = 'btn btn-success download-btn'; // Class chung và class riêng
             btn.textContent = '📥 Xuất Excel';
             btn.onclick = exportToExcel;
-            document.querySelector('.toolbar').appendChild(btn);
+            document.querySelector('.actions-group').appendChild(btn); // Sửa: Thêm vào group hành động
         }
 
         function applyGlobalTarget() {
@@ -2295,13 +2546,84 @@
         // Gọi showTab ban đầu để ẩn các tab không active
         document.addEventListener('DOMContentLoaded', () => {
             // Thêm class để ẩn cột ID và Quái Tuần mặc định
-            document.body.classList.add('hide-id-column');
-            document.body.classList.add('hide-quaituan');
-            showTab('missing'); // Hiển thị tab mặc định
-            toggleHellOptions(); // Gọi để hiển thị đúng options cho hell mặc định
-            document.body.classList.toggle('hide-bu-column', !showBuColumn); // Đặt trạng thái ban đầu cho cột Bù
-            displayPurchaseLeaderboard(); // Khởi tạo BXH Nạp
+            loadBookmarkedData(); // Thử tải dữ liệu đã lưu
+            if (processedData.length === 0) {
+                // Nếu không có dữ liệu lưu, thiết lập trạng thái mặc định
+                document.body.classList.add('hide-id-column');
+                document.body.classList.add('hide-quaituan');
+                showTab('missing'); // Hiển thị tab mặc định
+                toggleHellOptions(); // Gọi để hiển thị đúng options cho hell mặc định
+                // Cập nhật trạng thái ban đầu cho các checkbox và cột
+                document.getElementById('toggleIdCheckbox').checked = showIdColumn;
+                document.getElementById('toggleQuaiTuanCheckbox').checked = showQuaiTuan;
+                document.getElementById('toggleBuCheckbox').checked = showBuColumn;
+                document.body.classList.toggle('hide-bu-column', !showBuColumn);
+                displayPurchaseLeaderboard(); // Khởi tạo BXH Nạp
+            }
         });
+
+        // === THÊM MỚI: Chức năng Bookmark ===
+        function bookmarkData() {
+            if (processedData.length === 0) {
+                alert("Không có dữ liệu để lưu.");
+                const bookmarkCheckbox = document.getElementById('toggleBookmarkCheckbox');
+                if (bookmarkCheckbox) bookmarkCheckbox.checked = false; // Hoàn tác lại checkbox
+                return;
+            }
+
+            const dataToSave = {
+                processedData: processedData,
+                rawExcelData: rawExcelData, // Lưu cả dữ liệu thô
+                showIdColumn: showIdColumn,
+                showQuaiTuan: showQuaiTuan,
+                showBuColumn: showBuColumn,
+                globalTarget: document.getElementById('globalTargetInput').value,
+                compensationValue: document.getElementById('compensationValueInput').value
+            };
+
+            localStorage.setItem(localStorageKey, JSON.stringify(dataToSave));
+            alert("Đã lưu lại danh sách và cài đặt hiện tại vào trình duyệt!");
+        }
+
+        function loadBookmarkedData() {
+            const savedDataJSON = localStorage.getItem(localStorageKey);
+            const bookmarkCheckbox = document.getElementById('toggleBookmarkCheckbox');
+            if (savedDataJSON) {
+                const savedData = JSON.parse(savedDataJSON);
+                processedData = savedData.processedData || [];
+                rawExcelData = savedData.rawExcelData || [];
+                originalData = JSON.parse(JSON.stringify(processedData)); // Tạo bản sao
+
+                // Khôi phục trạng thái UI
+                showIdColumn = savedData.showIdColumn || false;
+                showQuaiTuan = savedData.showQuaiTuan || false;
+                showBuColumn = savedData.showBuColumn !== undefined ? savedData.showBuColumn : true;
+                document.getElementById('globalTargetInput').value = savedData.globalTarget || 63;
+                document.getElementById('compensationValueInput').value = savedData.compensationValue || 5;
+
+                // Cập nhật giao diện với dữ liệu đã tải
+                document.body.classList.toggle('hide-id-column', !showIdColumn);
+                document.body.classList.toggle('hide-quaituan', !showQuaiTuan);
+                document.body.classList.toggle('hide-bu-column', !showBuColumn);
+                document.getElementById('toggleIdCheckbox').checked = showIdColumn;
+                document.getElementById('toggleQuaiTuanCheckbox').checked = showQuaiTuan;
+                document.getElementById('toggleBuCheckbox').checked = showBuColumn;
+                if (bookmarkCheckbox) bookmarkCheckbox.checked = true;
+
+                showTab('missing'); // Hiển thị tab mặc định
+                updateUI(); // Cập nhật toàn bộ UI
+                console.log("Đã tải thành công dữ liệu từ bộ nhớ trình duyệt.");
+            } else {
+                if (bookmarkCheckbox) bookmarkCheckbox.checked = false;
+            }
+        }
+
+        function clearBookmark() {
+            localStorage.removeItem(localStorageKey);
+            alert("Đã xóa trạng thái đã lưu. Dữ liệu hiện tại sẽ mất khi bạn tải lại trang.");
+        }
+        // === KẾT THÚC THÊM MỚI ===
+
         function exportToExcel() {
             try {
                 const wb = XLSX.utils.book_new();
@@ -2856,12 +3178,12 @@
              <table>
                  <thead>
                      <tr>
-                         <th>STT</th>
-                         <th>ID</th>
-                         <th>Tên</th>
-                         <th>Trạng thái</th>
-                         <th>Điểm săn</th>
-                         <th>Yêu cầu</th>
+                         <th class="stt-column">STT</th>
+                         <th class="id-column">ID</th>
+                         <th class="name-column">Tên</th>
+                         <th class="debt-status-col">Trạng thái</th>
+                         <th class="points-column">Điểm săn</th>
+                         <th class="required-column">Yêu cầu</th>
                      </tr>
                  </thead>
                  <tbody>`;
@@ -2870,12 +3192,12 @@
                 const statusClass = item.status === "Không tìm thấy" ? "debt-status-not-found" : (item.status.startsWith("ĐÃ ĐỦ") ? "debt-status-sufficient" : "debt-status-in-debt");
                 tableHtml += `
                      <tr>
-                         <td>${index + 1}</td>
-                         <td>${item.id}</td>
-                         <td>${item.name || ''}</td>
+                         <td class="stt-column">${index + 1}</td>
+                         <td class="id-column">${item.id}</td>
+                         <td class="name-column">${item.name || ''}</td>
                          <td class="${statusClass}">${item.status}</td>
-                         <td>${item.points || 0}</td>
-                         <td>${item.required || 0}</td>
+                         <td class="points-column">${item.points || 0}</td>
+                         <td class="required-column">${item.required || 0}</td>
                      </tr>`;
             });
 
@@ -3356,17 +3678,17 @@
             }
 
             if (leaderboard.length > 0) {
-                html += `<div class="table-responsive"><table><thead><tr><th>STT</th><th>Tên</th><th>Tổng KCX</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>L5</th></tr></thead><tbody>
+                html += `<div class="table-responsive"><table><thead><tr><th class="stt-column">STT</th><th class="name-column">Tên</th><th class="kcx-column">Tổng KCX</th><th class="level-column">L1</th><th class="level-column">L2</th><th class="level-column">L3</th><th class="level-column">L4</th><th class="level-column">L5</th></tr></thead><tbody>
                     ${leaderboard.map((player, index) => `
                         <tr>
-                            <td>${index + 1}</td>
-                            <td>${player.name}</td>
-                            <td><strong>${player.diamonds.toLocaleString('vi-VN')} 💎</strong></td>
-                            <td>${player.l1 > 0 ? player.l1 : '-'}</td>
-                            <td>${player.l2 > 0 ? player.l2 : '-'}</td>
-                            <td>${player.l3 > 0 ? player.l3 : '-'}</td>
-                            <td>${player.l4 > 0 ? player.l4 : '-'}</td>
-                            <td>${player.l5 > 0 ? player.l5 : '-'}</td>
+                            <td class="stt-column">${index + 1}</td>
+                            <td class="name-column">${player.name}</td>
+                            <td class="kcx-column"><strong>${player.diamonds.toLocaleString('vi-VN')} 💎</strong></td>
+                            <td class="level-column">${player.l1 > 0 ? player.l1 : '-'}</td>
+                            <td class="level-column">${player.l2 > 0 ? player.l2 : '-'}</td>
+                            <td class="level-column">${player.l3 > 0 ? player.l3 : '-'}</td>
+                            <td class="level-column">${player.l4 > 0 ? player.l4 : '-'}</td>
+                            <td class="level-column">${player.l5 > 0 ? player.l5 : '-'}</td>
                         </tr>`).join('')}
                 </tbody></table></div>`;
             } else if (!anonymousBox) {
